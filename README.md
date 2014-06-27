@@ -33,6 +33,13 @@ make sure to choose the following:
 > Target packages -> Interpreter languages and scripting -> python
 
 
+### make docker container a little usable
+#### install sshd
+> Target packages -> Networking applications -> openssh
+
+#### install supervisord
+> Target packages -> System tools -> supervisor
+
 ### nodejs specific config
 > Target packages -> Interpreter languages and scripting -> nodejs
 
