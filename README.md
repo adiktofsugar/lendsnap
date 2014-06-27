@@ -19,26 +19,39 @@ after you download the buildroot source tree, and run "make menuconfig"
 
 make sure to choose the following:
 > Target options -> Target Architecture -> x86_64
+
 > Target options -> Target Architecture Variant -> generic (already selected)
+
 > Toolchain -> Enable large file (files > 2 GB) support
+
 > Toolchain -> Enable IPv6 support
+
 > Toolchain -> Enable C++ support                                                                 
 
 
 ### nodejs specific config
 > Target packages -> Interpreter languages and scripting -> nodejs
+
 > Target packages -> Interpreter languages and scripting -> Module Selection ---> (under nodejs)
-> Target packages -> Interpreter languages and scripting -> Module Selection -> NPM for the target                                      > Target packages -> Interpreter languages and scripting -> Module Selection -> Express web application framework
+
+> Target packages -> Interpreter languages and scripting -> Module Selection -> NPM for the target                                    
+
+> Target packages -> Interpreter languages and scripting -> Module Selection -> Express web application framework
+
 > Target packages -> Interpreter languages and scripting -> Module Selection -> CoffeeScript
+
 > Target packages -> Interpreter languages and scripting -> Module Selection -> Additional modules -- add "minimatch wiki"
 
 
 ### post image
 > mkdir -p output/images/fixup/sbin output/images/fixup/etc 
+
 > touch output/images/fixup/sbin/init output/images/fixup/etc/resolv.conf
 
 > cd output/images
+
 > cp root.tar fixup.tar
+
 > tar rvf fixup.tar -C fixup .
 
 ### docker steps
