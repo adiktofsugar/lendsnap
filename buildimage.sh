@@ -21,6 +21,7 @@ sh -c "tar -xzvf buildroot-$BUILDROOTVER.tar.gz" >>$CURDIR/buildimage.log 2>&1
 echo "copying buildroot config" 
 cp -r $CURDIR/buildroot.config buildroot-$BUILDROOTVER/.config
 echo " building root filesystem" 
+rm -f output/images/rootfs.tar
 cd buildroot-$BUILDROOTVER
 sh -c "make all" >> $CURDIR/buildroot.log 2>&1
 echo wait a really long time while it builds everything including the toolchain
@@ -47,6 +48,7 @@ touch output/images/fixup/sbin/init output/images/fixup/etc/resolv.conf
 # add nodejs and wiki specific stuff here
 
 cd output/images
+rm -f fixup.tar
 cp rootfs.tar fixup.tar
 tar rvf fixup.tar -C fixup .
 
