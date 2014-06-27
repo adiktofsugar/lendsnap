@@ -16,7 +16,8 @@ cd src-buildroot
 
 echo " wget -c http://buildroot.uclibc.org/downloads/buildroot-$BUILDROOTVER.tar.gz"
 wget -c http://buildroot.uclibc.org/downloads/buildroot-$BUILDROOTVER.tar.gz
-tar -xzvf buildroot-$BUILDROOTVER.tar.gz
+echo " exploding tar file"
+sh -c "tar -xzvf buildroot-$BUILDROOTVER.tar.gz" >>$CURDIR/build.log
 echo "copying buildroot config" 
 cp -r $CURDIR/buildroot.config buildroot-$BUILDROOTVER/.config
 echo " building root filesystem" 
