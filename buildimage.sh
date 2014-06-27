@@ -46,7 +46,7 @@ cd output/images
 cp rootfs.tar fixup.tar
 tar rvf fixup.tar -C fixup .
 
-cp fixup.tar $CURDIR/dockerfile-$IMAGENAME
+cp fixup.tar $CURDIR/dockerfile-$IMAGENAME/$IMAGENAME.tar
 
 cd $CURDIR/dockerfile-$IMAGENAME
 # docker steps
