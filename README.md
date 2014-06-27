@@ -43,6 +43,10 @@ make sure to choose the following:
 
 > Target packages -> Interpreter languages and scripting -> python
 
+> Target packages -> Interpreter languages and scripting -> external python modules -> python-versiontools
+
+> Target packages -> Interpreter languages and scripting -> external python modules -> python-setuptools
+
 
 ### make docker container a little usable
 #### install sshd
