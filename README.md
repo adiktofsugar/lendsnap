@@ -14,7 +14,7 @@ building the root image from scratch
 ------------------------------------
 if you want to build the root image from scratch, follow the instructions in the buildimage.sh
 
-specifically
+### buildroot config
 after you download the buildroot source tree, and run "make menuconfig"
 make sure to choose the following:
 Target options -> Target Architecture -> x86_64
@@ -23,6 +23,8 @@ Toolchain -> Enable large file (files > 2 GB) support
 Toolchain -> Enable IPv6 support
 Toolchain -> Enable C++ support                                                                 
 
+
+### nodejs specific config
 Target packages -> Interpreter languages and scripting -> nodejs
 Target packages -> Interpreter languages and scripting -> Module Selection ---> (under nodejs)
 Target packages -> Interpreter languages and scripting -> Module Selection -> NPM for the target                                        Target packages -> Interpreter languages and scripting -> Module Selection -> Express web application framework
