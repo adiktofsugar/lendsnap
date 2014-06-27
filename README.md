@@ -64,7 +64,3 @@ make sure to choose the following:
 > cp rootfs.tar fixup.tar
 
 > tar rvf fixup.tar -C fixup .
-
-### docker steps
-> docker import - $IMAGENAME < fixup.tar
-
