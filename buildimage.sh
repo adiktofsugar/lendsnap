@@ -5,8 +5,8 @@ export BUILDROOTVER=2014.05
 
 CURDIR=`pwd`
 
-mkdir -p $CURDIR/docker-nodejs-wiki
-cd $CURDIR/docker-nodejs-wiki
+mkdir -p $CURDIR/$IMAGENAME
+cd $CURDIR/$IMAGENAME
 
 git clone https://github.com/lexlapax/dockerfile-$IMAGENAME
 
@@ -15,7 +15,7 @@ cd src-buildroot
 
 wget http://buildroot.uclibc.org/downloads/buildroot-$BUILDROOTVER.tar.gz
 tar -xzvf buildroot-$BUILDROOTVER.tar.gz
-cp -r ../dockerfile-tiny-nodejs-wiki/buildroot.config buildroot-$BUILDROOTVER/.config
+cp -r ../dockerfile-$IMAGENAME/buildroot.config buildroot-$BUILDROOTVER/.config
 cd buildroot-$BUILDROOTVER
 make all
 # wait a really long time while it builds everything including the toolchain
@@ -46,9 +46,9 @@ cd output/images
 cp rootfs.tar fixup.tar
 tar rvf fixup.tar -C fixup .
 
-cp fixup.tar $CURDIR/dockerfile-$IMAGENAME/$IMAGENAME.tar
+cp fixup.tar $CURDIR/$IMAGENAME/dockerfile-$IMAGENAME/$IMAGENAME.tar
 
-cd $CURDIR/dockerfile-$IMAGENAME
+cd $CURDIR/$IMAGENAME/dockerfile-$IMAGENAME
 # docker steps
 docker build -t $IMAGENAME . 
 
