@@ -14,11 +14,14 @@ CURDIR=`pwd`
 mkdir src-buildroot
 cd src-buildroot
 
+echo " wget -c http://buildroot.uclibc.org/downloads/buildroot-$BUILDROOTVER.tar.gz"
 wget -c http://buildroot.uclibc.org/downloads/buildroot-$BUILDROOTVER.tar.gz
 tar -xzvf buildroot-$BUILDROOTVER.tar.gz
+echo "copying buildroot config" 
 cp -r $CURDIR/buildroot.config buildroot-$BUILDROOTVER/.config
+echo " building root filesystem" 
 cd buildroot-$BUILDROOTVER
-make all
+sh -c "make all" >> $CURDIR/build.log
 # wait a really long time while it builds everything including the toolchain
 # 
 
@@ -37,7 +40,7 @@ make all
 # This means that /sbin/init should be a regular file as well. By default, 
 # buildroot makes it a symlink to busybox. We will change that, too.
 
-
+echo "fix up the rootfs filesytem"
 mkdir -p output/images/fixup/sbin output/images/fixup/etc 
 touch output/images/fixup/sbin/init output/images/fixup/etc/resolv.conf
 # add nodejs and wiki specific stuff here
@@ -48,7 +51,9 @@ tar rvf fixup.tar -C fixup .
 
 cp fixup.tar $CURDIR/$IMAGENAME.tar
 
+
+echo "build the docker image"
 cd $CURDIR
 # docker steps
-docker build -t $IMAGENAME . 
+sh -c "docker build -t $IMAGENAME ." >> $CURDIR/build.og
 
