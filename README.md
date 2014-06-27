@@ -40,7 +40,7 @@ make sure to choose the following:
 
 > Target packages -> Interpreter languages and scripting -> Module Selection -> CoffeeScript
 
-> Target packages -> Interpreter languages and scripting -> Module Selection -> Additional modules -- add "minimatch wiki"
+> Target packages -> Interpreter languages and scripting -> Module Selection -> Additional modules -- add "mime minimatch"
 
 
 ### post image
