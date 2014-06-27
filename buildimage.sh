@@ -1,21 +1,22 @@
 #!/bin/bash
+##  this assumes you've checked out this git repository via github using
+# git clone https://github.com/lexlapax/dockerfile-tiny-nodejs-wiki
+# cd dockerfile-tiny-nodejs-wiki
+## and you're running this script ./buildimage.sh from that directory
+## after you've done chmod +x buildimage.sh
+
 export IMAGENAME=tiny-nodejs-wiki
 export BUILDROOTVER=2014.05
 
 
 CURDIR=`pwd`
 
-mkdir -p $CURDIR/$IMAGENAME
-cd $CURDIR/$IMAGENAME
-
-git clone https://github.com/lexlapax/dockerfile-$IMAGENAME
-
 mkdir src-buildroot
 cd src-buildroot
 
 wget http://buildroot.uclibc.org/downloads/buildroot-$BUILDROOTVER.tar.gz
 tar -xzvf buildroot-$BUILDROOTVER.tar.gz
-cp -r ../dockerfile-$IMAGENAME/buildroot.config buildroot-$BUILDROOTVER/.config
+cp -r $CURDIR/buildroot.config buildroot-$BUILDROOTVER/.config
 cd buildroot-$BUILDROOTVER
 make all
 # wait a really long time while it builds everything including the toolchain
@@ -37,7 +38,6 @@ make all
 # buildroot makes it a symlink to busybox. We will change that, too.
 
 
-
 mkdir -p output/images/fixup/sbin output/images/fixup/etc 
 touch output/images/fixup/sbin/init output/images/fixup/etc/resolv.conf
 # add nodejs and wiki specific stuff here
@@ -46,9 +46,9 @@ cd output/images
 cp rootfs.tar fixup.tar
 tar rvf fixup.tar -C fixup .
 
-cp fixup.tar $CURDIR/$IMAGENAME/dockerfile-$IMAGENAME/$IMAGENAME.tar
+cp fixup.tar $CURDIR/$IMAGENAME.tar
 
-cd $CURDIR/$IMAGENAME/dockerfile-$IMAGENAME
+cd $CURDIR
 # docker steps
 docker build -t $IMAGENAME . 
 
