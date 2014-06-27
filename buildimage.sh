@@ -17,12 +17,12 @@ cd src-buildroot
 echo " wget -c http://buildroot.uclibc.org/downloads/buildroot-$BUILDROOTVER.tar.gz"
 wget -c http://buildroot.uclibc.org/downloads/buildroot-$BUILDROOTVER.tar.gz
 echo " exploding tar file"
-sh -c "tar -xzvf buildroot-$BUILDROOTVER.tar.gz" >>$CURDIR/build.log 2>&1
+sh -c "tar -xzvf buildroot-$BUILDROOTVER.tar.gz" >>$CURDIR/buildimage.log 2>&1
 echo "copying buildroot config" 
 cp -r $CURDIR/buildroot.config buildroot-$BUILDROOTVER/.config
 echo " building root filesystem" 
 cd buildroot-$BUILDROOTVER
-sh -c "make all" >> $CURDIR/build.log 2>&1
+sh -c "make all" >> $CURDIR/buildroot.log 2>&1
 echo wait a really long time while it builds everything including the toolchain
 # 
 
@@ -56,5 +56,5 @@ cp fixup.tar $CURDIR/$IMAGENAME.tar
 echo "build the docker image"
 cd $CURDIR
 # docker steps
-sh -c "docker build -t $IMAGENAME ." >> $CURDIR/build.log 2>&1
+sh -c "docker build -t $IMAGENAME ." >> $CURDIR/buildimage.log 2>&1
 
