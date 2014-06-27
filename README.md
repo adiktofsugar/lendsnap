@@ -14,6 +14,17 @@ building the root image from scratch
 ------------------------------------
 if you want to build the root image from scratch, follow the instructions in the buildimage.sh
 
+or do the following
+
+```
+#checkout this repo
+git clone https://github.com/lexlapax/dockerfile-tiny-nodejs-wiki
+cd dockerfile-tiny-nodejs-wiki
+chmod +x buildimage.sh
+./buildimage.sh
+```
+
+
 ### buildroot config
 after you download the buildroot source tree, and run "make menuconfig"
 
@@ -64,3 +75,5 @@ make sure to choose the following:
 > cp rootfs.tar fixup.tar
 
 > tar rvf fixup.tar -C fixup .
+
+> and then build the docker image from the fixup tar file
