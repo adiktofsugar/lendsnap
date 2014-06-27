@@ -23,7 +23,7 @@ cp -r $CURDIR/buildroot.config buildroot-$BUILDROOTVER/.config
 echo " building root filesystem" 
 cd buildroot-$BUILDROOTVER
 sh -c "make all" >> $CURDIR/build.log 2>&1
-# wait a really long time while it builds everything including the toolchain
+echo wait a really long time while it builds everything including the toolchain
 # 
 
 
