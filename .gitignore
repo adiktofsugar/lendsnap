@@ -1,3 +1,4 @@
 # ignore the src-buildroot directory which is produced by buildimage.sh
 src-buildroot
-build.log
+buildimage.log
+buildroot.log
