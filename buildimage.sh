@@ -14,7 +14,7 @@ CURDIR=`pwd`
 mkdir src-buildroot
 cd src-buildroot
 
-wget http://buildroot.uclibc.org/downloads/buildroot-$BUILDROOTVER.tar.gz
+wget -c http://buildroot.uclibc.org/downloads/buildroot-$BUILDROOTVER.tar.gz
 tar -xzvf buildroot-$BUILDROOTVER.tar.gz
 cp -r $CURDIR/buildroot.config buildroot-$BUILDROOTVER/.config
 cd buildroot-$BUILDROOTVER
