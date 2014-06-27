@@ -1,5 +1,5 @@
 #!/bin/bash
-export IMAGENAME=nodejs-wiki
+export IMAGENAME=tiny-nodejs-wiki
 export BUILDROOTVER=2014.05
 
 
@@ -8,7 +8,7 @@ CURDIR=`pwd`
 mkdir -p $CURDIR/docker-nodejs-wiki
 cd $CURDIR/docker-nodejs-wiki
 
-git clone https://github.com/lexlapax/dockerfile-tiny-nodejs-wiki
+git clone https://github.com/lexlapax/dockerfile-$IMAGENAME
 
 mkdir src-buildroot
 cd src-buildroot
@@ -46,9 +46,9 @@ cd output/images
 cp rootfs.tar fixup.tar
 tar rvf fixup.tar -C fixup .
 
-cp fixup.tar $CURDIR/dockerfile-tiny-nodejs-wiki
+cp fixup.tar $CURDIR/dockerfile-$IMAGENAME
 
-cd $CURDIR/dockerfile-tiny-nodejs-wiki
+cd $CURDIR/dockerfile-$IMAGENAME
 # docker steps
-docker build -t dockerfile-tiny-nodejs-wiki . 
+docker build -t $IMAGENAME . 
 
