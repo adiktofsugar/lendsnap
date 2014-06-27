@@ -26,7 +26,11 @@ make sure to choose the following:
 
 > Toolchain -> Enable IPv6 support
 
+> Toolchain -> Enable WCHAR support                                                              
+
 > Toolchain -> Enable C++ support                                                                 
+
+> Target packages -> Interpreter languages and scripting -> python
 
 
 ### nodejs specific config
@@ -50,7 +54,7 @@ make sure to choose the following:
 
 > cd output/images
 
-> cp root.tar fixup.tar
+> cp rootfs.tar fixup.tar
 
 > tar rvf fixup.tar -C fixup .
 
