@@ -1,0 +1,21 @@
+DEPENDENCIES
+  default
+    path: chef/site-cookbooks/default
+  railsapp
+    path: chef/site-cookbooks/railsapp
+  users
+    path: chef/site-cookbooks/users
+  webserver
+    path: chef/site-cookbooks/webserver
+
+GRAPH
+  chef_gem (0.1.0)
+  default (0.1.0)
+  java (1.28.0)
+  railsapp (0.1.0)
+    rvm (>= 0.0.0)
+  rvm (0.9.2)
+    chef_gem (>= 0.0.0)
+    java (>= 0.0.0)
+  users (0.1.0)
+  webserver (0.1.0)

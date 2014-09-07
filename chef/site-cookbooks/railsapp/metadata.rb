@@ -5,3 +5,4 @@ license          'all_rights'
 description      'Installs/Configures railsapp'
 long_description 'Installs/Configures railsapp'
 version          '0.1.0'
+depends "rvm"
