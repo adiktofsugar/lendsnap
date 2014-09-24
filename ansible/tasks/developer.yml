@@ -1,0 +1,17 @@
+-   user: >
+        name={{ developer_name }}
+        groups=rvm
+    sudo: yes
+
+-   authorized_key: >
+        user={{ developer_name }}
+        key="{{ lookup('file', '/Users/' + developer_name + '/.ssh/id_rsa.pub') }}"
+    sudo: yes
+
+-   template: >
+        src=templates/smccollum_sudoersd
+        dest=/etc/sudoers.d/smccollum
+    sudo: yes
+
+-   script: files/developer_mount_code {{ developer_name }}
+    sudo: yes

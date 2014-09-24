@@ -1,0 +1,14 @@
+-   name: install git
+    yum: name=git state=installed
+    sudo: yes
+
+-   name: install man
+    yum: name=man state=installed
+    sudo: yes
+
+-   name: install epel-release
+    yum: name=epel-release state=installed
+    sudo: yes
+
+-   hostname: name=lendsnap
+    sudo: yes

@@ -6,6 +6,10 @@ VAGRANTFILE_API_VERSION = "2"
 
 STATIC_IP = "192.168.33.10"
 
+user = "smccollum"
+user_id=1001
+group_id=1001
+
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
@@ -41,7 +45,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  # config.vm.synced_folder "../data", "/vagrant_data"
+
+  # config.vm.synced_folder "code/", "/code",
+  #   owner: "#{user_id}", group: "#{group_id}"
+  
+
+  config.vm.provider "virtualbox" do |vb|
+    vm_name = "lendsnap"
+    vb.name = vm_name
+    vb.customize ["sharedfolder", :add, vm_name,
+      "--name", "/code",
+      "--hostpath", File.join(Dir.pwd, "code")]
+  end
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -57,6 +72,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   # View the documentation for the provider you're using for more
   # information on available options.
+
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "ansible/playbook.yml"
+    ansible.verbose = "vv"
+    ansible.extra_vars = {
+      developer_name: user
+    }
+  end
 
   # Enable provisioning with CFEngine. CFEngine Community packages are
   # automatically installed. For example, configure the host as a
@@ -88,12 +111,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # path, and data_bags path (all relative to this Vagrantfile), and adding
   # some recipes and/or roles.
   #
-  config.vm.provision "chef_solo" do |chef|
-    chef.roles_path = "chef/roles"
-    chef.add_role "all"
-  end
+  # config.vm.provision "chef_solo" do |chef|
+  #   chef.roles_path = "chef/roles"
+  #   chef.add_role "all"
+  # end
 
-  config.berkshelf.enabled = true
+  # config.berkshelf.enabled = true
 
   # Enable provisioning with chef server, specifying the chef server URL,
   # and the path to the validation key (relative to this Vagrantfile).

@@ -1,0 +1,23 @@
+---
+-   name: checking that RVM is installed
+    file:
+        path: "/usr/local/rvm/bin/rvm"
+        state: file
+    ignore_errors: True
+    register: rvm_install_result
+
+-   name: install rvm installer
+    script: files/rvm_installer stable
+    sudo: yes
+    when: rvm_install_result | failed
+
+-   user: name=ruby-user group=rvm
+    sudo: yes
+
+-   name: setup ruby
+    script: files/install_default_ruby
+    sudo: yes
+
+-   template: >
+        src=files/etc_gemrc
+        destination=/etc/gemrc
