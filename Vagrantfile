@@ -56,6 +56,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ["sharedfolder", :add, vm_name,
       "--name", "/code",
       "--hostpath", File.join(Dir.pwd, "code")]
+    vb.customize ["setextradata", vm_name, "VBoxInternal2/SharedFoldersEnableSymlinksCreate//code", "1"]
   end
 
   # Provider-specific configuration so you can fine-tune various

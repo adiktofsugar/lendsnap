@@ -4,5 +4,5 @@
     -   include: tasks/base-system.yml
     -   include: tasks/developer.yml
         when: '"{{ developer_name }}" != ""'
-    -   include: tasks/rvm-and-ruby.yml
+    # -   include: tasks/rvm-and-ruby.yml
     # -   include: tasks/webserver.yml
