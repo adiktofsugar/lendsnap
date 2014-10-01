@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title%}Home{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="large-12 columns">
+        <div id="home-main-intro">
+
+            <form action="/accept-invite" method="post">
+                <div class="row collapse">
+                    <div class="large-10 columns">
+                        <input type="text" name="invite_id" placeholder="Invitation Code" />
+                    </div>
+                    <div class="large-2 columns">
+                        <button class="postfix" type="submit">Join</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

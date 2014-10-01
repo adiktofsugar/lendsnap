@@ -1,0 +1,20 @@
+<!DOCTYPE>
+<html>
+    <head>
+        {% include "_head-section.html" %}
+    </head>
+    <body>
+        <div class="row">
+            <div class="large-12 columns">
+                <h1>Log in</h1>
+                <form action="/log-in" method="post" class="form-horizontal">
+                    <label>Email</label>
+                    <input type="email" name="email" />
+
+                    <button class="button primary" type="submit">Log In</button>
+                    <a class="button gray">Register</a>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title%}Invite{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="large-12 columns">
+        {% if error %}
+            <h1>Error - {{ error }}</h1>
+        {% elif not invite %}
+            <h1>Oh...no one invited you.</h1>
+        {% else %}
+            <h1>Yay, you're invited!</h1>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,8 +1,0 @@
----
--   name: Copy rpm over
-    copy: src=files/rvm-0.1-1.x86_64.rpm dest=/root/rvm-0.1-1.x86_64.rpm
-    sudo: yes
-
--   name: Install rvm ruby rpm
-    yum: name=/root/rvm-0.1-1.x86_64.rpm state=present
-    sudo: yes
