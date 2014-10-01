@@ -12,3 +12,23 @@
 
 -   hostname: name=lendsnap
     sudo: yes
+
+-   name: install nginx
+    yum: name=nginx state=installed
+    sudo: yes
+
+-   name: install node
+    yum: name=nodejs state=installed
+    sudo: yes
+
+-   name: install npm
+    yum: name=npm state=installed
+    sudo: yes
+
+-   name: install forever
+    npm: name=forever global=yes production=yes
+    sudo: yes
+
+-   name: install grunt cli
+    npm: name=grunt-cli global=yes production=yes
+    sudo: yes

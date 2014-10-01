@@ -1,6 +1,6 @@
+
 -   user: >
         name={{ developer_name }}
-        groups=rvm
     sudo: yes
 
 -   authorized_key: >
@@ -9,9 +9,11 @@
     sudo: yes
 
 -   template: >
-        src=templates/smccollum_sudoersd
-        dest=/etc/sudoers.d/smccollum
+        src=templates/developer_sudoersd
+        dest=/etc/sudoers.d/{{ developer_name }}
     sudo: yes
 
--   script: files/developer_mount_code {{ developer_name }}
+-   template: >
+        src=templates/profile_d_mount_vagrant
+        dest=/etc/profile.d/mount-vagrant.sh
     sudo: yes
