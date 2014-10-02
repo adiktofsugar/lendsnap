@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-var db = require('./models');
 var options = require('nomnom')
     .option('force', {
         abbr: 'f',
@@ -11,6 +10,7 @@ var options = require('nomnom')
     .parse();
 
 var force = options.force;
+var db = require('./models');
 
 db.sequelize.sync({
     force: options.force

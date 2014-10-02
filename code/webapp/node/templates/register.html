@@ -1,15 +1,15 @@
 {% extends "log-in-base.html" %}
 
 {% block body %}
-<h1>Log in</h1>
-<form action="/log-in" method="post" class="form-horizontal">
+<h1>Register</h1>
+<form action="/register" method="post" class="form-horizontal">
     <label>Email</label>
     <input type="email" name="email" />
 
     <label>Password</label>
     <input type="password" name="password" />
 
-    <button class="button primary" type="submit">Log In</button>
-    <a class="button small gray" href="/register">Register</a>
+    <button class="button primary" type="submit">Register</button>
+    <a class="button small gray" href="/log-in">Log in</a>
 </form>
 {% endblock %}

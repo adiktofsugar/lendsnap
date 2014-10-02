@@ -1,0 +1,17 @@
+<!DOCTYPE>
+<html>
+    <head>
+        {% include "_head-section.html" %}
+    </head>
+    <body>
+        <div class="row">
+            <div class="large-12 columns">
+                {% if error %}
+                <p class="alert-box warning">{{ error }}</p>
+                {% endif %}
+                
+                {% block body %}{% endblock %}
+            </div>
+        </div>
+    </body>
+</html>

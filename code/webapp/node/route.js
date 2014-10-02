@@ -1,6 +1,6 @@
 var invitation = require('./invitation');
-var sendHtml = require('send-data/html');
-var page = require('./page');
+var account = require('./account');
+var sendData = require('send-data');
 
 var route = {
     router: null,
@@ -10,19 +10,56 @@ var route = {
     },
     start: function start () {
         this.router.get('/', function (req, res, next) {
-            sendHtml(req, res, page.render('index.html'));
+            res.render('index.html');
         });
 
         this.router.post('/accept-invite', function (req, res, next) {
             invitation.get(req.body['invite_id'], function (err, invite) {
-                sendHtml(req, res, page.render('invite.html', {
+                res.render('invite.html', {
                     error: err,
                     invite: invite
-                }));
+                });
             });
         });
         this.router.get('/log-in', function (req, res, next) {
-            sendHtml(req, res, page.render('log-in.html'));
+            res.render('log-in.html', {
+                error: req.query["error"]
+            });
+        });
+        this.router.post('/log-in', function (req, res, next) {
+            var email = req.body['email'];
+            var password = req.body['password'];
+            account.login(req, email, password, function (err, user) {
+                if (err) {
+                    var errorMessage = "Failed log in - " + err.message;
+                    res.redirect("/log-in?error=" + encodeURIComponent(errorMessage));
+                } else {
+                    res.redirect('/');
+                }
+            });
+        });
+        this.router.get('/register', function (req, res, next) {
+            res.render('register.html', {
+                error: req.query["error"]
+            });
+        });
+        this.router.post('/register', function (req, res, next) {
+            var email = req.body['email'];
+            var password = req.body['password'];
+            account.register(email, password, function (err, user) {
+                if (err) {
+                    var errorMessage = err.message;
+                    res.redirect("/register?error=" + encodeURIComponent(errorMessage));
+                } else {
+                    account.login(req, email, password, function (err) {
+                        if (err) {
+                            next(err);
+                        } else {
+                            res.redirect('/');
+                        }
+                    });
+                }
+            });
         });
         return this;
     }
