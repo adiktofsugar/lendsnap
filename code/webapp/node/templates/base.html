@@ -4,16 +4,22 @@
         {% include "_head-section.html" %}
     </head>
     <body>
-        <div class="row">
-            <div class="large-6 columns">
-                <h3>over here</h3>
+        <div class="topbar">
+            <div class="topbar__left-side">
+                <div class="topbar-item topbar__company-name-container">
+                    <a href="/" class="topbar__company-name">Lendsnap</a>
+                </div>
             </div>
-            <div class="large-6 columns">
-                <div id="account" class="text-right {{ "logged-in" if user }}">
+            <div class="topbar__right-side">
+                <div class="topbar-item topbar__account" class="text-right {{ "logged-in" if user }}">
                     {% if user %}
-                    <h3><a href="/account">{{ user.email }}</a></h3>
+                    <a href="#" data-dropdown="js-account-dropdown">{{ user.email }}</a>
+                    <ul id="js-account-dropdown" class="f-dropdown" data-dropdown-content aria-hidden="true" tabindex="-1">
+                        <li><a href="/account">account</a></li>
+                        <li><a href="/logout">logout</a></li>
+                    </ul>
                     {% else %}
-                    <h3><a href="/log-in">log in</a></h3>
+                    <a href="/log-in">log in</a>
                     {% endif %}
                 </div>
             </div>

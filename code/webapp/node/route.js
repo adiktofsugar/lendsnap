@@ -1,6 +1,5 @@
-var invitation = require('./invitation');
-var account = require('./account');
-var sendData = require('send-data');
+var helpers = require('./helpers');;
+var path = require('path');
 
 var route = {
     router: null,
@@ -9,58 +8,25 @@ var route = {
         return this;
     },
     start: function start () {
-        this.router.get('/', function (req, res, next) {
+        var router = this.router;
+
+        router.get('/', function (req, res, next) {
             res.render('index.html');
         });
 
-        this.router.post('/accept-invite', function (req, res, next) {
-            invitation.get(req.body['invite_id'], function (err, invite) {
-                res.render('invite.html', {
-                    error: err,
-                    invite: invite
-                });
-            });
-        });
-        this.router.get('/log-in', function (req, res, next) {
-            res.render('log-in.html', {
-                error: req.query["error"]
-            });
-        });
-        this.router.post('/log-in', function (req, res, next) {
-            var email = req.body['email'];
-            var password = req.body['password'];
-            account.login(req, email, password, function (err, user) {
-                if (err) {
-                    var errorMessage = "Failed log in - " + err.message;
-                    res.redirect("/log-in?error=" + encodeURIComponent(errorMessage));
+        helpers.getModules().forEach(function (moduleName) {
+            var modulePath = path.join(__dirname, moduleName, 'routes');
+            try {
+                require(modulePath)(router);
+            } catch (e) {
+                if (e.code != "MODULE_NOT_FOUND") {
+                    throw e;
                 } else {
-                    res.redirect('/');
+                    winston.error(modulePath + ' NOT FOUND');
                 }
-            });
+            }
         });
-        this.router.get('/register', function (req, res, next) {
-            res.render('register.html', {
-                error: req.query["error"]
-            });
-        });
-        this.router.post('/register', function (req, res, next) {
-            var email = req.body['email'];
-            var password = req.body['password'];
-            account.register(email, password, function (err, user) {
-                if (err) {
-                    var errorMessage = err.message;
-                    res.redirect("/register?error=" + encodeURIComponent(errorMessage));
-                } else {
-                    account.login(req, email, password, function (err) {
-                        if (err) {
-                            next(err);
-                        } else {
-                            res.redirect('/');
-                        }
-                    });
-                }
-            });
-        });
+        
         return this;
     }
 };

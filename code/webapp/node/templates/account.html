@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title%}{{ user.email }}{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="large-12 columns">
+        <h1>Account</h1>
+        {% if error %}
+        <div class="alert-box warning">{{ error }}</div>
+        {% endif %}
+        <form action="/account" method="post">
+            <label>Email</label>
+            <input type="email" name="email" value="{{ user.email }}" />
+
+            <label>First name</label>
+            <input type="text" name="first_name" value="{{ user.first_name }}" />
+
+            <button type="submit" class="button primary">Update Information</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

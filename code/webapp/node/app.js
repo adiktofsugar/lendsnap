@@ -6,6 +6,7 @@ var winston = require("winston");
 // winston.add(winston.transports.File, {
 //     filename: 'logs/node-web-server.log'
 // });
+var db = require('./db');
 
 var app = connect();
 
@@ -24,9 +25,6 @@ app.use(cookieSession({
 
 app.use(function (req, res, next) {
     winston.info("Url: ", req.url);
-    var n = req.session.count || 0;
-    req.session.count = n+1;
-    winston.info("count", req.session.count);
     next();
 });
 
@@ -36,11 +34,11 @@ app.use(function (req, res, next) {
     winston.info("setting user...");
     if (req.session.userId) {
         winston.info("...user id exists", req.session.userId);
-        require('./models').User.find({
+        db.User.find({
             id: req.session.userId
         })
         .then(function (user) {
-            winston.info("...found user", user);
+            winston.info("...found user");
             req.user = user;
             next();
         }, function (error) {
@@ -93,12 +91,15 @@ app.use(function (req, res, next) {
         data = _.extend({
             version: "123",
             page_title: req.url,
-            user: req.user
+            user: req.user,
+            error: req.query.error,
+            mesage: req.query.message
         }, data || {});
 
         var sendHtml = require('send-data/html');
         sendHtml(req, res, nunjucks.render(templateName, data));
     };
+    winston.info("--- render defined");
     next();
 });
 
@@ -112,6 +113,7 @@ app.use(connectRoute(function (router) {
 
 app.use(function (err, req, res, next) {
     if (err) {
+        winston.error(err);
         res.render('error.html', {
             error: err
         });

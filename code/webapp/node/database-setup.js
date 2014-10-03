@@ -10,7 +10,7 @@ var options = require('nomnom')
     .parse();
 
 var force = options.force;
-var db = require('./models');
+var db = require('./db');
 
 db.sequelize.sync({
     force: options.force

@@ -5,3 +5,16 @@ window.VERSION = "{{ version }}";
 </script>
 <link rel="stylesheet" href="/media/{{ version }}/vendor/foundation/css/foundation.css" />
 <link rel="stylesheet" href="/media/{{ version }}/main.css" />
+
+<script src="/media/{{ version }}/vendor/foundation/js/vendor/jquery.js"></script>
+<script src="/media/{{ version }}/vendor/foundation/js/vendor/jquery.cookie.js"></script>
+<script src="/media/{{ version }}/vendor/foundation/js/vendor/modernizr.js"></script>
+<script src="/media/{{ version }}/vendor/foundation/js/vendor/placeholder.js"></script>
+<script src="/media/{{ version }}/vendor/foundation/js/vendor/fastclick.js"></script>
+<script src="/media/{{ version }}/vendor/foundation/js/foundation.min.js"></script>
+
+<script>
+$(function () {
+    $(document).foundation();
+});
+</script>

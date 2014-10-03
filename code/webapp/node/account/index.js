@@ -1,6 +1,6 @@
-var db = require('./models');
 var md5 = require('MD5');
 var winston = require('winston');
+var db = require('../db');
 
 function login (req, email, password, cb) {
     db.User.find({
@@ -12,12 +12,18 @@ function login (req, email, password, cb) {
             cb(new Error("No account found."));
         } else {
             req.session.userId = user.id;
-            winston.info("account.login - user", user.toJSON());
+            winston.info("account.login - user", user.email);
             cb(null, user);
         }
     }, function (error) {
         cb(error);
     });
+};
+
+function logout(req, cb) {
+    delete req.session.userId;
+    winston.info("account.logout - " + req.user.email);
+    cb(null);
 };
 
 var userExists = function (email, cb) {
@@ -51,5 +57,6 @@ function register (email, password, cb) {
 
 module.exports = {
     login: login,
+    logout: logout,
     register: register
 };

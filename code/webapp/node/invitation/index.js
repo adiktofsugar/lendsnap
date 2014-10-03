@@ -1,4 +1,4 @@
-var db = require('./models');
+var db = require('../db');
 
 var getInvite = function (code, cb) {
     db.Invite.find({

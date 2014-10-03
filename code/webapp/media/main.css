@@ -1,7 +1,61 @@
 #home-main-intro {
-    background: #eee;
-    padding: 10em auto;
 }   
 .button.gray {
     background: #aaa;
+}
+
+.topbar {
+    height: 45px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+.topbar-item {
+    height: 45px;
+    line-height: 45px;
+    margin-top:0;
+    margin-bottom:0;
+    padding-top:0;
+    padding-bottom:0;
+}
+.topbar__left-side {
+    float:left;
+}
+.topbar__right-side {
+    float:right;
+}
+.topbar:after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.topbar__company-name {
+    padding: 0px 50px 0 50px;
+    line-height: 45px;
+    font-size: 20px;
+    display: inline-block;
+    color: #ccc;
+    font-family: "Helvetica";
+    transition: background 0.1s, color 0.1s;
+}
+.topbar__company-name:hover {
+    background: #c00;
+    color: white;
+}
+
+.topbar__account {
+    text-align: right;
+    border-bottom: 3px solid #f00;
+    margin-bottom: -3px;
+}
+.topbar__account a {
+    padding-left: 20px;
+    padding-right: 10px;
+    color: #aaa;
+    display: block;
+    transition: background 0.1s, color 0.1s;
+}
+.topbar__account a:hover {
+    background: rgba(0,0,0,0.5);
+    color: white;
 }
