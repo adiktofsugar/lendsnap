@@ -1,5 +1,6 @@
 var _ = require("lodash");
 var account = require('./index');
+var invitation = require('../invitation');
 
 module.exports = function (router) {
 
@@ -47,11 +48,18 @@ module.exports = function (router) {
     });
 
     router.get('/account', function (req, res, next) {
-        res.render('account.html');
+        invitation.getSentInvites(req.user, function(err, invites) {
+            console.log(invites);
+            if (err) throw err;
+            res.render('account.html', {
+                lastRequest: {},
+                invites: invites
+            });
+        });
     });
     router.post('/account', function (req, res, next) {
         var user = req.user;
-        _.each(["email", "first_name"], function (name) {
+        _.each(["email", "firstName"], function (name) {
             var value = req.body[name];
             user.set(name, value);
         });
@@ -61,5 +69,14 @@ module.exports = function (router) {
             }, function (error) {
                 res.redirect('/account?error=' + encodeURIComponent(error.message))
             });
+    });
+
+    router.post('/account/invites', function (req, res, next) {
+        
+        invitation.create(req.user.email, req.body.email, function (err, newInvite) {
+            if (err) throw err;
+            res.redirect('/account?message=' +
+                encodeURIComponent("Invitation created with code " + newInvite.code));
+        });
     });
 };

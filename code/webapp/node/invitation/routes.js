@@ -5,7 +5,7 @@ module.exports = function (router) {
         var code = req.body['invite_id'];
         invitation.get(code, function (err, invite) {
             if (err) {
-                res.redirect('/?error=' + encodeURIComponent(error.message));
+                res.redirect('/?error=' + encodeURIComponent(err.message));
             } else if (!invite) {
                 res.redirect('/?error=' +
                     encodeURIComponent("There is no invitation for that code ("+code+")."));

@@ -3,18 +3,60 @@
 {% block title%}{{ user.email }}{% endblock %}
 
 {% block body %}
+
+<div class="row">
+    {% if error %}
+    <div class="alert-box warning">{{ error }}</div>
+    {% endif %}
+    {% if message %}
+    <div class="alert-box">{{ message }}</div>
+    {% endif %}
+</div>
+
+{% if user.canInvite() %}
 <div class="row">
     <div class="large-12 columns">
+        <h1>Invites</h1>
+        <div class="row nest-collapse">
+            <div class="large-6 columns">
+                <form action="/account/invites" method="post">
+                    <label>To Email</label>
+                    <input type="email" name="email" value="{{ lastRequest.email }}" />
+
+                    <label>First name</label>
+                    <input type="text" name="firstName" value="{{ lastRequest.firstName }}" />
+
+                    <label>Last name</label>
+                    <input type="text" name="lastName" value="{{ lastRequest.lastName }}" />
+
+                    <button type="submit" class="button primary">Send Invite</button>
+                </form>
+            </div>
+            <div class="large-6 columns">
+                <ul>
+                    {% if not invites or invites.length == 0 %}
+                    <li>No Invites</li>
+                    {% endif %}
+                    {% for invite in invites %}
+                    <li>
+                        <h3>{{ invite.code}} <small>To: {{ invite.ReceivedUser.email }}</small></h3>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div class="row">
+    <div class="large-6 columns">
         <h1>Account</h1>
-        {% if error %}
-        <div class="alert-box warning">{{ error }}</div>
-        {% endif %}
         <form action="/account" method="post">
             <label>Email</label>
             <input type="email" name="email" value="{{ user.email }}" />
 
             <label>First name</label>
-            <input type="text" name="first_name" value="{{ user.first_name }}" />
+            <input type="text" name="firstName" value="{{ user.firstName }}" />
 
             <button type="submit" class="button primary">Update Information</button>
         </form>

@@ -1,13 +1,25 @@
 module.exports = function(sequelize, DataTypes) {
     var User = sequelize.define('User', {
-        first_name: DataTypes.STRING,
-        last_name: DataTypes.STRING,
+        firstName: DataTypes.STRING,
+        lastName: DataTypes.STRING,
         email: DataTypes.STRING,
         password: DataTypes.STRING
     }, {
         classMethods: {
             associate: function (models) {
-                User.hasMany(models.Invite);
+                User.hasMany(models.Invite, {
+                    as: 'SentInvites',
+                    foreignKey: 'sentUserId'
+                });
+                User.hasMany(models.Invite, {
+                    as: 'ReceivedInvites',
+                    foreignKey: 'receivedUserId'
+                });
+            }
+        },
+        instanceMethods: {
+            canInvite: function () {
+                return true;
             }
         }
     });

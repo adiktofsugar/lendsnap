@@ -17,3 +17,13 @@
         src=templates/profile_d_mount_vagrant
         dest=/etc/profile.d/mount-vagrant.sh
     sudo: yes
+
+-   name: Install development tools
+    yum: name="@Development Tools" state=present
+    sudo: yes
+
+-   name: Turn off iptables
+    shell: >
+        service iptables stop
+        chkconfig iptables off
+    sudo: yes

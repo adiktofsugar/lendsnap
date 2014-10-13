@@ -1,4 +1,7 @@
 {
-    "name": "lendsnap-media",
-    "version": "0.0.1"
+  "name": "lendsnap-media",
+  "version": "0.0.1",
+  "devDependencies": {
+    "node-sass": "~0.8.6"
+  }
 }

@@ -9,6 +9,8 @@ STATIC_IP = "192.168.33.10"
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   config.vm.box = "centos_65_x86_64"
+  config.vm.box = "https://f0fff3908f081cb6461b407be80daf97f07ac418.googledrive.com/host/0BwtuV7VyVTSkUG1PM3pCeDJ4dVE/centos7.box"
+
   config.vm.network "private_network", ip: STATIC_IP
 
   config.ssh.forward_agent = true

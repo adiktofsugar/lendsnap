@@ -1,12 +1,24 @@
+#!/usr/bin/env node
+
+var options = require('nomnom')
+    .option('environment', {
+        abbr: 'e',
+        help: 'Set environment specifically'
+    })
+    .help("Start the app server")
+    .parse();
+
+var config = require('./config');
+if (options.environment) {
+    config.setEnvironment(options.environment);
+}
+
 var connect = require('connect')
 var http = require('http')
 var _ = require('lodash');
-
 var winston = require("winston");
-// winston.add(winston.transports.File, {
-//     filename: 'logs/node-web-server.log'
-// });
 var db = require('./db');
+
 
 var app = connect();
 
@@ -93,13 +105,33 @@ app.use(function (req, res, next) {
             page_title: req.url,
             user: req.user,
             error: req.query.error,
-            mesage: req.query.message
-        }, data || {});
+            message: req.query.message
+        }, config.get("global_template_vars") || {}, data || {});
 
         var sendHtml = require('send-data/html');
         sendHtml(req, res, nunjucks.render(templateName, data));
     };
     winston.info("--- render defined");
+    next();
+});
+
+// json rendering
+app.use(function (req, res, next) {
+    res.json = function (json) {
+        var sendJson = require('send-data/json');
+        sendJson(req, res, json, {
+            statusCode: 200
+        });
+    };
+    res.jsonError = function (error, statusCode) {
+        statusCode = statusCode || 400;
+        var sendJson = require('send-data/json');
+        sendJson(req, res, {
+            message: error.message || "Unknown"
+        }, {
+            statusCode: statusCode
+        });
+    };
     next();
 });
 
