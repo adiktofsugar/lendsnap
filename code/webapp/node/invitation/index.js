@@ -17,8 +17,11 @@ var getInvite = function (code, cb) {
 
 var codeGenerator = new Hashids("this is my salt");
 
-var create = function (fromUserEmail, toUserEmail, cb) {
-    
+var create = function (fromUserEmail, toUserEmail, toUserDefaults, cb) {
+    if (!cb) {
+        cb = toUserDefaults;
+        toUserDefaults = {};
+    }
 
     db.User.findOrCreate({
         where: {
@@ -36,7 +39,8 @@ var create = function (fromUserEmail, toUserEmail, cb) {
         db.User.findOrCreate({
             where: {
                 email: toUserEmail
-            }
+            },
+            defaults: toUserDefaults
         })
         .spread(function (toUser, created) {
             if (!toUser) {

@@ -8,15 +8,22 @@ var db = {};
 
 helpers.getModules().forEach(function (moduleName) {
     var modulePath = path.join(__dirname, moduleName, 'models');
+    var models;
     try {
-        var model = sequelize.import(modulePath)
-        db[model.name] = model;
+        models = sequelize.import(modulePath);
     } catch (e) {
         if (e.code != "MODULE_NOT_FOUND") {
             throw e;
-        } else {
-            winston.error(modulePath + ' NOT FOUND');
         }
+    }
+    if (models && !(models instanceof Array)) {
+        models = [models];
+    }
+    if (models) {
+        _.each(models, function (model) {
+            winston.info("Assigning " + model.name);
+            db[model.name] = model;
+        });
     }
 
 });
@@ -25,7 +32,7 @@ Object.keys(db).forEach(function(modelName) {
     if ('associate' in db[modelName]) {
         db[modelName].associate(db);
     }
-})
+});
 
 module.exports = _.extend({
     sequelize: sequelize,

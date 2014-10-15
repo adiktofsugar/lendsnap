@@ -15,13 +15,46 @@ module.exports = function(sequelize, DataTypes) {
                     as: 'ReceivedInvites',
                     foreignKey: 'receivedUserId'
                 });
-            }
-        },
-        instanceMethods: {
-            canInvite: function () {
-                return true;
+
+                User.hasMany(models.Permission);
+                User.hasMany(models.Bank);
             }
         }
     });
-    return User
+
+    var Permission = sequelize.define('Permission', {
+        name: DataTypes.STRING
+    }, {
+        classMethods: {
+            associate: function (models) {
+                Permission.hasMany(models.User);
+                Permission.hasMany(models.Bank);
+            }
+        },
+        instanceMethods: {
+            hasGetUser: function (userInfo, cb) {
+                // will eventually implement this...
+                cb(null, true);
+            },
+            has: function (otherPermissionInfo, cb) {
+                var specificHasFunctionName = "has" + this.name.slice(0,1) + this.name.slice(1);
+                if (this[specificHasFunctionName]) {
+                    this[specificHasFunctionName](otherPermissionInfo, cb);
+                } else {
+                    cb(null, true);
+                }
+            }
+        }
+    });
+    var Bank = sequelize.define('Bank', {
+        name: DataTypes.STRING
+    }, {
+        classMethods: {
+            associate: function (models) {
+                Bank.hasMany(models.User);
+                Bank.hasMany(models.Permission);
+            }
+        }
+    });
+    return [User, Permission, Bank];
 }

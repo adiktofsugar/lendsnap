@@ -21,7 +21,7 @@ module.exports = function (router) {
     });
     router.get('/logout', function (req, res, next) {
         account.logout(req, function (err) {
-            if (err) throw err;
+            if (err) return next(err);
             res.redirect('/');
         });
     });
@@ -49,32 +49,46 @@ module.exports = function (router) {
 
     router.get('/account', function (req, res, next) {
         invitation.getSentInvites(req.user, function(err, invites) {
-            console.log(invites);
-            if (err) throw err;
-            res.render('account.html', {
-                lastRequest: {},
-                invites: invites
+            if (err) return next(err);
+            account.hasPermission(req.user, "canInvite", function (error) {
+                res.render('account.html', {
+                    lastRequest: {},
+                    userCanInvite: !error,
+                    invites: invites
+                });
             });
         });
     });
     router.post('/account', function (req, res, next) {
-        var user = req.user;
-        _.each(["email", "firstName"], function (name) {
-            var value = req.body[name];
-            user.set(name, value);
-        });
-        user.save()
-            .then(function () {
-                res.redirect('/account');
-            }, function (error) {
-                res.redirect('/account?error=' + encodeURIComponent(error.message))
+        var updateUser = function (user) {
+            _.each(["email", "firstName", "lastName"], function (name) {
+                var value = req.body[name];
+                user.set(name, value);
             });
+            user.save()
+                .then(function () {
+                    res.redirect('/account');
+                }, function (error) {
+                    res.redirect('/account?error=' + encodeURIComponent(error.message))
+                });
+        };
+
+        if (req.body.id) {
+            account.getUserById(req, req.body.id, function (error, user) {
+                if (error) return next(error);
+                updateUser(user);
+            });
+        } else {
+            updateUser(req.user);
+        }
     });
 
     router.post('/account/invites', function (req, res, next) {
-        
-        invitation.create(req.user.email, req.body.email, function (err, newInvite) {
-            if (err) throw err;
+        invitation.create(req.user.email, req.body.email, {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName
+        }, function (err, newInvite) {
+            if (err) return next(err);
             res.redirect('/account?message=' +
                 encodeURIComponent("Invitation created with code " + newInvite.code));
         });

@@ -13,7 +13,7 @@
     {% endif %}
 </div>
 
-{% if user.canInvite() %}
+{% if userCanInvite %}
 <div class="row">
     <div class="large-12 columns">
         <h1>Invites</h1>
@@ -40,6 +40,30 @@
                     {% for invite in invites %}
                     <li>
                         <h3>{{ invite.code}} <small>To: {{ invite.ReceivedUser.email }}</small></h3>
+                        <div class="row collapse">
+                            <form action="/account" method="post">
+                                <input type="hidden" name="id" value="{{ invite.ReceivedUser.id }}" />
+
+                                <div class="row collapse">
+                                    <div class="large-4 columns">
+                                        <label class="inline">First Name</label>
+                                    </div>
+                                    <div class="large-6 columns">
+                                        <input name="firstName" type="text" value="{{ invite.ReceivedUser.firstName }}" />
+                                    </div>
+                                </div>
+
+                                <div class="row collapse">
+                                    <div class="large-4 columns">
+                                        <label class="inline">Last Name</label>
+                                    </div>
+                                    <div class="large-6 columns">
+                                        <input name="lastName" type="text" value="{{ invite.ReceivedUser.lastName }}" />
+                                    </div>
+                                </div>
+                                <button class="button tiny right" type="submit">Save</button>
+                            </form>
+                        </div>
                     </li>
                     {% endfor %}
                 </ul>

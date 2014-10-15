@@ -65,19 +65,53 @@ async.waterfall([
             cb(error);
         });
     },
-    function (cb) {
+    function (finalCb) {
         if (options.addBaseData) {
             console.log(chalk.green("Adding base data..."));
             var md5 = require("MD5");
-            db.User.create({
-                email: "test@example.com",
-                password: md5("a")
-            })
-            .then(function () {
-                cb();
-            }, function (error) {
-                cb(error);
+
+            var createPermissions = function (cb) {
+                db.Permission.bulkCreate([{
+                    name: "admin"
+                }, {
+                    name: "canInvite"
+                }])
+                .then(cb, finalCb);
+            };
+
+            var createUsers = function (cb) {
+                db.User.bulkCreate([{
+                    email: "test@example.com",
+                    password: md5("a")
+                }, {
+                    email: "admin@example.com",
+                    password: md5("a")
+                }])
+                .then(cb, finalCb);
+            };
+            
+            var findUsersAndPermissions = function (cb) {
+                db.User.findAll()
+                .then(function (users) {
+                    db.Permission.findAll()
+                    .then(function (permissions) {
+                        cb(users, permissions);
+                    }, finalCb);
+                }, finalCb);
+            };
+
+            createPermissions(function () {
+                createUsers(function () {
+                    findUsersAndPermissions(function (users, permissions) {
+                        users[1].setPermissions(permissions)
+                        .then(function () {
+                            finalCb();
+                        }, finalCb);
+                    });
+                });
             });
+        } else {
+            finalCb();
         }
     },
     function (cb) {

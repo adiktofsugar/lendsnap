@@ -47,7 +47,9 @@ app.use(function (req, res, next) {
     if (req.session.userId) {
         winston.info("...user id exists", req.session.userId);
         db.User.find({
-            id: req.session.userId
+            where: {
+                id: req.session.userId
+            }
         })
         .then(function (user) {
             winston.info("...found user");
