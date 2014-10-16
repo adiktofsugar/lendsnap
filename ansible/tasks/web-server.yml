@@ -1,8 +1,0 @@
--   name: install nginx
-    yum: name=nginx state=installed
-    sudo: yes
-
--   name: Add to chkconfig
-    shell: >
-        chkconfig nginx on
-    sudo: yes

@@ -1,7 +1,11 @@
 var _ = require('lodash');
 var path = require('path');
 var Sequelize = require('sequelize');
-var sequelize = new Sequelize('lendsnap', 'lendsnap', 'a');
+var config = require('./config');
+var sequelize = new Sequelize(
+    config.get("dbName"),
+    config.get("dbUser"),
+    config.get("dbPassword"));
 var helpers = require('./helpers');
 var winston = require("winston");
 var db = {};

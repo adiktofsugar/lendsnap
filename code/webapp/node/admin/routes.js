@@ -1,4 +1,7 @@
+
 module.exports = function (router) {
+    var Uri = require("jsuri");
+
     router.get('/admin', function (req, res, next) {
         var account = require('../account');
         var db = require('../db');
@@ -21,7 +24,9 @@ module.exports = function (router) {
     router.post('/admin/user/:id/permission', function (req, res, next) {
         var db = require('../db');
         if (!req.body.name) {
-            return res.redirect('/admin?error=' + encodeURIComponent("Name Is Required"));
+            return res.redirect(new Uri('/admin')
+                .addQueryParam("error", "Name Is Required")
+                .toString());
         }
 
         db.Permission.findOrCreate({
@@ -48,7 +53,9 @@ module.exports = function (router) {
             .then(function (permission) {
                 user.removePermission(permission)
                 .then(function () {
-                    res.redirect('/admin?message=' + encodeURIComponent("Removed permission"));
+                    res.redirect(new Uri('/admin')
+                        .addQueryParam("message", "Removed permission")
+                        .toString());
                 }, next);
             }, next);
         }, next);

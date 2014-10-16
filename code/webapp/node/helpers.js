@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var excludedFolders = ["node_modules", "templates"];
+var excludedFolders = ["node_modules", "templates", "test", "scripts"];
 
 module.exports = {
     getModules: function () {

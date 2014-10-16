@@ -9,6 +9,15 @@ module.exports = function (grunt) {
                 dest: 'css/',
                 ext: '.css'
             }
+        },
+        watch: {
+            all: {
+                options: {
+                    atBegin: true
+                },
+                files: ['scss/**/*.scss'],
+                tasks: ['sass']
+            }
         }
     });
 

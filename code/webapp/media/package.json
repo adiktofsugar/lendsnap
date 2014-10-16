@@ -2,6 +2,14 @@
   "name": "lendsnap-media",
   "version": "0.0.1",
   "devDependencies": {
-    "node-sass": "~0.8.6"
+    "node-sass": "~0.8.6",
+    "gulp": "~3.8.8",
+    "gulp-sass": "~1.1.0",
+    "gulp-clean": "~0.3.1",
+    "grunt-contrib-clean": "~0.6.0",
+    "grunt": "~0.4.5",
+    "grunt-sass": "~0.15.0",
+    "load-grunt-tasks": "~0.6.0",
+    "grunt-contrib-watch": "~0.6.1"
   }
 }

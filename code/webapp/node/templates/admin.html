@@ -6,12 +6,7 @@
 <div class="row">
     <div class="large-12 columns">
         <h1>Admin</h1>
-        {% if error %}
-        <div class="alert-box warning">{{ error }}</div>
-        {% endif %}
-        {% if message %}
-        <div class="alert-box">{{ message }}</div>
-        {% endif %}
+        {% include "_flash.html" %}
         <ul>
             {% for user in users %}
             <li>

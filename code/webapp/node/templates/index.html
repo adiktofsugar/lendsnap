@@ -6,14 +6,14 @@
 <div class="row">
     <div class="large-12 columns">
         <h1>Join Lendsnap</h1>
-        {% if error %}
-        <div class="alert-box warning">{{ error }}</div>
-        {% endif %}
+        
+        {% include "_flash.html" %}
+
         <div id="home-main-intro">
-            <form action="/accept-invite" method="post">
+            <form action="/invite" method="get">
                 <div class="row collapse">
                     <div class="large-10 columns">
-                        <input type="text" name="invite_id" placeholder="Invitation Code" />
+                        <input type="text" name="code" placeholder="Invitation Code" />
                     </div>
                     <div class="large-2 columns">
                         <button class="postfix" type="submit">Join</button>

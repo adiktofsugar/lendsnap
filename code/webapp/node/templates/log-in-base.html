@@ -6,9 +6,7 @@
     <body>
         <div class="row">
             <div class="large-12 columns">
-                {% if error %}
-                <p class="alert-box warning">{{ error }}</p>
-                {% endif %}
+                {% include "_flash.html" %}
                 
                 {% block body %}{% endblock %}
             </div>

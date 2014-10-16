@@ -4,14 +4,7 @@
 
 {% block body %}
 
-<div class="row">
-    {% if error %}
-    <div class="alert-box warning">{{ error }}</div>
-    {% endif %}
-    {% if message %}
-    <div class="alert-box">{{ message }}</div>
-    {% endif %}
-</div>
+{% include "_flash.html" %}
 
 {% if userCanInvite %}
 <div class="row">

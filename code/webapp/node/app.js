@@ -36,7 +36,7 @@ app.use(cookieSession({
 }))
 
 app.use(function (req, res, next) {
-    winston.info("Url: ", req.url);
+    winston.info("Url: \"" + req.url + "\"");
     next();
 });
 
@@ -102,9 +102,22 @@ app.use(function (req, res, next) {
         nunjucks.configure('templates', {
             autoescape: true
         });
+        var pageTitleParts = req.url
+                .replace(/^\//, '')
+                .split('/')
+                .filter(function (token) {
+                    return !!token
+                        .replace(/^\s*/,'')
+                        .replace(/\s*$/, '');
+                });
+        var pageTitle = "Lendsnap";
+        if (pageTitleParts.length) {
+            pageTitle += " - " + pageTitleParts.join(" - ");
+        }
+        
         data = _.extend({
             version: "123",
-            page_title: req.url,
+            page_title: pageTitle,
             user: req.user,
             error: req.query.error,
             message: req.query.message

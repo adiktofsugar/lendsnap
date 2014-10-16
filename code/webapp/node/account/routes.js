@@ -1,11 +1,14 @@
 var _ = require("lodash");
+var Uri = require("jsuri");
 var account = require('./index');
 var invitation = require('../invitation');
 
 module.exports = function (router) {
 
     router.get('/log-in', function (req, res, next) {
-        res.render('log-in.html');
+        res.render('log-in.html', {
+            email: req.query.email
+        });
     });
     router.post('/log-in', function (req, res, next) {
         var email = req.body['email'];
@@ -13,7 +16,10 @@ module.exports = function (router) {
         account.login(req, email, password, function (err, user) {
             if (err) {
                 var errorMessage = "Failed log in - " + err.message;
-                res.redirect("/log-in?error=" + encodeURIComponent(errorMessage));
+                res.redirect(new Uri("/log-in")
+                    .addQueryParam("error", errorMessage)
+                    .addQueryParam("email", email)
+                    .toString());
             } else {
                 res.redirect('/');
             }
@@ -26,7 +32,9 @@ module.exports = function (router) {
         });
     });
     router.get('/register', function (req, res, next) {
-        res.render('register.html');
+        res.render('register.html', {
+            email: req.query.email
+        });
     });
     router.post('/register', function (req, res, next) {
         var email = req.body['email'];
@@ -34,7 +42,10 @@ module.exports = function (router) {
         account.register(email, password, function (err, user) {
             if (err) {
                 var errorMessage = err.message;
-                res.redirect("/register?error=" + encodeURIComponent(errorMessage));
+                res.redirect(new Uri("/register")
+                    .addQueryParam("error", errorMessage)
+                    .addQueryParam("email", email)
+                    .toString());
             } else {
                 account.login(req, email, password, function (err) {
                     if (err) {
@@ -46,6 +57,33 @@ module.exports = function (router) {
             }
         });
     });
+
+    router.get('/set-password', function (req, res, next) {
+        res.render('password-set.html', {
+            email: req.query.email
+        });
+    });
+    router.post('/set-password', function (req, res, next) {
+        var email = req.body.email;
+        var password = req.body.password;
+
+        account.setPassword(email, password, function (error) {
+            if (error) {
+                res.redirect(new Uri('/set-password')
+                    .addQueryParam("email", email)
+                    .addQueryParam('error', error.message)
+                    .toString());
+                return;
+            }
+            account.login(req, email, password, function (error, user) {
+                if (error) return next(error);
+                res.redirect(new Uri('/account')
+                    .addQueryParam("message", "Password set!")
+                    .toString());
+            });
+        });
+    });
+    
 
     router.get('/account', function (req, res, next) {
         invitation.getSentInvites(req.user, function(err, invites) {
@@ -69,12 +107,14 @@ module.exports = function (router) {
                 .then(function () {
                     res.redirect('/account');
                 }, function (error) {
-                    res.redirect('/account?error=' + encodeURIComponent(error.message))
+                    res.redirect(new Uri('/account')
+                        .addQueryParam("error", error.message)
+                        .toString());
                 });
         };
 
         if (req.body.id) {
-            account.getUserById(req, req.body.id, function (error, user) {
+            account.getUserById(req.body.id, function (error, user) {
                 if (error) return next(error);
                 updateUser(user);
             });
@@ -89,8 +129,9 @@ module.exports = function (router) {
             lastName: req.body.lastName
         }, function (err, newInvite) {
             if (err) return next(err);
-            res.redirect('/account?message=' +
-                encodeURIComponent("Invitation created with code " + newInvite.code));
+            res.redirect(new Uri('/account')
+                .addQueryParam("message", "Invitation created with code " + newInvite.code)
+                .toString());
         });
     });
 };

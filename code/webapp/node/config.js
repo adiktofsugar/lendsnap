@@ -2,8 +2,14 @@ var _ = require('lodash');
 var winston = require("winston");
 
 var baseConfig = {
+    dbName: "lendsnap",
+    dbUser: "lendsnap",
+    dbPassword: "a"
 };
 var environmentSpecficConfig = {
+    "test": {
+        dbName: "lendsnap_test"
+    },
     "dev": {
         global_template_vars: {
             in_develop_mode: true

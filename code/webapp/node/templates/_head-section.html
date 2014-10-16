@@ -13,12 +13,6 @@ window.VERSION = "{{ version }}";
 <script src="/media/{{ version }}/vendor/foundation/js/vendor/fastclick.js"></script>
 <script src="/media/{{ version }}/vendor/foundation/js/foundation.min.js"></script>
 
-{% if in_develop_mode %}
-<script type="text/javascript" src="http://localhost:48626/takana.js"></script>
-<script type="text/javascript">
-  takanaClient.run();
-</script>
-{% endif %}
 
 <script>
 $(function () {

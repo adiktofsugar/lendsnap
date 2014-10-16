@@ -1,18 +1,34 @@
-var invitation = require('./index');
-
 module.exports = function (router) {
-    router.post('/accept-invite', function (req, res, next) {
-        var code = req.body['invite_id'];
-        invitation.get(code, function (err, invite) {
+    var Uri = require('jsuri');
+
+    router.get('/invite/:code', function (req, res, next) {
+        var invitation = require('./index');
+
+        var code = req.params.code || req.query.code;
+        invitation.getByCode(code, function (err, invite) {
             if (err) {
-                res.redirect('/?error=' + encodeURIComponent(err.message));
+                res.redirect(new Uri('/')
+                    .addQueryParam("error", err.message)
+                    .toString());
             } else if (!invite) {
-                res.redirect('/?error=' +
-                    encodeURIComponent("There is no invitation for that code ("+code+")."));
+                res.redirect(new Uri('/')
+                    .addQueryParam("error", "There is no invitation for that code ("+code+").")
+                    .toString());
             } else {
-                res.render('invite.html', {
-                    invite: invite
-                });
+                invite.getReceivedUser()
+                .then(function (user) {
+                    if (user.password) {
+                        account.login(req, user, function (error) {
+                            if (error) return next(error);
+                            res.redirect('/account');
+                        });
+                    } else {
+                        res.redirect(new Uri('/set-password')
+                            .addQueryParam("message", "Thanks for joining! Please set your password")
+                            .addQueryParam("email", user.email)
+                            .toString());
+                    }
+                }, next);
             }
         });
     });

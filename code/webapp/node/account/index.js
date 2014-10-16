@@ -2,24 +2,38 @@ var md5 = require('MD5');
 var winston = require('winston');
 var db = require('../db');
 
-function login (req, email, password, cb) {
-    db.User.find({
-        where: {
-            email: email,
-            password: md5(password)
-        }
-    })
-    .then(function (user) {
-        if (!user) {
-            cb(new Error("No account found."));
-        } else {
-            req.session.userId = user.id;
-            winston.info("account.login - user", user.email);
-            cb(null, user);
-        }
-    }, function (error) {
-        cb(error);
-    });
+function login (req, userOrEmail, cbOrPassword, cb) {
+    var user;
+    var password;
+    var email;
+    if (cb === undefined) {
+        cb = cbOrPassword;
+        user = userOrEmail;
+    } else {
+        email = userOrEmail;
+        password = cbOrPassword;
+    }
+
+    var setCookie = function (user) {
+        req.session.userId = user.id;
+        winston.info("account.login - user", user.email);
+        cb(null, user);
+    };
+
+    if (!user) {
+        getUserByEmail(email, function (error, user) {
+            if (error) return cb(error);
+            if (!user) {
+                return cb(new Error("No account found."));
+            }
+            if (user.get("password") != md5(password)) {
+                return cb(new Error("Password doesn't match."));
+            }
+            setCookie(user);
+        });
+    } else {
+        setCookie(user);
+    }
 };
 
 function logout(req, cb) {
@@ -73,7 +87,7 @@ var userExists = function (email, cb) {
         cb(err);
     });
 };
-var getUser = function (req, queryParams, cb) {
+var getUser = function (queryParams, cb) {
     db.User.find({
         where: queryParams
     })
@@ -83,11 +97,11 @@ var getUser = function (req, queryParams, cb) {
         cb(error);
     });
 };
-var getUserById = function (req, id, cb) {
-    getUser(req, {id: id}, cb);
+var getUserById = function (id, cb) {
+    getUser({id: id}, cb);
 };
-var getUserByEmail = function (req, email, cb) {
-    getUser(req, {email: email}, cb);
+var getUserByEmail = function ( email, cb) {
+    getUser({email: email}, cb);
 };
 var register = function (email, password, cb) {
     userExists(email, function (err, exists) {
@@ -108,11 +122,27 @@ var register = function (email, password, cb) {
     });
 };
 
+var setPassword = function (email, password, cb) {
+    if (!password) {
+        return cb(new Error("Password must be set."));
+    }
+    getUserByEmail(email, function (error, user) {
+        if (error) return cb(error);
+
+        user.set("password", md5(password));
+        user.save()
+        .then(function () {
+            cb();
+        }, cb);
+    });
+};
+
 module.exports = {
     login: login,
     logout: logout,
     hasPermission: hasPermission,
     register: register,
+    setPassword: setPassword,
     getUserById: getUserById,
     getUserByEmail: getUserByEmail
 };
