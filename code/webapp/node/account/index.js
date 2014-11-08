@@ -137,6 +137,14 @@ var setPassword = function (email, password, cb) {
     });
 };
 
+var updateUser = function (user, attributes, cb) {
+    user.set(attributes)
+    .save()
+    .then(function (user) {
+        cb(null, user);
+    }, cb);
+};
+
 module.exports = {
     login: login,
     logout: logout,
@@ -144,5 +152,6 @@ module.exports = {
     register: register,
     setPassword: setPassword,
     getUserById: getUserById,
-    getUserByEmail: getUserByEmail
+    getUserByEmail: getUserByEmail,
+    update: updateUser
 };

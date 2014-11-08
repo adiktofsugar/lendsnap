@@ -161,6 +161,11 @@ app.use(connectRoute(function (router) {
 app.use(function (err, req, res, next) {
     if (err) {
         winston.error(err);
+        if (err.stack) {
+            _.each(err.stack.split(/\n/g), function (line) {
+                winston.error(line);
+            });
+        }
         res.render('error.html', {
             error: err
         });

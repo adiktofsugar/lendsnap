@@ -1,5 +1,6 @@
 var helpers = require('./helpers');;
 var path = require('path');
+var Uri = require("jsuri");
 
 var route = {
     router: null,
@@ -11,6 +12,9 @@ var route = {
         var router = this.router;
 
         router.get('/', function (req, res, next) {
+            if (req.user) {
+                return res.redirect('/loan');
+            }
             res.render('index.html');
         });
 
