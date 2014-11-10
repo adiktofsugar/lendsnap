@@ -9,7 +9,6 @@
     "connect-route": "~0.1.4",
     "nunjucks": "~1.1.0",
     "send-data": "~3.3.3",
-    "sequelize": "~2.0.0-rc1",
     "lodash": "~2.4.1",
     "mysql": "~2.5.1",
     "nomnom": "~1.8.0",
