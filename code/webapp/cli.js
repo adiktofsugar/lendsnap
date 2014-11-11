@@ -4,7 +4,33 @@ var path = require("path");
 var cwd = __dirname;
 var spawn = require("child_process").spawn;
 
-var IMAGE_NAMES = ["nginx", "node", "database"];
+// in the order that they would need to start...
+var IMAGES = [
+    {
+        name: "database",
+        ports: ["3606"]
+    },
+    {
+        name: "node",
+        ports: ["2080:80"],
+        links: ["database"]
+    },
+    {
+        name: "nginx",
+        ports: ["2080:80"],
+        links: ["node"]
+    }
+];
+
+var IMAGE_NAMES = [];
+var IMAGE_NAME_TO_PORTS = {};
+var IMAGE_NAME_TO_LINKS = {};
+IMAGES.forEach(function (image) {
+    IMAGE_NAMES.push(image.name);
+    IMAGE_NAME_TO_LINKS[image.name] = image.links;
+    IMAGE_NAME_TO_PORTS[image.name] = image.ports;
+});
+
 
 var withSpace = function (optionString) {
     if (optionString) {
@@ -12,24 +38,35 @@ var withSpace = function (optionString) {
     }
     return "";
 };
-var getOptionString = function (isDev) {
-    var volume = isDev ? cwd + ":/var/lendsnap" : "/var/lendsnap";
-    return "-v " + volume;
+var getOptionString = function (optionName, optionValues) {
+    return optionValues.map(function (value) {
+        return optionName + " " + value;
+    }).join(" ");
+};
+var getVolumes = function (isDev) {
+    var volumes = [];
+    if (isDev) {
+        volumes.push(cwd + ":/var/lendsnap");
+    } else {
+        volumes.push("/var/lendsnap");
+    }
+    return volumes;
 };
 var getCommands = {
     "run": function (options) {
-        var optionString = getOptionString(options.env == "dev");
+        var volumes = getVolumes(options.env == "dev");
         var imageNames = options.image ? [options.image] : IMAGE_NAMES;
-        var ports = {
-            "nginx": "2080:80",
-            "node" :"23000:3000",
-            "database": "23600:3606"
-        };
+        
         return imageNames.map(function (imageName) {
-            var port = ports[imageName];
-            var portOptionString = port ? "-p " + port : null;
-            return "docker run" + withSpace(optionString) +
-                withSpace(portOptionString) + " -d " + imageName;
+            var ports = IMAGE_NAME_TO_PORTS[imageName];
+            var links = IMAGE_NAME_TO_LINKS[imageName];
+            
+            return "docker run --rm " + 
+                "--name=" + imageName +
+                withSpace(getOptionString("-v", volumes)) +
+                withSpace(getOptionString("-p", ports)) +
+                withSpace(getOptionString("-l", links)) +
+                " -d " + imageName;
         });
     },
     "build": function (options) {
@@ -38,11 +75,14 @@ var getCommands = {
         });
     },
     "console": function (options) {
-        var optionString = getOptionString(options.env == "dev");
+        var volumes = getVolumes(options.env == "dev");
         var imageName = options.image;
+        var links = IMAGE_NAME_TO_LINKS[imageName];
         return [
-            "docker run -ti" + withSpace(optionString) +
-                " " + imageName + " /bin/bash"
+            "docker run -ti --rm" +
+            withSpace(getOptionString('-v', volumes)) +
+            withSpace(getOptionString('-l', links)) +
+            " " + imageName + " /bin/bash"
         ];
     }
 };
