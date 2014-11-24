@@ -1,0 +1,47 @@
+#!/bin/bash
+current_directory=$(cd `dirname ${BASH_SOURCE[0]}` && pwd)
+project_root=$(cd $current_directory/.. && pwd)
+
+test_mode=false
+while getopts ":t" opt; do
+    case $opt in
+        t)
+            test_mode=true
+            shift
+            ;;
+        *)
+            echo "Unsupported option: $OPTARG"
+            exit 1
+            ;;
+    esac
+done
+
+echo "test mode: $test_mode"
+if [ "$test_mode" = "true" ]; then
+    # echo "Starting shell into node"
+    echo "starting node bash"
+    docker run \
+        -it --rm \
+        -v $project_root:/var/lendsnap \
+        --link db:db \
+        node /bin/bash
+
+
+    exit
+fi
+
+docker pull mysql
+docker build -t node $project_root/node
+
+echo "Starting mysql..."
+# start mysql
+docker run --name db -d \
+    -e MYSQL_ROOT_PASSWORD=a \
+    mysql
+
+
+echo "Starting node db setup"
+docker run -t --rm \
+    -v $project_root:/var/lendsnap \
+    --link db:db \
+    node scripts/db-setup.js

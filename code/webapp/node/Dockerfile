@@ -8,7 +8,7 @@ RUN npm install -g forever
 EXPOSE 3000
 
 VOLUME /var/lendsnap
+COPY . /var/lendsnap/node
 
 WORKDIR /var/lendsnap/node
-
-CMD forever app.js
+CMD ["nodejs", "app.js"]

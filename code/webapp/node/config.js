@@ -2,6 +2,7 @@ var _ = require('lodash');
 var winston = require("winston");
 
 var baseConfig = {
+    dbHost: 'db',
     dbName: "lendsnap",
     dbUser: "lendsnap",
     dbPassword: "a"
@@ -41,5 +42,4 @@ module.exports = {
     get: function (key) {
         return actualConfig[key];
     }
-}
-
+};

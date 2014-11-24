@@ -1,6 +1,4 @@
 var md5 = require("md5");
-var db = require('../db');
-var helpers = require('../db-helpers');
 var async = require("async");
 var chalk = require("chalk");
 

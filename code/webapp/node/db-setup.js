@@ -162,8 +162,7 @@ module.exports = function (options, next) {
         if (error) {
             return next(error);
         }
-        var queries = [];
-
+        
         if (options.destroy) {
             queries = queries.concat(allQueries.destroy);
         }

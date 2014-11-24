@@ -1,6 +1,5 @@
 var md5 = require('MD5');
 var winston = require('winston');
-var db = require('../db');
 
 function login (req, userOrEmail, cbOrPassword, cb) {
     var user;

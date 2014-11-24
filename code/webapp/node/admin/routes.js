@@ -4,7 +4,6 @@ module.exports = function (router) {
 
     router.get('/admin', function (req, res, next) {
         var account = require('../account');
-        var db = require('../db');
 
         account.hasPermission(req.user, "admin", function (error) {
             if (error) return next(error);
@@ -22,7 +21,6 @@ module.exports = function (router) {
         });
     });
     router.post('/admin/user/:id/permission', function (req, res, next) {
-        var db = require('../db');
         if (!req.body.name) {
             return res.redirect(new Uri('/admin')
                 .addQueryParam("error", "Name Is Required")
