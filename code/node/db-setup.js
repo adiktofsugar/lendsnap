@@ -2,8 +2,9 @@ var async = require("async");
 var chalk = require("chalk");
 var path = require("path");
 var winston = require("winston");
-var db = require('./db');
+var config = require('./config');
 var helpers = require('./helpers');
+var db = require('./db');
 var dbHelpers = require('./db-helpers');
 
 module.exports = function (options, next) {
@@ -156,26 +157,54 @@ module.exports = function (options, next) {
         };
     };
 
-    console.log(chalk.green("Getting queries for all modules"));
-    async.series(registerQueriesForModuleFunctions, function (error) {
-        console.log(chalk.green("Queries ready"));
+    var initialSetup = function (callback) {
+        queries = [
+            "CREATE DATABASE IF NOT EXISTS " + config.get("dbName") + ";",
+            "GRANT ALL ON " + config.get("dbName") + ".* TO " +
+                "'" + config.get("dbUser") + "'@'%' " +
+                "IDENTIFIED BY '" + config.get("dbPassword") + "';",
+            "FLUSH PRIVILEGES;"
+        ];
+        var queryFunctions = queries.map(function (queryString) {
+                return function (callback) {
+                    db.getConnection("root").query(queryString, callback);
+                };
+            });
+        async.series(queryFunctions.concat([
+            function (callback) {
+                db.getConnection("root").end();
+                callback(null);
+            }]), callback);
+    };
+
+    console.log(chalk.green("Setting up database"));
+    initialSetup(function (error) {
         if (error) {
             return next(error);
         }
-        
-        if (options.destroy) {
-            queries = queries.concat(allQueries.destroy);
-        }
-        queries = queries.concat(allQueries.create);
-        if (options.baseData) {
-            queries = queries.concat(allQueries.baseData);
-        }
-        async.series(queries.map(getQueryFunctionFromQuery), function (error) {
+        console.log(chalk.green("Getting queries for all modules"));
+        async.series(registerQueriesForModuleFunctions, function (error) {
+            console.log(chalk.green("Queries ready"));
             if (error) {
                 return next(error);
             }
-            console.log(chalk.green("Success"));
-            next();
+            queries = [];
+            if (options.destroy) {
+                queries = queries.concat(allQueries.destroy);
+            }
+            queries = queries.concat(allQueries.create);
+            if (options.baseData) {
+                queries = queries.concat(allQueries.baseData);
+            }
+            async.series(queries.map(getQueryFunctionFromQuery), function (error) {
+                if (error) {
+                    return next(error);
+                }
+                console.log(chalk.green("Success"));
+                next();
+            });
         });
     });
+
+
 };

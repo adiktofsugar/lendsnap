@@ -1,7 +1,4 @@
-var config = require('../config');
-config.setEnvironment("test");
 var db = require('../db');
-
 var md5 = require("MD5");
 
 module.exports = function (callback) {

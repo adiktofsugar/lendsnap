@@ -1,6 +1,10 @@
 var _ = require('lodash');
 var winston = require("winston");
 
+
+// TODO: Credentials should all come from outside.
+// docker can set environment variables, so maybe thats a good way?
+
 var baseConfig = {
     dbHost: 'db',
     dbName: "lendsnap",

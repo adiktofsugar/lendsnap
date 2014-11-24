@@ -23,34 +23,18 @@ var connections = {
     }
 };
 
-var getConnection = function (connectionName, callback) {
-    if (!connectionName) {
-        callback(new Error("connectionName is required"));
-        return;
-    }
+var getConnection = function (connectionName) {
+    var parameters = connections[connectionName].parameters;
     if (!connections[connectionName].connection) {
         connections[connectionName].connection = mysql.createConnection(parameters);
     }
-    var connection = connections[connectionName].connection;
-    connection.connect(function (error) {
-        if (error) {
-            callback(error);
-        } else {
-            callback(null, connection);
-        }
-    });
+    return connections[connectionName].connection;
 };
 
-var queryByName = function (name, queryString, callback) {
-    getConnection(name, function (error, connection) {
-        if (error) {
-            callback(error);
-        } else {
-            connection.query(queryString, callback);
-        }
-    });
+var queryDefault = function (queryString, callback) {
+    getConnection("default").query(queryString, callback);
 };
-module.exports = function (queryString, callback) {
-    queryByName("default", queryString, callback);
+module.exports = {
+    query: queryDefault,
+    getConnection: getConnection
 };
-module.exports.queryByName = queryByName;
