@@ -2,11 +2,21 @@
 current_directory=$(cd `dirname ${BASH_SOURCE[0]}` && pwd)
 project_root=$(cd $current_directory/.. && pwd)
 
+build=false
 test_mode=false
-while getopts ":t" opt; do
+db_setup=false
+while getopts ":t:b:d" opt; do
     case $opt in
+        b)
+            build=true
+            shift
+            ;;
         t)
             test_mode=true
+            shift
+            ;;
+        d)
+            db_setup=true
             shift
             ;;
         *)
@@ -30,8 +40,11 @@ if [ "$test_mode" = "true" ]; then
     exit
 fi
 
-#docker pull mysql
-#docker build -t node $project_root/node
+if [ $build ];then
+    docker pull mysql
+    docker build -t node $project_root/node
+    docker build -t nginx $project_root/nginx
+fi
 
 echo "Starting mysql..."
 # start mysql
@@ -58,9 +71,34 @@ while [ true ];do
 done
 
 
+# if [[ "$db_setup" = "true" ]];then
+#     echo "Starting node db setup"
+#     docker run -t --rm \
+#         -v $project_root:/var/lendsnap \
+#         --link db:db \
+#         node scripts/db-setup.js
+#     if [[ $? -gt 0 ]];then
+#         exit $?
+#     fi
+# fi
 
-echo "Starting node db setup"
-docker run -t --rm \
+echo "Starting node webapp on port 3000"
+docker run --name node-webapp -t -d \
     -v $project_root:/var/lendsnap \
+    -p 3000:3000 \
     --link db:db \
-    node scripts/db-setup.js
+    node
+if [[ $? -gt 0 ]];then
+    exit $?
+fi
+
+echo "Starting nginx on port 80"
+docker run --name nginx -t -d \
+    -v $project_root:/var/lendsnap \
+    -p 80:80 \
+    --link db:db \
+    --link node-webapp:node \
+    nginx
+if [[ $? -gt 0 ]];then
+    exit $?
+fi

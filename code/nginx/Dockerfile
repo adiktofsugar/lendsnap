@@ -7,6 +7,9 @@ EXPOSE 80
 
 VOLUME /var/lendsnap
 
-RUN mkdir -p /etc/nginx/nginx.conf.d && \
-    ln -s /var/lendsnap/nginx.conf /etc/nginx/nginx.conf.d/lendsnap.com.conf
+
+RUN mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.original && \
+    ln -s /var/lendsnap/nginx/nginx.conf /etc/nginx/nginx.conf
+
+CMD ["nginx"]
 
