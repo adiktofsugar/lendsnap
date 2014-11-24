@@ -30,14 +30,33 @@ if [ "$test_mode" = "true" ]; then
     exit
 fi
 
-docker pull mysql
-docker build -t node $project_root/node
+#docker pull mysql
+#docker build -t node $project_root/node
 
 echo "Starting mysql..."
 # start mysql
 docker run --name db -d \
     -e MYSQL_ROOT_PASSWORD=a \
     mysql
+
+if [[ `docker ps -a | grep is-mysqld-up` ]];then
+    docker rm -f is-mysqld-up
+fi
+mysqld_status() {
+    docker run -t --name is-mysqld-up --rm --link db:db mysql \
+        mysqladmin -u root -pa -h db status
+}
+while [ true ];do
+    status=`mysqld_status`
+    
+    if [[ `echo $status | grep 'Uptime'` ]];then
+        break
+    else
+        echo "waiting a second..."
+        sleep 1s;
+    fi
+done
+
 
 
 echo "Starting node db setup"

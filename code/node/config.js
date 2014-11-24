@@ -5,7 +5,8 @@ var baseConfig = {
     dbHost: 'db',
     dbName: "lendsnap",
     dbUser: "lendsnap",
-    dbPassword: "a"
+    dbPassword: "a",
+    dbRootPassword: "a"
 };
 var environmentSpecficConfig = {
     "test": {
