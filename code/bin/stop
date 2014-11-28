@@ -1,8 +1,0 @@
-#!/bin/bash
-current_directory=$(cd `dirname ${BASH_SOURCE[0]}` && pwd)
-project_root=$(cd $current_directory/.. && pwd)
-
-docker rm -f db
-docker rm -f node-webapp
-docker rm -f nginx
-exit 0

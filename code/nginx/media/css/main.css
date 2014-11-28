@@ -1,6 +1,9 @@
 .f-dropdown {
   outline: none; }
 
+BODY {
+  font-family: "Open Sans"; }
+
 .button.gray {
   background: #aaa; }
 

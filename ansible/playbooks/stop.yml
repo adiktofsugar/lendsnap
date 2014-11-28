@@ -1,0 +1,5 @@
+-   hosts: all
+    connection: local
+    tasks:
+        -   name: Stop all docker processes
+            command: docker ps -a | grep -v CONT | awk '{print $1}' | xargs docker rm -f

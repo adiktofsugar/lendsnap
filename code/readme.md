@@ -6,3 +6,4 @@ Code standards
 - callback methods always have an error as the first argument. if there is an error, `error instanceof Error` is true
 - require everything at the top
 - all uris are constructed with jsuri if they have query parameters
+- no nested objects. every object must be flat, and have a service to fetch it

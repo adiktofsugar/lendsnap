@@ -1,6 +1,7 @@
-var helpers = require('./helpers');;
+var helpers = require('./helpers');
 var path = require('path');
 var Uri = require("jsuri");
+var winston = require("winston");
 
 var route = {
     router: null,
@@ -19,7 +20,7 @@ var route = {
         });
 
         helpers.getModules().forEach(function (moduleName) {
-            var modulePath = path.join(__dirname, moduleName, 'routes');
+            var modulePath = path.join(__dirname, moduleName, 'route');
             try {
                 require(modulePath)(router);
             } catch (e) {

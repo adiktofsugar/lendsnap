@@ -17,7 +17,7 @@ var getDocuments = function (parameters) {
     });
 };
 
-var getDocumentPackage = function (parameters) {
+var getDocumentPackageById = function (parameters) {
     db.query(
         "SELECT * FROM document_package " + 
         "WHERE id = ?", [parameters.id], 
@@ -26,7 +26,7 @@ var getDocumentPackage = function (parameters) {
     });
 };
 
-modules.exports = {
+module.exports = {
     getDocumentById: getDocument,
     getDocuments: getDocuments,
     getDocumentPackageById: getDocumentPackageById
