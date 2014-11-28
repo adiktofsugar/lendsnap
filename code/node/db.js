@@ -7,28 +7,30 @@ var connections = {
     "default": {
         connection: null,
         parameters: {
-            host: config.get('dbHost'),
-            database : config.get("dbName"),
-            user : config.get("dbUser"),
-            password: config.get("dbPassword")
+            host: config.dbHost,
+            database : config.dbName,
+            user : config.dbUser,
+            password: config.dbPassword
         }
     },
     "root": {
         connection: null,
         parameters: {
-            host: config.get('dbHost'),
+            host: config.dbHost,
             user : "root",
-            password: config.get("dbRootPassword")
+            password: config.dbRootPassword
         }
     }
 };
 
+var activeConnection;
 var getConnection = function (connectionName) {
     var parameters = connections[connectionName].parameters;
     if (!connections[connectionName].connection) {
         connections[connectionName].connection = mysql.createConnection(parameters);
     }
-    return connections[connectionName].connection;
+    activeConnection = connections[connectionName].connection;
+    return activeConnection;
 };
 
 var queryDefault = function (queryString, callback) {
@@ -38,3 +40,13 @@ module.exports = {
     query: queryDefault,
     getConnection: getConnection
 };
+Object.defineProperty(module.exports, "connection", {
+    get: function () {
+        return activeConnection;
+    }
+});
+Object.defineProperty(module.exports, "escape", {
+    get: function () {
+        return activeConnection.escape;
+    }
+});

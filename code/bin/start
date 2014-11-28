@@ -50,6 +50,10 @@ echo "Starting mysql..."
 # start mysql
 docker run --name db -d \
     -e MYSQL_ROOT_PASSWORD=a \
+    -e LS_NAME=lendsnap \
+    -e LS_USER=lendsnap \
+    -e LS_PASSWORD=a \
+    -e LS_ROOT_PASSWORD=a \
     mysql
 
 if [[ `docker ps -a | grep is-mysqld-up` ]];then

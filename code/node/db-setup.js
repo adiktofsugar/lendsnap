@@ -159,10 +159,10 @@ module.exports = function (options, next) {
 
     var initialSetup = function (callback) {
         queries = [
-            "CREATE DATABASE IF NOT EXISTS " + config.get("dbName") + ";",
-            "GRANT ALL ON " + config.get("dbName") + ".* TO " +
-                "'" + config.get("dbUser") + "'@'%' " +
-                "IDENTIFIED BY '" + config.get("dbPassword") + "';",
+            "CREATE DATABASE IF NOT EXISTS " + config.dbName + ";",
+            "GRANT ALL ON " + config.dbName + ".* TO " +
+                "'" + config.dbUser + "'@'%' " +
+                "IDENTIFIED BY '" + config.dbPassword + "';",
             "FLUSH PRIVILEGES;"
         ];
         var queryFunctions = queries.map(function (queryString) {

@@ -7,6 +7,10 @@ RUN npm install -g forever
 
 EXPOSE 3000
 
+ENV DB_NAME lendsnap
+ENV DB_USER lendsnap
+ENV DB_PASSWORD a
+
 VOLUME /var/lendsnap
 COPY . /var/lendsnap/node
 

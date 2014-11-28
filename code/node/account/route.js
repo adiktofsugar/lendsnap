@@ -1,7 +1,6 @@
 var _ = require("lodash");
 var Uri = require("jsuri");
-var account = require('./index');
-var invitation = require('../invitation');
+var accountService = require('./service');
 
 module.exports = function (router) {
 
@@ -13,7 +12,7 @@ module.exports = function (router) {
     router.post('/log-in', function (req, res, next) {
         var email = req.body['email'];
         var password = req.body['password'];
-        account.login(req, email, password, function (err, user) {
+        accountService.login(req, email, password, function (err, user) {
             if (err) {
                 var errorMessage = "Failed log in - " + err.message;
                 res.redirect(new Uri("/log-in")
@@ -26,7 +25,7 @@ module.exports = function (router) {
         });
     });
     router.get('/logout', function (req, res, next) {
-        account.logout(req, function (err) {
+        accountService.logout(req, function (err) {
             if (err) return next(err);
             res.redirect('/');
         });
@@ -39,7 +38,7 @@ module.exports = function (router) {
     router.post('/register', function (req, res, next) {
         var email = req.body['email'];
         var password = req.body['password'];
-        account.register(email, password, function (err, user) {
+        accountService.register(email, password, function (err, user) {
             if (err) {
                 var errorMessage = err.message;
                 res.redirect(new Uri("/register")
@@ -47,7 +46,7 @@ module.exports = function (router) {
                     .addQueryParam("email", email)
                     .toString());
             } else {
-                account.login(req, email, password, function (err) {
+                accountService.login(req, email, password, function (err) {
                     if (err) {
                         next(err);
                     } else {
@@ -67,7 +66,7 @@ module.exports = function (router) {
         var email = req.body.email;
         var password = req.body.password;
 
-        account.setPassword(email, password, function (error) {
+        accountService.setPassword(email, password, function (error) {
             if (error) {
                 res.redirect(new Uri('/set-password')
                     .addQueryParam("email", email)
@@ -75,7 +74,7 @@ module.exports = function (router) {
                     .toString());
                 return;
             }
-            account.login(req, email, password, function (error, user) {
+            accountService.login(req, email, password, function (error, user) {
                 if (error) return next(error);
                 res.redirect(new Uri('/account')
                     .addQueryParam("message", "Password set!")
@@ -86,52 +85,32 @@ module.exports = function (router) {
     
 
     router.get('/account', function (req, res, next) {
-        invitation.getSentInvites(req.user, function(err, invites) {
-            if (err) return next(err);
-            account.hasPermission(req.user, "canInvite", function (error) {
-                res.render('account.html', {
-                    lastRequest: {},
-                    userCanInvite: !error,
-                    invites: invites
-                });
-            });
-        });
+        res.render('account.html');
     });
     router.post('/account', function (req, res, next) {
         var updateUser = function (user) {
-            _.each(["email", "firstName", "lastName"], function (name) {
-                var value = req.body[name];
-                user.set(name, value);
-            });
-            user.save()
-                .then(function () {
-                    res.redirect('/account');
-                }, function (error) {
+            accountService.updateUser(user, {
+                email: req.body.email,
+                first_name: req.body.first_name,
+                last_name: req.body.last_name
+            }, function (error) {
+                if (error) {
                     res.redirect(new Uri('/account')
                         .addQueryParam("error", error.message)
                         .toString());
-                });
+                } else {
+                    res.redirect('/account');
+                }
+            });
         };
 
         if (req.body.id) {
-            account.getUserById(req.body.id, function (error, user) {
+            accountService.getUserById(req.body.id, function (error, user) {
                 if (error) return next(error);
                 updateUser(user);
             });
         } else {
             updateUser(req.user);
         }
-    });
-
-    router.post('/account/invites', function (req, res, next) {
-        invitation.create(req.user.email, req.body.email, {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName
-        }, function (err, newInvite) {
-            if (err) return next(err);
-            res.redirect(new Uri('/account')
-                .addQueryParam("message", "Invitation created with code " + newInvite.code)
-                .toString());
-        });
     });
 };

@@ -1,7 +1,0 @@
----
--   hosts: all
-    tasks:
-    -   include: tasks/base-system.yml
-    -   include: tasks/webapp.yml
-    -   include: tasks/developer.yml
-        when: '"{{ developer_name }}" != ""'

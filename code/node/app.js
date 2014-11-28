@@ -1,40 +1,36 @@
 #!/usr/bin/env node
 
-var options = require('nomnom')
-    .option('environment', {
-        abbr: 'e',
-        help: 'Set environment specifically'
-    })
-    .help("Start the app server")
-    .parse();
-
 var config = require('./config');
-if (options.environment) {
-    config.setEnvironment(options.environment);
-}
-
-var connect = require('connect')
-var http = require('http')
+var connect = require('connect');
+var http = require('http');
 var _ = require('lodash');
 var winston = require("winston");
+var url = require('url');
+var Qs = require('qs');
+var sendData = require('send-data');
+var sendHtml = require('send-data/html');
+var sendJson = require('send-data/json');
+var nunjucks = require('nunjucks');
 
+var compression = require('compression');
+var cookieSession = require('cookie-session');
+var bodyParser = require('body-parser');
+var connectRoute = require('connect-route');
+
+var appRoute = require('./route');
 var db = require('./db');
-
-
 var app = connect();
 
 // gzip/deflate outgoing responses
-var compression = require('compression')
-app.use(compression())
+app.use(compression());
 
 // store session state in browser cookie
-var cookieSession = require('cookie-session')
 app.use(cookieSession({
     keys: ['secret1', 'secret2'],
     name: "lendsnap",
     domain: ".lendsnap.com",
     httpOnly: false
-}))
+}));
 
 app.use(function (req, res, next) {
     winston.info("Url: \"" + req.url + "\"");
@@ -66,15 +62,11 @@ app.use(function (req, res, next) {
 });
 
 // parse urlencoded request bodies into req.body
-var bodyParser = require('body-parser')
-app.use(bodyParser.urlencoded())
+app.use(bodyParser.urlencoded());
 
 // get query parameters
 app.use(function (req, res, next) {
-    var Qs = require('qs');
-    var queryString = require('url')
-        .parse(req.url, true)
-        .query;
+    var queryString = url.parse(req.url, true).query;
     var parsedQueryString = Qs.parse(queryString);
     winston.info("parsed query string", parsedQueryString);
     req.query = parsedQueryString;
@@ -85,7 +77,6 @@ app.use(function (req, res, next) {
 // add redirect
 app.use(function (req, res, next) {
     res.redirect = function (path) {
-        var sendData = require('send-data');
         sendData(req, res, {
             statusCode: 302,
             headers: {
@@ -99,7 +90,6 @@ app.use(function (req, res, next) {
 // define template render
 app.use(function (req, res, next) {
     res.render = function (templateName, data, cb) {
-        var nunjucks = require('nunjucks');
         nunjucks.configure('templates', {
             autoescape: true
         });
@@ -122,9 +112,8 @@ app.use(function (req, res, next) {
             user: req.user,
             error: req.query.error,
             message: req.query.message
-        }, config.get("global_template_vars") || {}, data || {});
+        }, data || {});
 
-        var sendHtml = require('send-data/html');
         sendHtml(req, res, nunjucks.render(templateName, data));
     };
     winston.info("--- render defined");
@@ -134,14 +123,12 @@ app.use(function (req, res, next) {
 // json rendering
 app.use(function (req, res, next) {
     res.json = function (json) {
-        var sendJson = require('send-data/json');
         sendJson(req, res, json, {
             statusCode: 200
         });
     };
     res.jsonError = function (error, statusCode) {
         statusCode = statusCode || 400;
-        var sendJson = require('send-data/json');
         sendJson(req, res, {
             message: error.message || "Unknown"
         }, {
@@ -151,11 +138,9 @@ app.use(function (req, res, next) {
     next();
 });
 
-var connectRoute = require('connect-route');
+
 app.use(connectRoute(function (router) {
-    require('./route')
-        .setRouter(router)
-        .start();
+    appRoute.setRouter(router).start();
 
 }));
 
@@ -176,4 +161,4 @@ app.use(function (err, req, res, next) {
 });
 
 
-http.createServer(app).listen(3000)
+http.createServer(app).listen(3000);

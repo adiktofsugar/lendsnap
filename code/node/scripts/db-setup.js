@@ -9,22 +9,12 @@ var options = require('nomnom')
         full: 'base-data',
         default: undefined,
         flag: true,
-        help: 'Run "baseData" step (default if env is dev)'
-    })
-    .option('environment', {
-        abbr: 'e',
-        help: 'Set environment explicitly'
+        help: 'Run "baseData" step'
     })
     .help("Setup the database")
     .parse();
 
 var config = require('../config');
-if (options.environment) {
-    config.setEnvironment(options.environment);
-}
-if (options.baseData === undefined) {
-    options.baseData = (config.getEnvironment() == "dev") ? true : false;
-}
 var dbSetup = require('../db-setup');
 var chalk = require("chalk");
 

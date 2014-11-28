@@ -1,17 +1,15 @@
 var vows = require('vows');
 var assert = require('assert');
-
 var config = require('../config');
-config.setEnvironment("test");
 
-var account = require('../account');
+var accountService = require('../account/service');
 
 vows.describe('account')
 .addBatch({
     'getUserById': {
         topic: function () {
             var callback = this.callback;
-            account.getUserById(1, callback);
+            accountServices.getUserById(1, callback);
         },
         "get the user": function (err, user) {
             assert.isNull(err);
@@ -21,7 +19,7 @@ vows.describe('account')
     'getUserByEmail': {
         topic: function () {
             var callback = this.callback;
-            account.getUserByEmail("sean@test-lendsnap.com", callback);
+            accountServices.getUserByEmail("sean@test-lendsnap.com", callback);
         },
         "get the user": function (err, user) {
             assert.isNull(err);
@@ -35,9 +33,9 @@ vows.describe('account')
                 session: {}
             };
 
-            account.getUserById(1, function (error, user) {
+            accountServices.getUserById(1, function (error, user) {
                 if (error) return callback(error);
-                account.login(req, user, function (error) {
+                accountServices.login(req, user, function (error) {
                     callback(error, req);
                 });
             });
@@ -53,7 +51,7 @@ vows.describe('account')
                 session: {}
             };
 
-            account.login(req, "sean@test-lendsnap.com", "a", function (error, user) {
+            accountServices.login(req, "sean@test-lendsnap.com", "a", function (error, user) {
                 callback(error, req);
             });
         },
