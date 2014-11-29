@@ -1,0 +1,10 @@
+-   name: Db setup node
+    command: >
+        docker run --name node-db-setup -t --rm
+            -v {{ code_directory }}/node:/var/lendsnap/node
+            --link db:db
+            node scripts/db-setup.js
+    register: db_setup_node
+
+-   debug: msg="{{ db_setup_node.stdout }}"
+

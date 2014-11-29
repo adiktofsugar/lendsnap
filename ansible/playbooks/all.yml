@@ -1,53 +1,8 @@
+# TODO: make mounting local directory optional
+
 -   hosts: all
     connection: local
     tasks:
-    -   name: Check code_directory
-        debug: var=code_directory
-
-    -   name: Stop db
-        command: docker rm -f db
-        ignore_errors: true
-
-    -   name: Start db
-        command: >
-            docker run --name db -d
-                -e MYSQL_ROOT_PASSWORD=a
-                -e LS_NAME=lendsnap
-                -e LS_USER=lendsnap
-                -e LS_PASSWORD=a
-                -e LS_ROOT_PASSWORD=a
-                mysql
-
-    -   name: Stop node
-        command: docker rm -f node-webapp
-        ignore_errors: true
-
-    -   name: Build node
-        command: >
-            docker build -t node {{ code_directory }}/node
-
-    -   name: Start node
-        command: >
-            docker run --name node-webapp -t -d
-                -v {{ code_directory }}/node:/var/lendsnap/node
-                -p 3000:3000
-                --link db:db
-                node
-
-    -   name: Stop nginx
-        command: docker rm -f nginx
-        ignore_errors: true
-
-    -   name: Build nginx
-        command: >
-            docker build -t nginx {{ code_directory }}/nginx
-
-    -   name: Start nginx
-        command: >
-            docker run --name nginx -t -d
-                -v {{ code_directory }}/nginx:/var/lendsnap/nginx
-                -p 80:80
-                --link db:db
-                --link node-webapp:node
-                nginx
-
+    -   include: ../tasks/db.yml
+    -   include: ../tasks/node.yml
+    -   include: ../tasks/nginx.yml

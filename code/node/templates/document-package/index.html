@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title%}Document Packages{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="large-12 columns">
+        {% if documentPackages.length <= 0 %}
+            You have no packages
+        {% else %}
+            <ul>
+            {% for package in documentPackages %}
+                <li><a href="/document-package/{{ package.id }}">{{ package.name }}</a></li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div>
+            <a href="/document-package/new">Set up a new one</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title%}New Package{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="large-12 columns">
+        <h1>Create new document package</h1>
+        <form action="/document-package/{{ documentPackage.id }}" method="post">
+            {% include "document-package/_package-form-contents.html" %}
+            <div>
+                <button type="submit" class="button">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

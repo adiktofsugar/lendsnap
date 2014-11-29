@@ -1,0 +1,4 @@
+-   hosts: all
+    connection: local
+    tasks:
+    -   include: ../tasks/node-db-setup.yml

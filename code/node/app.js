@@ -19,6 +19,7 @@ var connectRoute = require('connect-route');
 
 var appRoute = require('./route');
 var db = require('./db');
+var accountService = require('./account/service');
 var app = connect();
 
 // gzip/deflate outgoing responses
@@ -43,17 +44,13 @@ app.use(function (req, res, next) {
     winston.info("setting user...");
     if (req.session.userId) {
         winston.info("...user id exists", req.session.userId);
-        db.User.find({
-            where: {
-                id: req.session.userId
+        accountService.getUserById(req.session.userId, function (error, user) {
+            if (error) {
+                winston.error("...error", error);
+            } else {
+                req.user = user;
             }
-        })
-        .then(function (user) {
-            winston.info("...found user");
-            req.user = user;
             next();
-        }, function (error) {
-            winston.error("...error", error);
         });
     } else {
         winston.info("...no user id");

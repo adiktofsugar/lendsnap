@@ -14,7 +14,7 @@ var route = {
 
         router.get('/', function (req, res, next) {
             if (req.user) {
-                return res.redirect('/loan');
+                return res.redirect('/document-package');
             }
             res.render('index.html');
         });

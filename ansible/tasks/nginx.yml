@@ -1,0 +1,17 @@
+-   name: Stop nginx
+    command: docker rm -f nginx
+    ignore_errors: true
+
+-   name: Build nginx
+    command: >
+        docker build -t nginx {{ code_directory }}/nginx
+
+-   name: Start nginx
+    command: >
+        docker run --name nginx -t -d
+            -v {{ code_directory }}/nginx:/var/lendsnap/nginx
+            -p 80:80
+            --link db:db
+            --link node-webapp:node
+            nginx
+

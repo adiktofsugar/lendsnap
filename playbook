@@ -1,5 +1,0 @@
-#!/bin/bash
-current_directory=$(cd `dirname ${BASH_SOURCE[0]}`; pwd)
-cd $current_directory
-echo ansible-playbook --extra-vars="code_directory=$current_directory/code" $@
-ansible-playbook --extra-vars="code_directory=$current_directory/code" $@

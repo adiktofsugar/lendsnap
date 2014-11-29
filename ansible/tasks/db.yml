@@ -1,0 +1,13 @@
+-   name: Stop db
+    command: docker rm -f db
+    ignore_errors: true
+
+-   name: Start db
+    command: >
+        docker run --name db -d
+            -e MYSQL_ROOT_PASSWORD=a
+            -e LS_NAME=lendsnap
+            -e LS_USER=lendsnap
+            -e LS_PASSWORD=a
+            -e LS_ROOT_PASSWORD=a
+            mysql

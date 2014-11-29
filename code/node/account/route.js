@@ -1,6 +1,7 @@
 var _ = require("lodash");
 var Uri = require("jsuri");
 var accountService = require('./service');
+var winston = require('winston');
 
 module.exports = function (router) {
 
@@ -13,6 +14,7 @@ module.exports = function (router) {
         var email = req.body['email'];
         var password = req.body['password'];
         accountService.login(req, email, password, function (err, user) {
+            winston.log("LOGIN service response - Error: ", err, "User", user);
             if (err) {
                 var errorMessage = "Failed log in - " + err.message;
                 res.redirect(new Uri("/log-in")

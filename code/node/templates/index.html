@@ -5,30 +5,12 @@
 {% block body %}
 <div class="row">
     <div class="large-12 columns">
-        <h1>Join Lendsnap</h1>
-        
+        <h1 class="text-center">Loan applications.<small>simple</small></h1>
         {% include "_flash.html" %}
 
-        <div id="home-main-intro">
-            <form action="/invite" method="get">
-                <div class="row collapse">
-                    <div class="large-10 columns">
-                        <input type="text" name="code" placeholder="Invitation Code" />
-                    </div>
-                    <div class="large-2 columns">
-                        <button class="postfix" type="submit">Join</button>
-                    </div>
-                </div>
-            </form>
+        <div class="text-center">
+            <a href="/log-in">register / log in</a>
         </div>
-        <p>
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </p>
     </div>
 </div>
 {% endblock %}

@@ -1,0 +1,6 @@
+#!/bin/bash
+current_dir=$(cd `dirname ${BASH_SOURCE[0]}`; pwd)
+docker run --name node-db-setup -it --rm \
+    -v $current_dir/code/node:/var/lendsnap/node \
+    --link db:db \
+    node scripts/db-setup.js --destroy --base-data

@@ -1,5 +1,6 @@
 var md5 = require('MD5');
 var winston = require('winston');
+var db = require('../db');
 
 function login (req, userOrEmail, cbOrPassword, cb) {
     var user;
@@ -50,12 +51,12 @@ var userExists = function (email, cb) {
 };
 
 var getUserById = function (id, cb) {
-    db.query("SELECT user WHERE id=?", [id], function (error, rows) {
+    db.query("SELECT * FROM user WHERE id=?", [id], function (error, rows) {
         cb(error, rows[0]);
     });
 };
-var getUserByEmail = function ( email, cb) {
-    db.query("SELECT user WHERE email=?", [email], function (error, rows) {
+var getUserByEmail = function (email, cb) {
+    db.query("SELECT * FROM user WHERE email=?", [email], function (error, rows) {
         cb(error, rows[0]);
     });
 };

@@ -13,4 +13,4 @@ ENV DB_PASSWORD a
 
 COPY . /var/lendsnap/node
 WORKDIR /var/lendsnap/node
-CMD ["nodejs", "app.js"]
+CMD ["forever", "-w", "app.js"]

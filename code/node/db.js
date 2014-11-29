@@ -33,8 +33,9 @@ var getConnection = function (connectionName) {
     return activeConnection;
 };
 
-var queryDefault = function (queryString, callback) {
-    getConnection("default").query(queryString, callback);
+var queryDefault = function () {
+    var connection = getConnection("default");
+    connection.query.apply(connection, arguments);
 };
 module.exports = {
     query: queryDefault,

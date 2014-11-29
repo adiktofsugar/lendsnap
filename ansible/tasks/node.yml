@@ -1,0 +1,15 @@
+-   name: Stop node
+    command: docker rm -f node-webapp
+    ignore_errors: true
+
+-   name: Build node
+    command: >
+        docker build -t node {{ code_directory }}/node
+
+-   name: Start node
+    command: >
+        docker run --name node-webapp -t -d
+            -v {{ code_directory }}/node:/var/lendsnap/node
+            -p 3000:3000
+            --link db:db
+            node

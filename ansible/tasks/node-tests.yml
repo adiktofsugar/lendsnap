@@ -1,0 +1,10 @@
+-   name: Test node
+    command: >
+        docker run --name node-tests -t --rm
+            -v {{ code_directory }}/node:/var/lendsnap/node
+            --link db:db
+            node node_modules/vows/bin/vows --spec test/*-spec.js
+    register: db_test_node
+
+-   debug: msg="{{ db_test_node.stdout }}"
+
