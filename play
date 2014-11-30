@@ -9,4 +9,4 @@ playbook_path=$current_directory/ansible/playbooks/$playbook_name.yml
 echo "using playbook: $playbook_path"
 
 cd $current_directory # use the ansible.cfg
-ansible-playbook --extra-vars="code_directory=$current_directory/code" $playbook_path
+ansible-playbook --extra-vars="project_root=$current_directory" $playbook_path

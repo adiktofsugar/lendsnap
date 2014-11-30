@@ -7,6 +7,7 @@ var manyToMany = function (t1, t2) {
 };
 
 module.exports = {
+    DOCUMENT_PACKAGE_FIELDS: ['user_id', 'name'],
     "document_package": {
         create: "CREATE TABLE IF NOT EXISTS document_package (" +
             "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
@@ -20,6 +21,7 @@ module.exports = {
             "(1, 1), " +
             "(2, 1);"
     },
+    DOCUMENT_FIELDS: ['document_package_id', 'name', 'group_name', 'path'],
     "document": {
         create: "CREATE TABLE IF NOT EXISTS document (" +
             "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +

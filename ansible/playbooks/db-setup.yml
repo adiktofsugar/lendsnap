@@ -1,4 +1,5 @@
 -   hosts: all
     connection: local
+    gather_facts: False
     tasks:
-    -   include: ../tasks/node-db-setup.yml
+    -   command: "{{ project_root }}/ansible/commands/node-db-setup"

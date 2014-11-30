@@ -1,6 +1,5 @@
 var config = require('./config');
 var winston = require("winston");
-
 var mysql = require('mysql');
 
 var connections = {
@@ -23,31 +22,24 @@ var connections = {
     }
 };
 
-var activeConnection;
 var getConnection = function (connectionName) {
     var parameters = connections[connectionName].parameters;
     if (!connections[connectionName].connection) {
         connections[connectionName].connection = mysql.createConnection(parameters);
     }
-    activeConnection = connections[connectionName].connection;
-    return activeConnection;
+    return connections[connectionName].connection;
 };
 
 var queryDefault = function () {
     var connection = getConnection("default");
-    connection.query.apply(connection, arguments);
+    return connection.query.apply(connection, arguments);
+};
+var escapeDefault = function () {
+    var connection = getConnection("default");
+    return connection.escape.apply(connection, arguments);
 };
 module.exports = {
     query: queryDefault,
+    escape: escapeDefault,
     getConnection: getConnection
 };
-Object.defineProperty(module.exports, "connection", {
-    get: function () {
-        return activeConnection;
-    }
-});
-Object.defineProperty(module.exports, "escape", {
-    get: function () {
-        return activeConnection.escape;
-    }
-});

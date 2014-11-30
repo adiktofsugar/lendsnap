@@ -4,12 +4,8 @@
 
 -   name: Build node
     command: >
-        docker build -t node {{ code_directory }}/node
+        docker build -t node {{ project_root }}/code/node
 
 -   name: Start node
     command: >
-        docker run --name node-webapp -t -d
-            -v {{ code_directory }}/node:/var/lendsnap/node
-            -p 3000:3000
-            --link db:db
-            node
+        {{ project_root }}/ansible/commands/node-start

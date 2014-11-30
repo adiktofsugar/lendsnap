@@ -1,5 +1,6 @@
 -   hosts: all
     connection: local
+    gather_facts: False
     tasks:
     # setup test db
     -   include: ../tasks/node-tests.yml

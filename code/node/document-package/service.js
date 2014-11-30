@@ -1,20 +1,32 @@
 var db = require('../db');
 var _ = require('lodash');
 
+var dbSetup = require('./db-setup');
+var DOCUMENT_PACKAGE_FIELDS = dbSetup.DOCUMENT_PACKAGE_FIELDS;
+var DOCUMENT_FIELDS = dbSetup.DOCUMENT_FIELDS;
+
 var getDocument = function (parameters, callback) {
     db.query(
         "SELECT * FROM document " + 
         "WHERE id = ?", [parameters.id], 
-    function (error, results) {
-        callback(error, results);
+    function (error, rows) {
+        if (error) {
+            return cb(new Error("Could get document, parameters - " + parameters +
+                " - error - " + error));
+        }
+        callback(null, rows[0]);
     });
 };
 var getDocuments = function (parameters, callback) {
     db.query(
         "SELECT * FROM document " + 
         "WHERE document_package_id = ?", [parameters.documentPackageId], 
-    function (error, results) {
-        callback(error, results);
+    function (error, rows) {
+        if (error) {
+            return cb(new Error("Could get document list, parameters - " + parameters +
+                " - error - " + error));
+        }
+        callback(null, rows);
     });
 };
 
@@ -23,34 +35,67 @@ var getDocumentPackagesByUserId = function (parameters, callback) {
         "SELECT * FROM document_package WHERE user_id=?",
         [parameters.userId],
     function (error, rows) {
-        callback(error, rows);
+        if (error) {
+            return cb(new Error("Could get document packages by user id, parameters - " + parameters +
+                " - error - " + error));
+        }
+        callback(null, rows);
     });
 };
 var getDocumentPackageById = function (parameters, callback) {
+    if (!parameters.id) {
+        return callback(new Error("No id passed"));
+    }
     db.query(
         "SELECT * FROM document_package " + 
         "WHERE id = ?", [parameters.id], 
-    function (error, results) {
-        callback(error, results);
+    function (error, rows) {
+        if (error) {
+            return cb(new Error("Could get document package by id, parameters - " + parameters +
+                " - error - " + error));
+        }
+        callback(null, rows[0]);
     });
 };
+
+var getFieldsFromParameters = function (parameters, options) {
+    var fieldsToInclude = options.include || null;
+    var fieldsToExclude = options.exclude || [];
+    
+    var fieldNames = [];
+    var fieldValues = [];
+
+    var fieldName;
+    var fieldValue;
+    for (fieldName in parameters) {
+        if (parameters.hasOwnProperty(fieldName)) {
+            fieldValue = parameters[fieldName];
+            if (fieldsToExclude.indexOf(fieldName) <= -1) {
+                if (fieldsToInclude === null || fieldsToInclude.indexOf(fieldName) > -1) {
+                    fieldNames.push(fieldName);
+                    fieldValues.push(db.escape(fieldValue));
+                }
+            }
+        }
+    }
+    return {
+        names: fieldNames,
+        values: fieldValues
+    };
+};
+
 var createDocumentPackage = function (parameters, callback) {
-    var insertFieldNames = [];
-    var insertFieldValues = [];
-    _.each(parameters, function (insertFieldValue, insertFieldName) {
-        insertFieldNames.push(insertFieldName);
-        insertFieldValues.push(db.escape(insertFieldValue));
-    });
+    var fields = getFieldsFromParameters(parameters, {include: DOCUMENT_PACKAGE_FIELDS});
     db.query(
         "INSERT INTO document_package " +
-        "(" + insertFieldNames.join(",") + ") " +
+        "(" + fields.names.join(",") + ") " +
         "VALUES " +
-        "(" + insertFieldValues.join(",") + ");",
+        "(" + fields.values.join(",") + ");",
     function (error, result) {
         if (error) {
             return callback(new Error("Couldn't create document package - " + error));
         }
-        getDocumentPackageById(result.insertId, function (error, documentPackage) {
+        getDocumentPackageById({id: result.insertId}, function (error, documentPackage) {
             if (error) {
                 return callback(new Error("Couldn't get package by id " + result.insertId +
                     " - " + error));
@@ -60,17 +105,15 @@ var createDocumentPackage = function (parameters, callback) {
     });
 };
 var updateDocumentPackage = function (parameters, callback) {
-    var updateFieldNames = [];
-    var updateFieldValues = [];
-    _.each(parameters, function (fieldValue, fieldName) {
-        updateFieldNames.push(fieldName);
-        updateFieldValues.push(db.escape(fieldValue || null));
+    console.log("update document_package", parameters);
+    var fields = getFieldsFromParameters(parameters, {include: DOCUMENT_PACKAGE_FIELDS});
+    var setStatement = "";
+    _.each(fields.names, function (name, index) {
+        setStatement += name + "=" + fields.values[index] + " ";
     });
     db.query(
         "UPDATE document_package " +
-        "(" + updateFieldNames.join(",") + ") " + 
-        "VALUES " +
-        "(" + updateFieldValues.join(",") + ") " +
+        "SET " + setStatement +
         "WHERE id=?",
         [parameters.id],
         function (error, result) {

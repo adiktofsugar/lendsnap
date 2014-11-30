@@ -1,0 +1,6 @@
+#!/bin/bash -eu
+project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ../..; pwd)
+docker run --name node-db-setup -it --rm \
+    -v $project_root/code/node:/var/lendsnap/node \
+    --link db:db \
+    node scripts/db-setup.js "$@"

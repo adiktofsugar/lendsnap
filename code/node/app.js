@@ -1,30 +1,18 @@
 #!/usr/bin/env node
 
-var config = require('./config');
+var _ = require('lodash');
 var connect = require('connect');
 var http = require('http');
-var _ = require('lodash');
 var winston = require("winston");
-var url = require('url');
-var Qs = require('qs');
-var sendData = require('send-data');
-var sendHtml = require('send-data/html');
-var sendJson = require('send-data/json');
-var nunjucks = require('nunjucks');
+var Url = require('jsuri');
 
-var compression = require('compression');
-var cookieSession = require('cookie-session');
-var bodyParser = require('body-parser');
-var connectRoute = require('connect-route');
-
-var appRoute = require('./route');
-var db = require('./db');
-var accountService = require('./account/service');
 var app = connect();
 
 // gzip/deflate outgoing responses
+var compression = require('compression');
 app.use(compression());
 
+var cookieSession = require('cookie-session');
 // store session state in browser cookie
 app.use(cookieSession({
     keys: ['secret1', 'secret2'],
@@ -33,129 +21,71 @@ app.use(cookieSession({
     httpOnly: false
 }));
 
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json());
+
+
 app.use(function (req, res, next) {
     winston.info("Url: \"" + req.url + "\"");
     next();
 });
 
-
-// add user from session
-app.use(function (req, res, next) {
-    winston.info("setting user...");
-    if (req.session.userId) {
-        winston.info("...user id exists", req.session.userId);
-        accountService.getUserById(req.session.userId, function (error, user) {
-            if (error) {
-                winston.error("...error", error);
-            } else {
-                req.user = user;
-            }
-            next();
-        });
-    } else {
-        winston.info("...no user id");
-        next();
-    }
+var nunjucks = require('nunjucks');
+nunjucks.configure('templates', {
+    autoescape: true
 });
-
-// parse urlencoded request bodies into req.body
-app.use(bodyParser.urlencoded());
-
-// get query parameters
 app.use(function (req, res, next) {
-    var queryString = url.parse(req.url, true).query;
-    var parsedQueryString = Qs.parse(queryString);
-    winston.info("parsed query string", parsedQueryString);
-    req.query = parsedQueryString;
-    
+    req.nunjucks = nunjucks;
     next();
 });
 
-// add redirect
+var middleware = require('./middleware');
+app.use(middleware.addQuery);
+app.use(middleware.addRedirect);
+app.use(middleware.addRender);
+app.use(middleware.addJson);
+app.use(middleware.addJsonError);
+app.use(middleware.errorHandler);
+
+var accountMiddleware = require('./account/middleware');
+app.use(accountMiddleware.addUser);
+
+var Router = require('routes');
+app.router = new Router();
 app.use(function (req, res, next) {
-    res.redirect = function (path) {
-        sendData(req, res, {
-            statusCode: 302,
-            headers: {
-                location: path
-            }
-        });
-    };
-    next();
-});
-
-// define template render
-app.use(function (req, res, next) {
-    res.render = function (templateName, data, cb) {
-        nunjucks.configure('templates', {
-            autoescape: true
-        });
-        var pageTitleParts = req.url
-                .replace(/^\//, '')
-                .split('/')
-                .filter(function (token) {
-                    return !!token
-                        .replace(/^\s*/,'')
-                        .replace(/\s*$/, '');
-                });
-        var pageTitle = "Lendsnap";
-        if (pageTitleParts.length) {
-            pageTitle += " - " + pageTitleParts.join(" - ");
-        }
-        
-        data = _.extend({
-            version: "123",
-            page_title: pageTitle,
-            user: req.user,
-            error: req.query.error,
-            message: req.query.message
-        }, data || {});
-
-        sendHtml(req, res, nunjucks.render(templateName, data));
-    };
-    winston.info("--- render defined");
-    next();
-});
-
-// json rendering
-app.use(function (req, res, next) {
-    res.json = function (json) {
-        sendJson(req, res, json, {
-            statusCode: 200
-        });
-    };
-    res.jsonError = function (error, statusCode) {
-        statusCode = statusCode || 400;
-        sendJson(req, res, {
-            message: error.message || "Unknown"
-        }, {
-            statusCode: statusCode
-        });
-    };
-    next();
-});
-
-
-app.use(connectRoute(function (router) {
-    appRoute.setRouter(router).start();
-
-}));
-
-app.use(function (err, req, res, next) {
-    if (err) {
-        winston.error(err);
-        if (err.stack) {
-            _.each(err.stack.split(/\n/g), function (line) {
-                winston.error(line);
-            });
-        }
-        res.render('error.html', {
-            error: err
-        });
+    var path = require('url').parse(req.url).pathname;
+    var match = app.router.match(path);
+    if (match) {
+        req.params = match.params;
+        match.fn(req, res, next, match);
     } else {
         next();
     }
 });
 
+var route = require('./route');
+route.mount(app);
 
-http.createServer(app).listen(3000);
+var helper = require('./helper');
+helper.getModules().forEach(function (moduleName) {
+    var path = require('path');
+    var moduleRoute;
+    var moduleRoutePath = './' + moduleName + '/route';
+    try {
+        moduleRoute = require(moduleRoutePath);
+    } catch (e) {
+        if (e.code !== "MODULE_NOT_FOUND") {
+            throw e;
+        }
+    }
+    console.log("adding routes for", moduleName, Boolean(moduleRoute));
+    if (!moduleRoute) {
+        return;
+    }
+    moduleRoute.mount(app);
+});
+
+http.createServer(app).listen(3000, function () {
+    winston.info("Listening on port 3000");
+});

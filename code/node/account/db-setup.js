@@ -12,6 +12,7 @@ var manyToMany = function (t1, t2) {
 };
 
 module.exports = {
+    USER_FIELDS: ['email', 'first_name', 'last_name', 'password'],
     "user": {
         create: "CREATE TABLE IF NOT EXISTS user (" +
             "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
@@ -31,6 +32,7 @@ module.exports = {
             "(2, 'user2@example.org', 'The', 'Hero', '"+ md5("a") + "'), " +
             "(3, 'admin@lendsnap.com', 'Super', 'Admin', '" + md5("admin") + "');"
     },
+    BANK_FIELDS: ['name'],
     "bank": {
         create: "CREATE TABLE IF NOT EXISTS bank (" +
             "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +

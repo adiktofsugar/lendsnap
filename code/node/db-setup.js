@@ -3,9 +3,9 @@ var chalk = require("chalk");
 var path = require("path");
 var winston = require("winston");
 var config = require('./config');
-var helpers = require('./helpers');
+var helper = require('./helper');
 var db = require('./db');
-var dbHelpers = require('./db-helpers');
+var dbHelper = require('./db-helper');
 
 module.exports = function (options, next) {
     if (next === undefined) {
@@ -32,7 +32,7 @@ module.exports = function (options, next) {
             }, 10);
         }
         _gettingExistingTables = true;
-        dbHelpers.getExistingTables(function (error, existingTables) {
+        dbHelper.getExistingTables(function (error, existingTables) {
             if (error) {
                 return callback(error);
             }
@@ -125,7 +125,7 @@ module.exports = function (options, next) {
     };
 
     var registerQueriesForModuleFunctions = [];
-    helpers.getModules().forEach(function (moduleName) {
+    helper.getModules().forEach(function (moduleName) {
         var modulePath = path.join(__dirname, moduleName, 'db-setup');
         try {
             console.log(chalk.green(""));

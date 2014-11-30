@@ -52,12 +52,18 @@ var userExists = function (email, cb) {
 
 var getUserById = function (id, cb) {
     db.query("SELECT * FROM user WHERE id=?", [id], function (error, rows) {
-        cb(error, rows[0]);
+        if (error) {
+            return cb(new Error("Failed select by id " + id + " - " + error));
+        }
+        cb(null, rows[0]);
     });
 };
 var getUserByEmail = function (email, cb) {
     db.query("SELECT * FROM user WHERE email=?", [email], function (error, rows) {
-        cb(error, rows[0]);
+        if (error) {
+            return cb(new Error("Failed to select by email " + email + " - " + error));
+        }
+        cb(null, rows[0]);
     });
 };
 var register = function (email, password, cb) {

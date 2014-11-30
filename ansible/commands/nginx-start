@@ -1,0 +1,20 @@
+#!/bin/bash -eu
+project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ../..; pwd)
+
+interactive=false
+while getopts ":i" opt; do
+    case $opt in
+        i) interactive=true;;
+    esac
+done
+
+daemon_option="-d"
+if [[ interactive ]];then
+    daemon_option="-i --rm"
+fi
+docker run --name nginx -t -d \
+    -v $project_root/code/nginx:/var/lendsnap/nginx \
+    -p 80:80 \
+    --link db:db \
+    --link node-webapp:node \
+    nginx

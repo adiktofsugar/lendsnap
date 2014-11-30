@@ -1,7 +1,3 @@
-// TODO: Credentials should all come from outside.
-// docker can set environment variables, so maybe thats a good way?
-
-
 module.exports = {
     dbHost: 'db',
     dbName: process.env.DB_ENV_LS_NAME,
