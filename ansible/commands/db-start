@@ -1,4 +1,6 @@
 #!/bin/bash -eu
+project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ../..; pwd)
+
 while [[ $# -gt 0 ]];do
     case "$1" in
         --root_pass) root_pass=$2; shift;;
@@ -15,6 +17,7 @@ echo "root_pass: $root_pass"
 echo "name: $name"
 echo "user: $user"
 echo "pass: $pass"
+#-v $project_root/volumes/db/datadir:/var/lib/mysql \
 
 docker run --name db -d \
     -e MYSQL_ROOT_PASSWORD=$root_pass \

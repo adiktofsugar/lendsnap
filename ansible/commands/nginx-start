@@ -9,10 +9,10 @@ while getopts ":i" opt; do
 done
 
 daemon_option="-d"
-if [[ interactive ]];then
+if [[ $interactive = true ]];then
     daemon_option="-i --rm"
 fi
-docker run --name nginx -t -d \
+docker run --name nginx -t $daemon_option \
     -v $project_root/code/nginx:/var/lendsnap/nginx \
     -p 80:80 \
     --link db:db \

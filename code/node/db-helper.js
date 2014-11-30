@@ -25,7 +25,38 @@ var getTablesWithNames = function (tableNames, cb) {
     });
 };
 
+var getFieldsFromParameters = function (parameters, options) {
+    var fieldsToInclude = options.include || null;
+    var fieldsToExclude = options.exclude || [];
+    
+    var setStatement = "";
+    var fieldNames = [];
+    var fieldValues = [];
+
+    var fieldName;
+    var fieldValue;
+    for (fieldName in parameters) {
+        if (parameters.hasOwnProperty(fieldName)) {
+            fieldValue = parameters[fieldName];
+            if (fieldsToExclude.indexOf(fieldName) <= -1) {
+                if (fieldsToInclude === null || fieldsToInclude.indexOf(fieldName) > -1) {
+                    fieldNames.push(fieldName);
+                    fieldValue = db.escape(fieldValue);
+                    fieldValues.push(fieldValue);
+                    setStatement += ", `" + fieldName + "`= " + fieldValue;
+                }
+            }
+        }
+    }
+    return {
+        names: fieldNames,
+        values: fieldValues,
+        setStatement: "SET" + setStatement.slice(1)
+    };
+};
+
 module.exports = {
     getExistingTables: getExistingTables,
-    getTablesWithNames: getTablesWithNames
+    getTablesWithNames: getTablesWithNames,
+    getFieldsFromParameters: getFieldsFromParameters
 };

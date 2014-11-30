@@ -6,7 +6,7 @@ var winston = require('winston');
 function addQuery(req, res, next) {    
     var uri = new Uri(req.url);
     
-    var queryString = uri.query();
+    var queryString = uri.query().slice(1);
     req.query = Qs.parse(queryString);
     
     next();
@@ -42,6 +42,7 @@ function addRender(req, res, next) {
             error: req.query.error,
             message: req.query.message
         }, data || {});
+        console.log("TEMPLATE DATA - ", data);
 
         res.writeHead(200, {
             'Content-type': 'text/html'

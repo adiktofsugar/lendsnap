@@ -13,15 +13,8 @@
             <div class="topbar__right-side">
                 <div class="topbar-item topbar__account" class="text-right {{ "logged-in" if user }}">
                     {% if user %}
-                    <a href="#" 
-                        data-options="is_hover:true; align:left"
-                        data-dropdown="js-account-dropdown">{{ user.email }}</a>
-                    <ul id="js-account-dropdown" class="f-dropdown"
-                    data-dropdown-content
-                    aria-hidden="true" tabindex="-1">
-                        <li><a href="/account">account</a></li>
-                        <li><a href="/logout">logout</a></li>
-                    </ul>
+                    <a href="/account" >{{ user.email }}</a>
+                    <small><a href="/logout">logout</a></small>
                     {% else %}
                     <a href="/log-in">log in</a>
                     {% endif %}

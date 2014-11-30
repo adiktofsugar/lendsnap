@@ -2,6 +2,7 @@
 
 BODY {
     font-family: "Open Sans";
+    background: #fefefe;
 }
 
 #home-main-intro {
@@ -14,6 +15,8 @@ BODY {
     height: 45px;
     margin-bottom: 20px;
     width: 100%;
+    box-shadow: 0px 1px 5px rgba(0,0,0,0.2);
+    background: white;
 }
 .topbar-item {
     height: 45px;
@@ -34,34 +37,9 @@ BODY {
     display: block;
     clear: both;
 }
-
+.topbar__company-name, .topbar__account {
+    padding: 0px 20px;
+}
 .topbar__company-name {
-    padding: 0px 50px 0 50px;
-    line-height: 45px;
-    font-size: 20px;
-    display: inline-block;
-    color: #ccc;
-    font-family: "Helvetica";
-    transition: background 0.1s, color 0.1s;
-}
-.topbar__company-name:hover {
-    background: #c00;
-    color: white;
-}
-
-.topbar__account {
-    text-align: right;
-    border-bottom: 3px solid #f00;
-    margin-bottom: -3px;
-}
-.topbar__account a {
-    padding-left: 20px;
-    padding-right: 10px;
-    color: #aaa;
-    display: block;
-    transition: background 0.1s, color 0.1s;
-}
-.topbar__account a:hover {
-    background: rgba(0,0,0,0.5);
-    color: white;
+    color: black;
 }

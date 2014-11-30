@@ -17,10 +17,10 @@
                     <input type="email" name="email" value="{{ lastRequest.email }}" />
 
                     <label>First name</label>
-                    <input type="text" name="firstName" value="{{ lastRequest.firstName }}" />
+                    <input type="text" name="first_name" value="{{ lastRequest.first_name }}" />
 
                     <label>Last name</label>
-                    <input type="text" name="lastName" value="{{ lastRequest.lastName }}" />
+                    <input type="text" name="last_name" value="{{ lastRequest.last_name }}" />
 
                     <button type="submit" class="button primary">Send Invite</button>
                 </form>
@@ -42,7 +42,7 @@
                                         <label class="inline">First Name</label>
                                     </div>
                                     <div class="large-6 columns">
-                                        <input name="firstName" type="text" value="{{ invite.ReceivedUser.firstName }}" />
+                                        <input name="first_name" type="text" value="{{ invite.ReceivedUser.first_name }}" />
                                     </div>
                                 </div>
 
@@ -51,7 +51,7 @@
                                         <label class="inline">Last Name</label>
                                     </div>
                                     <div class="large-6 columns">
-                                        <input name="lastName" type="text" value="{{ invite.ReceivedUser.lastName }}" />
+                                        <input name="last_name" type="text" value="{{ invite.ReceivedUser.last_name }}" />
                                     </div>
                                 </div>
                                 <button class="button tiny right" type="submit">Save</button>
@@ -73,7 +73,7 @@
             <input type="email" name="email" value="{{ user.email }}" />
 
             <label>First name</label>
-            <input type="text" name="firstName" value="{{ user.firstName }}" />
+            <input type="text" name="first_name" value="{{ user.first_name }}" />
 
             <button type="submit" class="button primary">Update Information</button>
         </form>

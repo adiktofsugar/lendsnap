@@ -1,6 +1,12 @@
 var md5 = require('MD5');
 var winston = require('winston');
 var db = require('../db');
+var dbHelper = require('../db-helper');
+
+var dbSetup = require('./db-setup');
+var USER_FIELDS = dbSetup.USER_FIELDS;
+var BANK_FIELDS = dbSetup.BANK_FIELDS;
+
 
 function login (req, userOrEmail, cbOrPassword, cb) {
     var user;
@@ -107,15 +113,12 @@ var setPassword = function (email, password, cb) {
 };
 
 var updateUser = function (user, attributes, cb) {
-    var updateFields = [];
-    var updateValues = [];
-    _.each(attributes, function (attributeValue, attributeName) {
-        updateFields.push(attributeName);
-        updateFields.push(db.escape(attributeValue));
-    });
+    var setStatement = dbHelper.getFieldsFromParameters(attributes, {
+            include: USER_FIELDS
+        }).setStatement;
+    
     db.query("" +
-        "UPDATE user (" + updateFields.join(",") + ")" + 
-        "VALUES (" + updateValues.join(",") + ") " +
+        "UPDATE user " + setStatement + " " +
         "WHERE id = ?",
         [user.id],
         function (error, rows) {
@@ -130,5 +133,5 @@ module.exports = {
     setPassword: setPassword,
     getUserById: getUserById,
     getUserByEmail: getUserByEmail,
-    update: updateUser
+    updateUser: updateUser
 };

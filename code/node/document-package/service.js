@@ -1,4 +1,5 @@
 var db = require('../db');
+var dbHelper = require('../db-helper');
 var _ = require('lodash');
 
 var dbSetup = require('./db-setup');
@@ -58,34 +59,11 @@ var getDocumentPackageById = function (parameters, callback) {
     });
 };
 
-var getFieldsFromParameters = function (parameters, options) {
-    var fieldsToInclude = options.include || null;
-    var fieldsToExclude = options.exclude || [];
-    
-    var fieldNames = [];
-    var fieldValues = [];
-
-    var fieldName;
-    var fieldValue;
-    for (fieldName in parameters) {
-        if (parameters.hasOwnProperty(fieldName)) {
-            fieldValue = parameters[fieldName];
-            if (fieldsToExclude.indexOf(fieldName) <= -1) {
-                if (fieldsToInclude === null || fieldsToInclude.indexOf(fieldName) > -1) {
-                    fieldNames.push(fieldName);
-                    fieldValues.push(db.escape(fieldValue));
-                }
-            }
-        }
-    }
-    return {
-        names: fieldNames,
-        values: fieldValues
-    };
-};
 
 var createDocumentPackage = function (parameters, callback) {
-    var fields = getFieldsFromParameters(parameters, {include: DOCUMENT_PACKAGE_FIELDS});
+    var fields = dbHelper.getFieldsFromParameters(parameters, {
+            include: DOCUMENT_PACKAGE_FIELDS
+        });
     db.query(
         "INSERT INTO document_package " +
         "(" + fields.names.join(",") + ") " +
@@ -105,15 +83,12 @@ var createDocumentPackage = function (parameters, callback) {
     });
 };
 var updateDocumentPackage = function (parameters, callback) {
-    console.log("update document_package", parameters);
-    var fields = getFieldsFromParameters(parameters, {include: DOCUMENT_PACKAGE_FIELDS});
-    var setStatement = "";
-    _.each(fields.names, function (name, index) {
-        setStatement += name + "=" + fields.values[index] + " ";
-    });
+    var setStatement = dbHelper.getFieldsFromParameters(parameters, {
+            include: DOCUMENT_PACKAGE_FIELDS
+        }).setStatement;
     db.query(
         "UPDATE document_package " +
-        "SET " + setStatement +
+        setStatement + " " +
         "WHERE id=?",
         [parameters.id],
         function (error, result) {
