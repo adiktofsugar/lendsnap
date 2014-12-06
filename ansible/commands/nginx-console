@@ -1,9 +1,8 @@
 #!/bin/bash -eu
 project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ../..; pwd)
-docker run --name nginx -t -d \
+docker run --name nginx-console -ti --rm \
     -v $project_root/code/nginx:/var/lendsnap/nginx \
     --volumes-from data-uploaded \
-    -p 80:80 \
     --link db:db \
     --link node-webapp:node \
-    nginx
+    nginx /bin/bash

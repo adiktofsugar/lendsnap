@@ -1,0 +1,11 @@
+#!/bin/bash
+project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ..; pwd)
+
+command_name=${1:-}
+commands_path=$project_root/ansible/commands
+if ! [[ $command_name ]];then
+    ls $commands_path
+    exit
+fi
+shift
+eval $commands_path/$command_name $@

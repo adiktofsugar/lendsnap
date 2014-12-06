@@ -1,8 +1,10 @@
+var fs = require('fs');
 var _ = require('lodash');
 var Uri = require('jsuri');
 var documentPackageService = require('./service');
 var accountService = require('../account/service');
 var async = require("async");
+var Busboy = require('busboy');
 
 function mount (app) {
     app.router.addRoute('/document-package', function (req, res, next) {
@@ -24,7 +26,8 @@ function mount (app) {
 
             res.render('document-package/package-new.html', {
                 document_package_user: req.user,
-                document_package: documentPackage
+                document_package: documentPackage,
+                documents: []
             });
         });
     });
@@ -48,14 +51,25 @@ function mount (app) {
                             }
                             callback(null, user, documentPackage);
                         });
+                },
+                function (user, documentPackage, callback) {
+                    documentPackageService.getDocumentsByDocumentPackageId(documentPackage.id,
+                    function (error, documents) {
+                        if (error) {
+                            return callback(error);
+                        }
+                        callback(null, user, documentPackage, documents);
+                    });
                 }
-            ], function (error, user, documentPackage) {
+            ], function (error, user, documentPackage, documents) {
                 if (error) {
                     return next(error);
                 }
+                console.log("documents", documents);
                 res.render('document-package/package.html', {
                     document_package_user: user,
-                    document_package: documentPackage
+                    document_package: documentPackage,
+                    documents: documents
                 });
             });
         } else if (req.method == "POST") {
@@ -93,6 +107,84 @@ function mount (app) {
                     .addQueryParam("message", "Package updated")
                     .toString());
             });
+        }
+    });
+    app.router.addRoute('/document-package/:id/document', function (req, res, next) {
+        var documentPackageId = req.params.id;
+        var userId = req.user.id;
+
+        if (req.method == "POST") {
+            
+            var busboy = new Busboy({
+                headers: req.headers
+            });
+            var filesUploaded = {};
+            busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+                console.log('File [' + fieldname + ']: filename: ' + filename);
+                var fileKey = userId + '-' + documentPackageId + '-' +
+                        fieldname + '-' + filename;
+                var saveTo = '/var/lendsnap/uploaded/' + fileKey;
+                filesUploaded[fileKey] = {
+                    filename: filename,
+                    fieldname: fieldname,
+                    saveTo: saveTo
+                };
+                var outputFile = fs.createWriteStream(saveTo);
+                file.pipe(outputFile);
+                outputFile.on('error', function(error) {
+                    console.log('File [' + fileKey + '] Error - ', error);
+                });
+            });
+            busboy.on('finish', function() {
+                console.log('Done parsing form!');
+                var newDocumentParametersArray = _.map(filesUploaded, function (fileUploaded) {
+                        return {
+                            document_package_id: documentPackageId,
+                            group_name: fileUploaded.fieldname,
+                            name: fileUploaded.filename,
+                            path: fileUploaded.saveTo
+                        };
+                    });
+                console.log("createDocuments", newDocumentParametersArray);
+                documentPackageService.createDocuments(newDocumentParametersArray,
+                function (error, newDocuments) {
+                    if (error) {
+                        return next(new Error("Could not create documents - " + error));
+                    }
+                    if (req.query.next) {
+                        return res.redirect(req.query.next);
+                    }
+                    res.json({
+                        status: "ok",
+                        filesUploaded: filesUploaded,
+                        newDocuments: newDocuments
+                    });
+                });
+            });
+            req.pipe(busboy);
+        } else {
+            res.writeHead(404);
+            res.end();
+        }
+    });
+    app.router.addRoute('/document-package/:document_package_id/document/:id', function (req, res, next) {
+        if (req.method == "DELETE") {
+            documentPackageService.deleteDocumentById(req.params.id,
+            function (error, document) {
+                if (error) {
+                    return next(new Error("Couldnt delete document with id " + req.params.id));
+                }
+
+                if (req.query.next) {
+                    return res.redirect(req.query.next);
+                }
+                res.json({
+                    status: "ok"
+                });
+            });
+        } else {
+            res.writeHead(404);
+            res.end();
         }
     });
 }

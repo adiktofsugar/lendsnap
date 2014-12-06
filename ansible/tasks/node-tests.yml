@@ -1,4 +1,0 @@
--   name: Test node
-    command: >
-        {{ project_root }}/ansible/commands/node-tests
-

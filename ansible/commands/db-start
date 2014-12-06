@@ -17,9 +17,9 @@ echo "root_pass: $root_pass"
 echo "name: $name"
 echo "user: $user"
 echo "pass: $pass"
-#-v $project_root/volumes/db/datadir:/var/lib/mysql \
 
-docker run --name db -d \
+docker run --name db -t -d \
+    --volumes-from data-db \
     -e MYSQL_ROOT_PASSWORD=$root_pass \
     -e LS_NAME=$name \
     -e LS_USER=$user \

@@ -1,5 +1,0 @@
--   hosts: all
-    connection: local
-    gather_facts: False
-    tasks:
-    -   command: "{{ project_root }}/ansible/commands/node-db-setup"

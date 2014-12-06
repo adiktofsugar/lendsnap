@@ -4,6 +4,45 @@
     connection: local
     gather_facts: False
     tasks:
-    -   include: ../tasks/db.yml
-    -   include: ../tasks/node.yml
-    -   include: ../tasks/nginx.yml
+    -   name: Start data
+        command: >
+            {{ project_root }}/ansible/commands/data-start
+        ignore_errors: true
+
+    -   name: Stop db
+        command: docker rm -f db
+        ignore_errors: true
+
+    -   name: Start db
+        command: >
+            {{ project_root }}/ansible/commands/db-start
+                --root_pass a
+                --name lendsnap
+                --user lendsnap
+                --pass a
+
+    -   name: Stop node
+        command: docker rm -f node-webapp
+        ignore_errors: true
+
+    -   name: Build node
+        command: >
+            docker build -t node {{ project_root }}/code/node
+
+    -   name: Start node
+        command: >
+            {{ project_root }}/ansible/commands/node-start
+
+    -   name: Stop nginx
+        command: docker rm -f nginx
+        ignore_errors: true
+
+    -   name: Build nginx
+        command: >
+            docker build -t nginx {{ project_root }}/code/nginx
+
+    -   name: Start nginx
+        command: >
+            {{ project_root }}/ansible/commands/nginx-start
+
+

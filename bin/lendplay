@@ -1,0 +1,15 @@
+#!/bin/bash
+project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ..; pwd)
+
+playbook_name=${1:-}
+playbooks_path=$project_root/ansible/playbooks
+if ! [[ $playbook_name ]];then
+    ls $playbooks_path
+    exit
+fi
+
+playbook_path=$playbooks_path/$playbook_name.yml
+echo "using playbook: $playbook_path"
+
+cd $project_root # use the ansible.cfg
+ansible-playbook --extra-vars="project_root=$project_root" $playbook_path

@@ -42,6 +42,7 @@ app.use(function (req, res, next) {
 
 var middleware = require('./middleware');
 app.use(middleware.addQuery);
+app.use(middleware.addMethodByQuery);
 app.use(middleware.addRedirect);
 app.use(middleware.addRender);
 app.use(middleware.addJson);

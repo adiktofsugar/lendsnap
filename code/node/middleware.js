@@ -11,6 +11,12 @@ function addQuery(req, res, next) {
     
     next();
 }
+function addMethodByQuery(req, res, next) {
+    if (req.query._method) {
+        req.method = req.query._method.toUpperCase();
+    }
+    next();
+}
 function addRedirect(req, res, next) {
     res.redirect = function (redirectLocation) {
         res.writeHead(302, {
@@ -55,7 +61,7 @@ function addRender(req, res, next) {
 
 function addJson(req, res, next) {
     res.json = function (json, options) {
-        options = _.extend(true, {
+        options = _.merge({
             statusCode: 200,
             headers: {
                 'Content-type': 'application/json'
@@ -103,6 +109,7 @@ function errorHandler(err, req, res, next) {
 
 module.exports = {
     addQuery: addQuery,
+    addMethodByQuery: addMethodByQuery,
     addRedirect: addRedirect,
     addRender: addRender,
     addJson: addJson,

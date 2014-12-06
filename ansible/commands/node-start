@@ -1,7 +1,9 @@
 #!/bin/bash -eu
 project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ../..; pwd)
+
 docker run --name node-webapp -t -d \
     -v $project_root/code/node:/var/lendsnap/node \
+    --volumes-from data-uploaded \
     -p 3000:3000 \
     --link db:db \
     node

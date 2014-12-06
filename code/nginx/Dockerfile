@@ -5,7 +5,8 @@ RUN apt-get update
 RUN apt-get -y install nginx
 EXPOSE 80
 
-COPY . /var/lendsnap/nginx
+VOLUME /var/lendsnap/uploaded
+COPY . /var/lendsnap/nginx/
 
 RUN mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.original && \
     ln -s /var/lendsnap/nginx/nginx.conf /etc/nginx/nginx.conf

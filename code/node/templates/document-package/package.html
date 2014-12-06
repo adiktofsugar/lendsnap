@@ -13,6 +13,34 @@
                 <button type="submit" class="button">Save Changes</button>
             </div>
         </form>
+
+        
+        <h3>Checking account statements</h3>
+        <form action="/document-package/{{ document_package.id }}/document?next=/document-package/{{ document_package.id }}" method="post"
+            enctype="multipart/form-data">
+
+            <div class="row">
+                <div class="large-5 columns">
+                    
+                    <button type="submit" class="button tiny left">Add Files</button>
+                    <input type="file" name="document_checking[]" multiple />
+                </div>
+                <div class="large-7 columns">
+                    <ul>
+                        {% for document in documents %}
+                        {% if document.group_name == "document_checking[]" %}
+                        <li>
+                            <small>
+                            {{ document.path }}
+                            <a href="/document-package/{{ document_package.id }}/document/{{ document.id }}?_method=delete&next=/document-package/{{ document_package.id }}">remove</a>
+                            </small>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
