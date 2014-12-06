@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path');
 var _ = require('lodash');
 var Uri = require('jsuri');
 var documentPackageService = require('./service');
@@ -66,10 +67,18 @@ function mount (app) {
                     return next(error);
                 }
                 console.log("documents", documents);
+                var documentsByGroupName = {};
+                documents.forEach(function (document) {
+                    if (!documentsByGroupName[document.group_name]) {
+                        documentsByGroupName[document.group_name] = [];
+                    }
+                    documentsByGroupName[document.group_name].push(document);
+                });
                 res.render('document-package/package.html', {
                     document_package_user: user,
                     document_package: documentPackage,
-                    documents: documents
+                    documents: documents,
+                    documents_by_group_name: documentsByGroupName
                 });
             });
         } else if (req.method == "POST") {
@@ -114,35 +123,50 @@ function mount (app) {
         var userId = req.user.id;
 
         if (req.method == "POST") {
+            var groupName = req.body.group_name;
+            console.log("group name", groupName);
             
             var busboy = new Busboy({
                 headers: req.headers
             });
+            var fields = {};
             var filesUploaded = {};
             busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
                 console.log('File [' + fieldname + ']: filename: ' + filename);
                 var fileKey = userId + '-' + documentPackageId + '-' +
                         fieldname + '-' + filename;
-                var saveTo = '/var/lendsnap/uploaded/' + fileKey;
-                filesUploaded[fileKey] = {
-                    filename: filename,
-                    fieldname: fieldname,
-                    saveTo: saveTo
-                };
-                var outputFile = fs.createWriteStream(saveTo);
-                file.pipe(outputFile);
-                outputFile.on('error', function(error) {
-                    console.log('File [' + fileKey + '] Error - ', error);
-                });
+                if (filename) {
+                    var saveTo = '/var/lendsnap/uploaded/' + fileKey;
+                    filesUploaded[fileKey] = {
+                        filename: filename,
+                        fieldname: fieldname,
+                        saveTo: saveTo
+                    };
+                    var outputFile = fs.createWriteStream(saveTo);
+                    file.pipe(outputFile);
+                    outputFile.on('error', function(error) {
+                        console.log('File [' + fileKey + '] Error - ', error);
+                    });
+                } else {
+                    file.on('data', function () {
+                        console.log('File without a name got data?');
+                    });
+                    file.on('end', function () {
+                        console.log('File without a name finished');
+                    });
+                }
+            });
+            busboy.on('field', function (fieldname, value) {
+                fields[fieldname] = value;
             });
             busboy.on('finish', function() {
                 console.log('Done parsing form!');
-                var newDocumentParametersArray = _.map(filesUploaded, function (fileUploaded) {
+                var newDocumentParametersArray = _.map(filesUploaded, function (fileUploaded, fileKey) {
                         return {
                             document_package_id: documentPackageId,
-                            group_name: fileUploaded.fieldname,
-                            name: fileUploaded.filename,
-                            path: fileUploaded.saveTo
+                            group_name: fields["group_name"],
+                            name: path.basename(fileUploaded.filename),
+                            path: fileKey
                         };
                     });
                 console.log("createDocuments", newDocumentParametersArray);

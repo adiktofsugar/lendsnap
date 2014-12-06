@@ -1,0 +1,31 @@
+{% macro add_file_path(document_package_id) %}
+/document-package/{{ document_package_id }}/document?next=/document-package/{{ document_package_id }}
+{% endmacro %}
+
+{% macro remove_document_path(document_package_id, document_id) %}
+/document-package/{{ document_package_id }}/document/{{ document_id }}?_method=delete&next=/document-package/{{ document_package_id }}
+{% endmacro %}
+
+{% macro upload_form_with_preview(document_package_id, group_name, documents=[]) %}
+<form action="{{ add_file_path(document_package_id) }}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="group_name" value="{{ group_name }}" />
+    <div class="row">
+        <div class="large-5 columns">
+            <button type="submit" class="button tiny left">Add Files</button>
+            <input type="file" name="file[]" multiple />
+        </div>
+        <div class="large-7 columns">
+            <ul>
+                {% for document in documents %}
+                <li>
+                    <small>
+                    <a href="/uploaded/{{ document.path }}">{{ document.name }}</a>
+                    <a href="{{ remove_document_path(document_package_id, document.id) }}">remove</a>
+                    </small>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</form>
+{% endmacro %}

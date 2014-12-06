@@ -4,7 +4,11 @@ project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ..; pwd)
 playbook_name=${1:-}
 playbooks_path=$project_root/ansible/playbooks
 if ! [[ $playbook_name ]];then
-    ls $playbooks_path
+    playbooks=""
+    for playbook in `ls $playbooks_path`; do
+        playbooks="$playbooks ${playbook%.yml}"
+    done
+    echo $playbooks
     exit
 fi
 
