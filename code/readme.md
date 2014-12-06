@@ -4,6 +4,11 @@ JS Code standards
 - module names are singular
 - asynchronous methods have a callback as the last argument
 - callback methods always have an error as the first argument. if there is an error, `error instanceof Error` is true
+- service methods should be as specific as possible.
+    - aka getUserById isntead of getUser
+    - signature of getUserById(id[,options],callback)
+    - callback will always be at the end, and if there are options, they will be before the callback
+    - this style encourages writing specific service methods
 - require everything at the top of each function that needs it.
 - modules should not depend on the state of something at the time it is required, except static "config"
 - keep scripts below a certain length (100 lines?)

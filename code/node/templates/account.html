@@ -6,65 +6,6 @@
 
 {% include "_flash.html" %}
 
-{% if userCanInvite %}
-<div class="row">
-    <div class="large-12 columns">
-        <h1>Invites</h1>
-        <div class="row nest-collapse">
-            <div class="large-6 columns">
-                <form action="/account/invites" method="post">
-                    <label>To Email</label>
-                    <input type="email" name="email" value="{{ lastRequest.email }}" />
-
-                    <label>First name</label>
-                    <input type="text" name="first_name" value="{{ lastRequest.first_name }}" />
-
-                    <label>Last name</label>
-                    <input type="text" name="last_name" value="{{ lastRequest.last_name }}" />
-
-                    <button type="submit" class="button primary">Send Invite</button>
-                </form>
-            </div>
-            <div class="large-6 columns">
-                <ul>
-                    {% if not invites or invites.length == 0 %}
-                    <li>No Invites</li>
-                    {% endif %}
-                    {% for invite in invites %}
-                    <li>
-                        <h3>{{ invite.code}} <small>To: {{ invite.ReceivedUser.email }}</small></h3>
-                        <div class="row collapse">
-                            <form action="/account" method="post">
-                                <input type="hidden" name="id" value="{{ invite.ReceivedUser.id }}" />
-
-                                <div class="row collapse">
-                                    <div class="large-4 columns">
-                                        <label class="inline">First Name</label>
-                                    </div>
-                                    <div class="large-6 columns">
-                                        <input name="first_name" type="text" value="{{ invite.ReceivedUser.first_name }}" />
-                                    </div>
-                                </div>
-
-                                <div class="row collapse">
-                                    <div class="large-4 columns">
-                                        <label class="inline">Last Name</label>
-                                    </div>
-                                    <div class="large-6 columns">
-                                        <input name="last_name" type="text" value="{{ invite.ReceivedUser.last_name }}" />
-                                    </div>
-                                </div>
-                                <button class="button tiny right" type="submit">Save</button>
-                            </form>
-                        </div>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
 <div class="row">
     <div class="large-6 columns">
         <h1>Account</h1>
@@ -74,6 +15,9 @@
 
             <label>First name</label>
             <input type="text" name="first_name" value="{{ user.first_name }}" />
+
+            <label>Last name</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}" />
 
             <button type="submit" class="button primary">Update Information</button>
         </form>

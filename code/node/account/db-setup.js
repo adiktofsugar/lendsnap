@@ -26,11 +26,11 @@ module.exports = {
             "INDEX (email), " +
             "CONSTRAINT UNIQUE (email));",
         baseData: "INSERT INTO user " +
-            "(id, email, first_name, last_name, password) " + 
+            "(id, email, first_name, last_name, password, is_banker, is_admin) " + 
             "VALUES " + 
-            "(1, 'user1@example.org', 'Charles', 'Awesome', '" + md5("a") + "'), " +
-            "(2, 'user2@example.org', 'The', 'Hero', '"+ md5("a") + "'), " +
-            "(3, 'admin@lendsnap.com', 'Super', 'Admin', '" + md5("admin") + "');"
+            "(1, 'user1@example.org', 'Charles', 'Awesome', '" + md5("a") + "', 0, 0), " +
+            "(2, 'user2@example.org', 'The', 'Banker', '"+ md5("a") + "', 1, 0), " +
+            "(3, 'admin@lendsnap.com', 'Super', 'Admin', '" + md5("admin") + "', 0, 1);"
     },
     BANK_FIELDS: ['name'],
     "bank": {
@@ -46,6 +46,9 @@ module.exports = {
             "(1, 'Wells Fargo');"
     },
     "user_bank": {
-        create: manyToMany("user", "bank")
+        create: manyToMany("user", "bank"),
+        baseData: "INSERT INTO user_bank " +
+            "VALUES " +
+            "(2, 1)"
     }
 };

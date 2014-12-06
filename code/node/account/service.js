@@ -112,7 +112,7 @@ var setPassword = function (email, password, cb) {
     });
 };
 
-var updateUser = function (user, attributes, cb) {
+var updateUser = function (userId, attributes, cb) {
     var setStatement = dbHelper.getFieldsFromParameters(attributes, {
             include: USER_FIELDS
         }).setStatement;
@@ -120,7 +120,7 @@ var updateUser = function (user, attributes, cb) {
     db.query("" +
         "UPDATE user " + setStatement + " " +
         "WHERE id = ?",
-        [user.id],
+        [userId],
         function (error, rows) {
             cb(error, user);
         });

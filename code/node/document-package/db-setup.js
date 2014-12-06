@@ -7,19 +7,20 @@ var manyToMany = function (t1, t2) {
 };
 
 module.exports = {
-    DOCUMENT_PACKAGE_FIELDS: ['user_id', 'name'],
+    DOCUMENT_PACKAGE_FIELDS: ['user_id', 'banker_user_id', 'name'],
     "document_package": {
         create: "CREATE TABLE IF NOT EXISTS document_package (" +
             "id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
             "user_id INT NOT NULL, " +
+            "banker_user_id INT, " +
             "name VARCHAR(250) DEFAULT 'document package', " +
             "INDEX (id), " +
             "INDEX (user_id));",
         baseData: "INSERT INTO document_package " +
-            "(id, user_id) " + 
+            "(id, user_id, banker_user_id, name) " + 
             "VALUES " + 
-            "(1, 1), " +
-            "(2, 1);"
+            "(1, 1, NULL, \"Created by myself\"), " +
+            "(2, 1, 2, \"Created by banker with user id 2\");"
     },
     DOCUMENT_FIELDS: ['document_package_id', 'name', 'group_name', 'path'],
     "document": {

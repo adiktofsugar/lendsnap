@@ -13,6 +13,9 @@
             <div class="topbar__right-side">
                 <div class="topbar-item topbar__account" class="text-right {{ "logged-in" if user }}">
                     {% if user %}
+                        {% if user.is_banker %}
+                        <i class="icon-bank"></i>
+                        {% endif %}
                     <a href="/account" >{{ user.email }}</a>
                     <small><a href="/logout">logout</a></small>
                     {% else %}

@@ -94,8 +94,8 @@ function mount(app) {
         if (req.method == "GET") {
             res.render('account.html');
         } else if (req.method == "POST") {
-            var updateUser = function (user) {
-                accountService.updateUser(user, {
+            var updateUser = function (userId) {
+                accountService.updateUser(userId, {
                     email: req.body.email,
                     first_name: req.body.first_name,
                     last_name: req.body.last_name
@@ -111,12 +111,9 @@ function mount(app) {
             };
 
             if (req.body.id) {
-                accountService.getUserById(req.body.id, function (error, user) {
-                    if (error) return next(error);
-                    updateUser(user);
-                });
+                updateUser(req.body.id);
             } else {
-                updateUser(req.user);
+                updateUser(req.user.id);
             }
         }
     });

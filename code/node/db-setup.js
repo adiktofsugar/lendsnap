@@ -52,7 +52,7 @@ module.exports = function (options, next) {
             }
             var query;
             if (existingTables.indexOf(tableName) > -1) {
-                query = "TRUNCATE TABLE " + tableName;
+                query = "DROP TABLE " + tableName;
             }
             allQueries.destroy.push(query);
             callback(null, query);

@@ -1,2 +1,7 @@
+{% if user.is_banker %}
+<label>For user:</label>
+<input type="text" name="user_email" value="{{ document_package_user.email }}" />
+{% endif %}
+
 <label>Name</label>
-<input type="text" name="name" value="{{ documentPackage.name }}" />
+<input type="text" name="name" value="{{ document_package.name }}" />

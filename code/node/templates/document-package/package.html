@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title%}{{ documentPackage.name }}{% endblock %}
+{% block title%}{{ document_package.name }}{% endblock %}
 
 {% block body %}
 {% include "_flash.html" %}
 <div class="row">
     <div class="large-12 columns">
-        <h1>Edit {{ documentPackage.name }}</h1>
-        <form action="/document-package/{{ documentPackage.id }}" method="post">
+        <h1>Edit {{ document_package.name }}</h1>
+        <form action="/document-package/{{ document_package.id }}" method="post">
             {% include "document-package/_package-form-contents.html" %}
             <div>
                 <button type="submit" class="button">Save Changes</button>

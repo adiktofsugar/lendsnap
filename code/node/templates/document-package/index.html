@@ -5,12 +5,17 @@
 {% block body %}
 <div class="row">
     <div class="large-12 columns">
-        {% if documentPackages.length <= 0 %}
+        {% if document_packages.length <= 0 %}
             You have no packages
         {% else %}
             <ul>
-            {% for package in documentPackages %}
-                <li><a href="/document-package/{{ package.id }}">{{ package.name }}</a></li>
+            {% for package in document_packages %}
+                <li>
+                    {% if package.user_id != user.id %}
+                    <i class="icon-bank"></i>
+                    {% endif %}
+                    <a href="/document-package/{{ package.id }}">{{ package.name }}</a>
+                </li>
             {% endfor %}
             </ul>
         {% endif %}
