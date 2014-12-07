@@ -1,12 +1,8 @@
-# TODO: make mounting local directory optional
-
--   hosts: all
-    connection: local
-    gather_facts: False
+-   hosts: db
     tasks:
-    -   name: Start data
+    -   name: Start db data
         command: >
-            {{ project_root }}/ansible/commands/data-start
+            {{ project_root }}/ansible/commands/data-db-start
         ignore_errors: true
 
     -   name: Stop db
@@ -16,10 +12,17 @@
     -   name: Start db
         command: >
             {{ project_root }}/ansible/commands/db-start
-                --root_pass a
-                --name lendsnap
-                --user lendsnap
-                --pass a
+                -r {{ db_root_password }}
+                -n {{ db_name }}
+                -u {{ db_user }}
+                -p {{ db_password }}
+
+-   hosts: webapp
+    tasks:
+    -   name: Start data
+        command: >
+            {{ project_root }}/ansible/commands/data-uploaded-start
+        ignore_errors: true
 
     -   name: Stop node
         command: docker rm -f node-webapp
@@ -31,7 +34,7 @@
 
     -   name: Start node
         command: >
-            {{ project_root }}/ansible/commands/node-start
+            {{ project_root }}/ansible/commands/node-start {{ dev_mode_option }}
 
     -   name: Stop nginx
         command: docker rm -f nginx
@@ -43,6 +46,6 @@
 
     -   name: Start nginx
         command: >
-            {{ project_root }}/ansible/commands/nginx-start
+            {{ project_root }}/ansible/commands/nginx-start {{ dev_mode_option }}
 
 

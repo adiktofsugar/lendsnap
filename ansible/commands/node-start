@@ -1,8 +1,22 @@
 #!/bin/bash -eu
 project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ../..; pwd)
 
+dev_mode=false
+while getopts ":d" opt; do
+    case "$opt" in
+        d) dev_mode=true;;
+        \?) echo "Invalid option -$OPTARG"; exit 1;;
+    esac
+done
+args=${@:$OPTIND}
+
+dev_volume=""
+if [ $dev_mode = true ];then
+    dev_volume="-v $project_root/code/node:/var/lendsnap/node "
+fi
+
 docker run --name node-webapp -t -d \
-    -v $project_root/code/node:/var/lendsnap/node \
+    $dev_volume \
     --volumes-from data-uploaded \
     -p 3000:3000 \
     --link db:db \

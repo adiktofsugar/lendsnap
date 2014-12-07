@@ -1,28 +1,23 @@
 #!/bin/bash -eu
 project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ../..; pwd)
 
-while [[ $# -gt 0 ]];do
-    case "$1" in
-        --root_pass) root_pass=$2; shift;;
-        --name) name=$2; shift;;
-        --user) user=$2; shift;;
-        --pass) pass=$2; shift;;
-        --*) echo "unsupported option $1"; exit 1;;
-        *) break ;;
+while getopts ":r:n:u:p:" opt; do
+    case "$opt" in
+        r) root_pass=$OPTARG;;
+        n) db_name=$OPTARG;;
+        u) db_user=$OPTARG;;
+        p) db_pass=$OPTARG;;
+        \?) echo "option -$OPTARG not supported"; exit 1;;
+        :) echo "option -$OPTARG requires an argument"; exit 1;;
     esac
-    shift
 done
-
-echo "root_pass: $root_pass"
-echo "name: $name"
-echo "user: $user"
-echo "pass: $pass"
+args="${@:$OPTIND}"
 
 docker run --name db -t -d \
     --volumes-from data-db \
     -e MYSQL_ROOT_PASSWORD=$root_pass \
-    -e LS_NAME=$name \
-    -e LS_USER=$user \
-    -e LS_PASSWORD=$pass \
+    -e LS_NAME=$db_name \
+    -e LS_USER=$db_user \
+    -e LS_PASSWORD=$db_pass \
     -e LS_ROOT_PASSWORD=$root_pass \
     mysql

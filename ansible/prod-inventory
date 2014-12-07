@@ -1,0 +1,16 @@
+[webapp]
+localhost
+
+[db]
+localhost
+
+[shared:children]
+webapp
+db
+
+[shared:vars]
+dev_mode_option=
+root_password=a
+db_name=lendsnap
+db_user=lendsnap
+db_pass=a

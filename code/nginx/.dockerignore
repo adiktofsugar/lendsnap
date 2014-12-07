@@ -1,5 +1,2 @@
 media/node_modules*
-media/scss*
-media/Gruntfile.js
-media/gulpfile.js
-media/package.json
+media/css*
