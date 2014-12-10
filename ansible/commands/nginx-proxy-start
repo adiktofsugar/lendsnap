@@ -1,0 +1,32 @@
+#!/bin/bash
+project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ../..; pwd)
+
+dev_mode=false
+interactive=false
+while getopts ":id" opt; do
+    case $opt in
+        i) interactive=true;;
+        d) dev_mode=true;;
+        \?) echo "Not a supported option $OPTARG"; exit 1;;
+    esac
+done
+args=${@:$OPTIND}
+
+interactive_option="-d"
+if [ $interactive = true ];then
+    interactive_option="-ti --rm"
+fi
+dev_volume=""
+if [ $dev_mode = true ];then
+    dev_volume="\
+    -v $project_root/code/nginx-proxy/nginx.conf:/etc/nginx.conf \
+    -v $project_root/code/nginx-proxy/real-signed-cert:/etc/nginx/real-signed-cert"
+fi
+
+docker run --name nginx-proxy $interactive_option \
+    -p 80:80 -p 443:443 \
+    $dev_volume \
+    --volumes-from data-uploaded \
+    --link media:media \
+    --link node:node \
+    nginx-proxy $args

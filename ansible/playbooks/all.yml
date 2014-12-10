@@ -17,35 +17,59 @@
                 -u {{ db_user }}
                 -p {{ db_password }}
 
--   hosts: webapp
+-   hosts: media
     tasks:
-    -   name: Start data
+    -   name: Start uploaded data
+        command: >
+            {{ project_root }}/ansible/commands/data-uploaded-start
+        ignore_errors: true
+
+    -   name: Build media
+        command: >
+            {{ project_root }}/ansible/commands/media-build
+    -   name: Stop media
+        command: >
+            docker rm -f media
+        ignore_errors: true
+    -   name: Start media
+        command: >
+            {{ project_root }}/ansible/commands/media-start {{ dev_mode_option }}
+
+-   hosts: node
+    tasks:
+    -   name: Start uploaded data
         command: >
             {{ project_root }}/ansible/commands/data-uploaded-start
         ignore_errors: true
 
     -   name: Stop node
-        command: docker rm -f node-webapp
+        command: docker rm -f node
         ignore_errors: true
 
     -   name: Build node
         command: >
-            docker build -t node {{ project_root }}/code/node
+            {{ project_root }}/ansible/commands/node-build
 
     -   name: Start node
         command: >
             {{ project_root }}/ansible/commands/node-start {{ dev_mode_option }}
 
-    -   name: Stop nginx
-        command: docker rm -f nginx
+
+-   hosts: nginx_proxy
+    tasks:
+    -   name: Start uploaded data
+        command: >
+            {{ project_root }}/ansible/commands/data-uploaded-start
         ignore_errors: true
 
-    -   name: Build nginx
+    -   name: Stop nginx proxy
+        command: docker rm -f nginx-proxy
+        ignore_errors: true
+
+    -   name: Build nginx proxy
         command: >
-            docker build -t nginx {{ project_root }}/code/nginx
+            {{ project_root }}/ansible/commands/nginx-proxy-build
 
-    -   name: Start nginx
+    -   name: Start nginx proxy
         command: >
-            {{ project_root }}/ansible/commands/nginx-start {{ dev_mode_option }}
-
-
+            {{ project_root }}/ansible/commands/nginx-proxy-start {{ dev_mode_option }}

@@ -1,3 +1,12 @@
+deployment
+----
+i need a "commit docker image" step so that the coreos instances can all pull it
+ansible should use the etcd coreos service to communicate between them i guess?
+I think the process is
+- commit docker instances
+- set up core os group and assign roles to each one
+- ansible commands basically just make the hosts pull a docker image and run commands on it
+
 auth
 ---
 Cookies just hold access_token

@@ -15,6 +15,7 @@ args="${@:$OPTIND}"
 
 docker run --name db -t -d \
     --volumes-from data-db \
+    -P \
     -e MYSQL_ROOT_PASSWORD=$root_pass \
     -e LS_NAME=$db_name \
     -e LS_USER=$db_user \

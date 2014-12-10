@@ -15,9 +15,9 @@ if [ $dev_mode = true ];then
     dev_volume="-v $project_root/code/node:/var/lendsnap/node "
 fi
 
-docker run --name node-webapp -t -d \
+docker run --name node -t -d \
     $dev_volume \
-    --volumes-from data-uploaded \
     -p 3000:3000 \
+    --volumes-from data-uploaded \
     --link db:db \
     node
