@@ -1,7 +1,9 @@
--   hosts: all
+-   hosts: coreos
     gather_facts: False
     roles:
         -   defunctzombie.coreos-bootstrap
+
+-   hosts: all
     tasks:
         # -   name: git repo
         #     git: repo=git://git@github.com:lendsnap/lendsnap dest=/var/lendsnap-repo accept_hostkey=yes

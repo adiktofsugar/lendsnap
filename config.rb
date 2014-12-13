@@ -2,17 +2,19 @@
 # To automatically replace the discovery token on 'vagrant up', uncomment
 # the lines below:
 #
-if File.exists?('deploy/user-data') && ARGV[0].eql?('up')
+TEMPLATE_CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "deploy/user-data-template")
+CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "deploy/user-data")
+if File.exists?(TEMPLATE_CLOUD_CONFIG_PATH) && ARGV[0].eql?('up')
  require 'open-uri'
  require 'yaml'
 
  token = open('https://discovery.etcd.io/new').read
 
- data = YAML.load(IO.readlines('deploy/user-data')[1..-1].join)
+ data = YAML.load(IO.readlines(TEMPLATE_CLOUD_CONFIG_PATH)[1..-1].join)
  data['coreos']['etcd']['discovery'] = token
 
  yaml = YAML.dump(data)
- File.open('deploy/user-data', 'w') { |file| file.write("#cloud-config\n\n#{yaml}") }
+ File.open(CLOUD_CONFIG_PATH, 'w') { |file| file.write("#cloud-config\n\n#{yaml}") }
 end
 
 
