@@ -1,25 +1,17 @@
-[node]
-localhost
+[webapp]
+core-01
 
 [db]
-localhost
+core-02
 
-[media]
-localhost
-
-[nginx_proxy]
-localhost
 
 [shared:children]
-node
+webapp
 db
-media
-nginx_proxy
 
 [shared:vars]
-ansible_connection=local
 ansible_gather_facts=false
-dev_mode_option=-d
+ansible_ssh_user=core
 db_root_password=a
 db_name=lendsnap
 db_user=lendsnap

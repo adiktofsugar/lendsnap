@@ -1,0 +1,15 @@
+[Unit]
+Description=Data only container for uploaded data
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %n
+ExecStartPre=-/usr/bin/docker rm -f %n
+ExecStart=/usr/bin/docker run --name %n busybox \
+    -v /var/lendsnap/uploaded \
+    echo "Data only container for nginx (uploaded files)"
+ExecStop=/usr/bin/docker stop -t 3 %n
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+[Unit]
+Description=Data only container for mysql
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %n
+ExecStartPre=-/usr/bin/docker rm -f %n
+ExecStart=/usr/bin/docker run --name %n mysql echo "Data only container for mysql started"
+ExecStop=/usr/bin/docker stop -t 3 %n
+
+[Install]
+WantedBy=multi-user.target

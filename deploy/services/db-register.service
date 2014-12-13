@@ -1,0 +1,17 @@
+[Unit]
+Description=Db docker register
+After=docker.service
+Requires=docker.service
+After=db.service
+Requires=db.service
+
+[Service]
+ExecStartPre=/usr/bin/docker pull polvi/docker-register
+ExecStart=/usr/bin/docker run --name %n --rm \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -e ETCD_PORT_10000_TCP_ADDR=172.17.8.103 \
+    -e ETCD_PORT_10000_TCP_PORT=4001 \
+    polvi/docker-register db.service 3306 db-A
+
+[Install]
+WantedBy=multi-user.target

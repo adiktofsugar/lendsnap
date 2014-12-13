@@ -1,75 +1,38 @@
--   hosts: db
+-   hosts: all
+    gather_facts: False
+    roles:
+        -   defunctzombie.coreos-bootstrap
     tasks:
-    -   name: Start db data
-        command: >
-            {{ project_root }}/ansible/commands/data-db-start
-        ignore_errors: true
+        # -   name: git repo
+        #     git: repo=git://git@github.com:lendsnap/lendsnap dest=/var/lendsnap-repo accept_hostkey=yes
+        -   name: Enable systemctl modules
+            raw: systemctl enable /var/lendsnap-repo/deploy/services/*.service
+            sudo: yes
 
-    -   name: Stop db
-        command: docker rm -f db
-        ignore_errors: true
+-   hosts: db
+    sudo: yes
+    tasks:
+    -   name: Pull mysql image
+        raw: docker pull mysql
+    -   name: Pull docker register image
+        raw: docker pull polvi/docker-register
 
     -   name: Start db
-        command: >
-            {{ project_root }}/ansible/commands/db-start
-                -r {{ db_root_password }}
-                -n {{ db_name }}
-                -u {{ db_user }}
-                -p {{ db_password }}
+        raw: systemctl start db
+    -   name: Start db-register
+        raw: systemctl start db-register
 
--   hosts: media
+-   hosts: webserver
+    sudo: yes
     tasks:
-    -   name: Start uploaded data
-        command: >
-            {{ project_root }}/ansible/commands/data-uploaded-start
-        ignore_errors: true
-
-    -   name: Build media
-        command: >
-            {{ project_root }}/ansible/commands/media-build
-    -   name: Stop media
-        command: >
-            docker rm -f media
-        ignore_errors: true
-    -   name: Start media
-        command: >
-            {{ project_root }}/ansible/commands/media-start {{ dev_mode_option }}
-
--   hosts: node
-    tasks:
-    -   name: Start uploaded data
-        command: >
-            {{ project_root }}/ansible/commands/data-uploaded-start
-        ignore_errors: true
-
-    -   name: Stop node
-        command: docker rm -f node
-        ignore_errors: true
-
+    -   name: Pull polvi/dynamic-etcd-amb
+        raw: docker pull polvi/dynamic-etcd-amb
     -   name: Build node
-        command: >
-            {{ project_root }}/ansible/commands/node-build
+        raw: docker build -t node /var/lendsnap-repo/code/node
+    -   name: Build nginx proxy
+        raw: docker build -t nginx-proxy /var/lendsnap-repo/code/nginx-proxy
 
     -   name: Start node
-        command: >
-            {{ project_root }}/ansible/commands/node-start {{ dev_mode_option }}
-
-
--   hosts: nginx_proxy
-    tasks:
-    -   name: Start uploaded data
-        command: >
-            {{ project_root }}/ansible/commands/data-uploaded-start
-        ignore_errors: true
-
-    -   name: Stop nginx proxy
-        command: docker rm -f nginx-proxy
-        ignore_errors: true
-
-    -   name: Build nginx proxy
-        command: >
-            {{ project_root }}/ansible/commands/nginx-proxy-build
-
-    -   name: Start nginx proxy
-        command: >
-            {{ project_root }}/ansible/commands/nginx-proxy-start {{ dev_mode_option }}
+        raw: systemctl start node
+    -   name: Start nginx
+        raw: systemctl start nginx-proxy

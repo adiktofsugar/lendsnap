@@ -1,0 +1,19 @@
+[Unit]
+Description=Node webapp
+After=docker.service
+Requires=docker.service
+Requires=data-uploaded.service
+Requires=db-dynamic-ambassador.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %n
+ExecStartPre=-/usr/bin/docker rm -f %n
+ExecStart=/usr/bin/docker run --rm --name %n \
+    -p 3000:3000 \
+    --volumes-from data-uploaded.service \
+    --link db-dynamic-ambassador.service:db \
+    node
+ExecStop=/usr/bin/docker stop -t 3 %n
+
+[Install]
+WantedBy=multi-user.target

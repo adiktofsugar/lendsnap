@@ -1,0 +1,16 @@
+[Unit]
+Description=Dynamic ambassador for db.service
+After=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %n
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStart=/usr/bin/docker run --rm -name %n \
+    -e ETCD_PORT_10000_TCP_ADDR=172.17.8.103 \
+    -e ETCD_PORT_10000_TCP_PORT=4001 \
+    -p 127.0.0.1:3306:3306 \
+    polvi/dynamic-etcd-amb db-A 3306
+ExecStop=/usr/bin/docker stop -t 3 %n
+
+[Install]
+WantedBy=multi-user.target

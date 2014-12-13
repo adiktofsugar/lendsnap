@@ -1,0 +1,24 @@
+[Unit]
+Description=Runs the database
+After=docker.service
+After=data-db.service
+Requires=docker.service
+Requires=data-db.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %n
+ExecStartPre=-/usr/bin/docker rm -f %n
+ExecStart=/bin/bash -c "HOST_IP=$(/bin/ifconfig enp0s8 | awk '/inet /{print $2}') && exec \
+    /usr/bin/docker run --rm --name %n \
+    --volumes-from data-db.service \
+    -p $HOST_IP:3306:3306 \
+    -e MYSQL_ROOT_PASSWORD=a \
+    -e LS_NAME=lendsnap \
+    -e LS_USER=lendsnap \
+    -e LS_PASSWORD=a \
+    -e LS_ROOT_PASSWORD=a \
+    mysql"
+ExecStop=/usr/bin/docker stop -t 3 %n
+
+[Install]
+WantedBy=multi-user.target
