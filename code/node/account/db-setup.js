@@ -1,4 +1,4 @@
-var md5 = require("md5");
+var md5 = require("MD5");
 var async = require("async");
 var chalk = require("chalk");
 
