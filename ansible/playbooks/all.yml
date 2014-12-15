@@ -24,10 +24,12 @@
     -   name: Start db-register
         raw: systemctl start db-register
 
--   hosts: webserver
+-   hosts: webapp
     sudo: yes
     tasks:
     -   name: Pull polvi/dynamic-etcd-amb
+        raw: docker pull polvi/dynamic-etcd-amb
+    -   name: Pull phusion/baseimage:0.9.15
         raw: docker pull polvi/dynamic-etcd-amb
     -   name: Build node
         raw: docker build -t node /var/lendsnap-repo/code/node

@@ -3,6 +3,7 @@ Description=Nginx proxy
 After=docker.service
 Requires=docker.service
 Requires=data-uploaded.service
+Requires=media.service
 Requires=node.service
 
 [Service]
@@ -11,6 +12,8 @@ ExecStartPre=-/usr/bin/docker rm -f %n
 ExecStart=/usr/bin/docker run --rm --name %n \
     -p 80:80 -p 443:443 \
     --volumes-from data-uploaded.service \
+    --volumes-from media.service \
+    -v /var/lendsnap-repo/code/nginx-proxy:/var/lendsnap/nginx-proxy \
     --link node.service:node \
     nginx-proxy
 ExecStop=/usr/bin/docker stop -t 3 %n

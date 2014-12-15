@@ -4,7 +4,6 @@ core-01
 [db]
 core-02
 
-
 [shared:children]
 webapp
 db

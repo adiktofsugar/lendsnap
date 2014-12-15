@@ -13,10 +13,6 @@ ExecStart=/bin/bash -c "HOST_IP=$(/bin/ifconfig enp0s8 | awk '/inet /{print $2}'
     --volumes-from data-db.service \
     -p $HOST_IP:3306:3306 \
     -e MYSQL_ROOT_PASSWORD=a \
-    -e LS_NAME=lendsnap \
-    -e LS_USER=lendsnap \
-    -e LS_PASSWORD=a \
-    -e LS_ROOT_PASSWORD=a \
     mysql"
 ExecStop=/usr/bin/docker stop -t 3 %n
 

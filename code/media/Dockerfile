@@ -9,15 +9,16 @@ CMD ["/sbin/my_init"]
 
 RUN apt-get update
 RUN apt-get -y install nodejs nodejs-legacy npm
-RUN npm install -g forever
+RUN npm install -g gulp
 
-VOLUME /var/lendsnap/uploaded
-VOLUME /var/lendsnap/node
+VOLUME /var/lendsnap/media
 
-EXPOSE 3000
-RUN mkdir /etc/service/node
-RUN ln -s /var/lendsnap/node/run.sh /etc/service/node/run
+RUN mkdir /etc/service/media
+RUN ln -s /var/lendsnap/media/run.sh /etc/service/media/run
 RUN /usr/sbin/enable_insecure_key
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+
+
