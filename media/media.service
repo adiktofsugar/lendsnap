@@ -1,0 +1,14 @@
+[Unit]
+Description=Builds media
+Requires=docker.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %n
+ExecStartPre=-/usr/bin/docker rm -f %n
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name %n \
+    -v /var/lendsnap-repo/media:/var/lendsnap/media \
+    media"
+ExecStop=/usr/bin/docker stop -t 3 %n
+
+[X-Fleet]
+MachineOf=nginx-proxy

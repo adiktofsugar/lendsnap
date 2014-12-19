@@ -1,0 +1,6 @@
+#!/bin/bash
+fleetctl load /var/lendsnap-repo/data/data-db.service
+fleetctl load /var/lendsnap-repo/db/db-register.service
+fleetctl load /var/lendsnap-repo/db/db.service
+docker pull mysql
+docker pull polvi/docker-register

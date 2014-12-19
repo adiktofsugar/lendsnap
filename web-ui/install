@@ -1,0 +1,5 @@
+#!/bin/bash
+fleetctl load /var/lendsnap-repo/data/data-uploaded.service
+
+docker build -t web-ui /var/lendsnap-repo/web-ui
+fleetctl load /var/lendsnap-repo/web-ui/web-ui.service

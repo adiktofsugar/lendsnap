@@ -1,0 +1,21 @@
+[Unit]
+Description=Node webapp
+Requires=docker.service data-uploaded.service
+After=docker.service data-uploaded.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %n
+ExecStartPre=-/usr/bin/docker rm -f %n
+ExecStart=/bin/bash -c "\
+    etcd_host=`ifconfig docker0 | grep -o 'inet [0-9.]*' | cut -d ' ' -f 2`; \
+    docker run --rm --name %n \
+    -p 3000:3000 \
+    -e ETCD_HOST=$etcd_host \
+    -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4` \
+    -v /var/lendsnap-repo/web-ui:/var/lendsnap/web-ui \
+    --volumes-from data-uploaded.service \
+    web-ui"
+ExecStop=/usr/bin/docker stop -t 3 %n
+
+[X-Fleet]
+MachineOf=nginx-proxy

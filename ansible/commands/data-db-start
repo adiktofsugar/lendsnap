@@ -1,2 +1,0 @@
-#!/bin/bash
-docker run --name data-db -d mysql echo "Data only container for mysql"

@@ -1,0 +1,16 @@
+[Unit]
+Description=Runs the database
+Requires=docker.service data-db.service
+After=docker.service data-db.service
+
+[Service]
+ExecStartPre=-/usr/bin/docker kill %n
+ExecStartPre=-/usr/bin/docker rm -f %n
+ExecStart=/bin/bash -c "\
+    MACHINE_PRIVATE_IP=`cat /etc/private_ipv4`; \
+    /usr/bin/docker run --rm --name %n \
+    --volumes-from data-db.service \
+    -p $MACHINE_PRIVATE_IP:3306:3306 \
+    -e MYSQL_ROOT_PASSWORD=a \
+    mysql"
+ExecStop=/usr/bin/docker stop -t 3 %n

@@ -1,4 +1,0 @@
-#!/bin/bash -eu
-docker run --name db-console -ti --rm \
-    --link db:db \
-    mysql mysql -u root -pa -h db $@

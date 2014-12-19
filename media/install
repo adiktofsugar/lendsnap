@@ -1,0 +1,3 @@
+#!/bin/bash
+docker build -t media /var/lendsnap-repo/media
+fleetctl load /var/lendsnap-repo/media/media.service

@@ -1,0 +1,11 @@
+[Unit]
+Description=Data only container for mysql
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStart=/usr/bin/docker run --name %n mysql echo "Data only container for mysql started"
+RemainAfterExit=yes
+
+[X-Fleet]
+MachineOf=db

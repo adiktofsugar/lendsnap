@@ -5,30 +5,41 @@ require 'fileutils'
 
 Vagrant.require_version ">= 1.6.0"
 
-CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "deploy/user-data")
-CONFIG = File.join(File.dirname(__FILE__), "config.rb")
+#
+# coreos-vagrant is configured through a series of configuration
+# options (global ruby variables) which are detailed below. To modify
+# these options, first copy this file to "config.rb". Then simply
+# uncomment the necessary lines, leaving the $, and replace everything
+# after the equals sign..
 
-# Defaults for config options defined in CONFIG
-$num_instances = 1
-$update_channel = "alpha"
-$enable_serial_logging = false
+# Size of the CoreOS cluster created by Vagrant
+$user_datas=["webserver", "db"]
+
+# Official CoreOS channel from which updates should be downloaded
+$update_channel='stable'
+
+# Log the serial consoles of CoreOS VMs to log/
+# Enable by setting value to true, disable with false
+# WARNING: Serial logging is known to result in extremely high CPU usage with
+# VirtualBox, so should only be used in debugging situations
+$enable_serial_logging=false
+
+# Enable port forwarding of Docker TCP socket
+# Set to the TCP port you want exposed on the *host* machine, default is 2375
+# If 2375 is used, Vagrant will auto-increment (e.g. in the case of $num_instances > 1)
+# You can then use the docker tool locally by setting the following env var:
+#   export DOCKER_HOST='tcp://127.0.0.1:2375'
+$expose_docker_tcp=2375
+
+# Setting for VirtualBox VMs
 $vb_gui = false
 $vb_memory = 1024
 $vb_cpus = 1
 
-# Attempt to apply the deprecated environment variable NUM_INSTANCES to
-# $num_instances while allowing config.rb to override it
-if ENV["NUM_INSTANCES"].to_i > 0 && ENV["NUM_INSTANCES"]
-  $num_instances = ENV["NUM_INSTANCES"].to_i
-end
-
-if File.exist?(CONFIG)
-  require CONFIG
-end
 
 Vagrant.configure("2") do |config|
   config.vm.box = "coreos-%s" % $update_channel
-  config.vm.box_version = ">= 308.0.1"
+  config.vm.box_version = ">= 494.4.0"
   config.vm.box_url = "http://%s.release.core-os.net/amd64-usr/current/coreos_production_vagrant.json" % $update_channel
 
   config.vm.provider :vmware_fusion do |vb, override|
@@ -47,8 +58,14 @@ Vagrant.configure("2") do |config|
     config.vbguest.auto_update = false
   end
 
-  (1..$num_instances).each do |i|
+  if ARGV[0].eql?('up')
+    token = open('https://discovery.etcd.io/new').read
+  end
+
+  $user_datas.each_with_index do |user_data_name, i|
+    user_data_file = File.open('deploy/#{user_data_name}-user-data')
     config.vm.define vm_name = "core-%02d" % i do |config|
+      
       config.vm.hostname = vm_name
 
       if $enable_serial_logging
@@ -92,11 +109,25 @@ Vagrant.configure("2") do |config|
       config.vm.synced_folder ".", "/var/lendsnap-repo",
         id: "lendsnap", :nfs => true, :mount_options => ['nolock,vers=3,udp']
 
-      if File.exist?(CLOUD_CONFIG_PATH)
-        config.vm.provision :file, :source => "#{CLOUD_CONFIG_PATH}", :destination => "/tmp/vagrantfile-user-data"
-        config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
-      end
+      # Replace discovery token with new one on vagrant up
+      if ARGV[0].eql?('up')
+        temporary_user_data_path=File.join(File.dirname(__FILE__), 'deploy/.temporary-#{user_data_name}-user-data')
+        if !File.exists?(temporary_user_data_path)
+          require 'open-uri'
+          require 'yaml'
 
+          data = YAML.load(IO.readlines(temporary_user_data_path)[1..-1].join)
+          data['coreos']['etcd']['discovery'] = token
+
+          yaml = YAML.dump(data)
+          File.open(temporary_user_data_path, 'w') { |file| file.write("#cloud-config\n\n#{yaml}") }
+        else
+          puts "Using existing cloud config data at #{temporary_user_data_path}"
+        end
+        
+        config.vm.provision :file, :source => "#{temporary_user_data_path}", :destination => "/tmp/vagrantfile-user-data"
+        config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
+      end        
     end
   end
 end
