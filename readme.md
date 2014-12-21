@@ -2,12 +2,13 @@ Lendsnap
 =====
 
 Setup:
- - Install ansible
- - Install docker
- - `echo "source $(pwd)/bin/profile.sh" >> ~/.profile; source ~/.profile`
-To start everything, use `lendplay all`
+ - Install vagrant
+ - Install virtualbox
+Run `vagrant up`;
+Run `vagrant ssh core-01`; `/var/lendsnap-repo/install`; `sudo systemctl start web-ui`
+Run `vagrant ssh core-02`; `/var/lendsnap-repo/install`; `sudo systemctl start db`
 
-Spec: https://www.dropbox.com/s/gqe638u7r6pohkb/141020.SPEC.Prototype%20rev%203.INT.OWP.docx?dl=0
+Spec: https://drive.google.com/open?id=1UEGZj9TWp1thlY5ItUdeCVzZOVloC-nxbebRD9EJUgw
 
 JS Code standards
 ----
