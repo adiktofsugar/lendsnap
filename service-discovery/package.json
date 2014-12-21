@@ -1,8 +1,0 @@
-{
-  "name": "service-discovery",
-  "version": "0.0.1",
-  "dependencies": {
-    "node-etcd": "^3.0.2",
-    "nomnom": "~1.8.1"
-  }
-}
