@@ -1,6 +1,5 @@
 #!/bin/bash
-fleetctl load /var/lendsnap-repo/data/data-db.service
-fleetctl load /var/lendsnap-repo/db/db-register.service
-fleetctl load /var/lendsnap-repo/db/db.service
+sudo systemctl enable /var/lendsnap-repo/data/data-db.service
+sudo systemctl enable /var/lendsnap-repo/db/db.service
+sudo systemctl enable /var/lendsnap-repo/db/db-announce.service
 docker pull mysql
-docker pull polvi/docker-register

@@ -4,8 +4,8 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-ExecStart=/usr/bin/docker run --name %n mysql echo "Data only container for mysql started"
+ExecStart=/usr/bin/docker run --name %p mysql echo "Data only container for mysql started"
 RemainAfterExit=yes
 
-[X-Fleet]
-MachineOf=db
+[Install]
+RequiredBy=db.service

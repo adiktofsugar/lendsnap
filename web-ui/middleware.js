@@ -1,7 +1,14 @@
 var _ = require('lodash');
 var Uri = require('jsuri');
 var Qs = require('qs');
+var accountService = require('./account/service');
 
+function addUser(req, res, next) {
+    req.getUser = function (callback) {
+        accountService.getUserById(req.session.userId, callback);
+    };
+    next();
+}
 function addQuery(req, res, next) {    
     var uri = new Uri(req.url);
     
@@ -39,21 +46,23 @@ function addRender(req, res, next) {
         if (pageTitleParts.length) {
             pageTitle += " - " + pageTitleParts.join(" - ");
         }
-        
-        data = _.extend({
-            version: "123",
-            page_title: pageTitle,
-            user: req.user,
-            error: req.query.error,
-            message: req.query.message
-        }, data || {});
-        console.log("TEMPLATE DATA - ", data);
 
-        res.writeHead(200, {
-            'Content-type': 'text/html'
+        req.getUser(function (error, user) {
+            data = _.extend({
+                version: "123",
+                page_title: pageTitle,
+                user: user,
+                error: req.query.error,
+                message: req.query.message
+            }, data || {});
+            console.log("TEMPLATE DATA - ", data);
+
+            res.writeHead(200, {
+                'Content-type': 'text/html'
+            });
+            res.write(req.nunjucks.render(templateName, data));
+            res.end();
         });
-        res.write(req.nunjucks.render(templateName, data));
-        res.end();
     };
     next();
 }
@@ -107,6 +116,7 @@ function errorHandler(err, req, res, next) {
 }
 
 module.exports = {
+    addUser: addUser,
     addQuery: addQuery,
     addMethodByQuery: addMethodByQuery,
     addRedirect: addRedirect,

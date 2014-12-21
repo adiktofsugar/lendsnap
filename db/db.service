@@ -9,8 +9,11 @@ ExecStartPre=-/usr/bin/docker rm -f %n
 ExecStart=/bin/bash -c "\
     MACHINE_PRIVATE_IP=`cat /etc/private_ipv4`; \
     /usr/bin/docker run --rm --name %n \
-    --volumes-from data-db.service \
+    --volumes-from data-db \
     -p $MACHINE_PRIVATE_IP:3306:3306 \
     -e MYSQL_ROOT_PASSWORD=a \
     mysql"
 ExecStop=/usr/bin/docker stop -t 3 %n
+
+[Install]
+WantedBy=db.target

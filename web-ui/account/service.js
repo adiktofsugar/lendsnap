@@ -42,8 +42,9 @@ function login (req, userOrEmail, cbOrPassword, cb) {
 }
 
 function logout(req, cb) {
+    var userId = req.session.userId;
+    console.info("account.logout", "id", userId);
     delete req.session.userId;
-    console.info("account.logout - " + req.user.email);
     cb(null);
 }
 

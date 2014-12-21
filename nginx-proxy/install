@@ -1,6 +1,0 @@
-#!/bin/bash
-/var/lendsnap-repo/media/install
-fleetctl load /var/lendsnap-repo/data/data-uploaded.service
-
-docker build -t nginx-proxy /var/lendsnap-repo/nginx-proxy
-fleetctl load /var/lendsnap-repo/nginx-proxy/nginx-proxy.service

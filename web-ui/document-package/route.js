@@ -9,20 +9,16 @@ var Busboy = require('busboy');
 
 function mount (app) {
     app.router.addRoute('/document-package', function (req, res, next) {
-        documentPackageService.getDocumentPackagesByUserId(req.user.id,
-        function (error, documentPackages) {
+        var render = function (error, documentPackages) {
             res.render('document-package/index.html', {
                 error: error,
                 document_packages: documentPackages
             });
-        });
+        };
+        documentPackageService.getDocumentPackagesByUserId(req.session.userId, render);
     });
     app.router.addRoute('/document-package/new', function (req, res, next) {
-        documentPackageService.createDocumentPackage({
-                user_id: req.user.id,
-                banker_user_id: req.user.is_banker ? req.user.id : null
-            },
-        function (error, documentPackage) {
+        var render = function (error, documentPackage) {
             if (error) { return next(error); }
 
             res.render('document-package/package-new.html', {
@@ -30,6 +26,15 @@ function mount (app) {
                 document_package: documentPackage,
                 documents: []
             });
+        };
+        req.getUser(function (error, user) {
+            if (error) {
+                return render(error);
+            }
+            documentPackageService.createDocumentPackage({
+                user_id: user.id,
+                banker_user_id: user.is_banker ? user.id : null
+            }, render);
         });
     });
     app.router.addRoute('/document-package/:id', function (req, res, next) {
@@ -120,7 +125,7 @@ function mount (app) {
     });
     app.router.addRoute('/document-package/:id/document', function (req, res, next) {
         var documentPackageId = req.params.id;
-        var userId = req.user.id;
+        var userId = req.session.userId;
 
         if (req.method == "POST") {
             var groupName = req.body.group_name;

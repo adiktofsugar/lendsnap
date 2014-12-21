@@ -27,10 +27,12 @@ var next = function (error) {
     process.exit();
 };
 
-dbSetup({
-    destroy: options.destroy,
-    baseData: options.baseData
-}, function (error) {
-    if (error) return next(error);
-    next();
+config.dbReady(function () {
+    dbSetup({
+        destroy: options.destroy,
+        baseData: options.baseData
+    }, function (error) {
+        if (error) return next(error);
+        next();
+    });
 });

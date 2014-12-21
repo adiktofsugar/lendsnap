@@ -112,7 +112,12 @@ function mount(app) {
             if (req.body.id) {
                 updateUser(req.body.id);
             } else {
-                updateUser(req.user.id);
+                req.getUser(function (error, user) {
+                    if (error) {
+                        return next(error);
+                    }
+                    updateUser(user.id);
+                });
             }
         }
     });

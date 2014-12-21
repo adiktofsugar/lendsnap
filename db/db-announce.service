@@ -1,0 +1,9 @@
+[Unit]
+Description=Announces the database
+BindsTo=db.service
+
+[Service]
+ExecStart=/bin/bash /var/lendsnap-repo/db/announce
+
+[Install]
+RequiredBy=db.service

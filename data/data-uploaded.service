@@ -3,10 +3,10 @@ Description=Data only container for uploaded data
 After=docker.service
 
 [Service]
-ExecStart=/usr/bin/docker run --name %n \
-    -v /var/lendsnap/uploaded \
+ExecStart=/usr/bin/docker run --name %p \
+    -v /mnt/uploaded:/var/lendsnap/uploaded \
     busybox echo "Data only container for nginx (uploaded files)"
 RemainAfterExit=yes
 
-[X-Fleet]
-MachineOf=nginx-proxy
+[Install]
+WantedBy=webapp.target

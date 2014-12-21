@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 
-var excludedFolders = ["node_modules", "templates", "test", "scripts"];
+var excludedFolders = ["node_modules", "templates", "test", "scripts", "real-signed-cert"];
 
 var getModules = function () {
     return fs.readdirSync(__dirname).filter(function (filepath) {

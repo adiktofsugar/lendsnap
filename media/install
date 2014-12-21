@@ -1,3 +1,4 @@
 #!/bin/bash
+sudo systemctl enable /var/lendsnap-repo/data/data-media.service
 docker build -t media /var/lendsnap-repo/media
-fleetctl load /var/lendsnap-repo/media/media.service
+sudo systemctl enable /var/lendsnap-repo/media/media.service

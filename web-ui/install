@@ -1,5 +1,7 @@
-#!/bin/bash
-fleetctl load /var/lendsnap-repo/data/data-uploaded.service
+#!/bin/bash -x
+/var/lendsnap-repo/media/install
+sudo systemctl enable /var/lendsnap-repo/data/data-uploaded.service
 
 docker build -t web-ui /var/lendsnap-repo/web-ui
-fleetctl load /var/lendsnap-repo/web-ui/web-ui.service
+sudo systemctl enable /var/lendsnap-repo/web-ui/web-ui.service
+sudo systemctl enable /var/lendsnap-repo/web-ui/web-ui-db-setup.service

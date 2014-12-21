@@ -3,7 +3,19 @@
 var _ = require('lodash');
 var connect = require('connect');
 var http = require('http');
+var https = require('https');
 var Url = require('jsuri');
+
+http.createServer(function (req, res) {
+    var uri = new Url(req.url);
+    uri.protocol('https');
+    uri.host(req.headers.host);
+    console.log("Redirecting to https version: " + uri.toString());
+    res.writeHead(301, "Only accessible through https", {
+        'Location': uri.toString()
+    });
+    res.end();
+}).listen(80);
 
 var app = connect();
 
@@ -36,6 +48,7 @@ app.use(function (req, res, next) {
 });
 
 var middleware = require('./middleware');
+app.use(middleware.addUser);
 app.use(middleware.addQuery);
 app.use(middleware.addMethodByQuery);
 app.use(middleware.addRedirect);
@@ -43,9 +56,6 @@ app.use(middleware.addRender);
 app.use(middleware.addJson);
 app.use(middleware.addJsonError);
 app.use(middleware.errorHandler);
-
-var accountMiddleware = require('./account/middleware');
-app.use(accountMiddleware.addUser);
 
 var Router = require('routes');
 app.router = new Router();
@@ -83,6 +93,12 @@ helper.getModules().forEach(function (moduleName) {
 });
 
 var config = require('./config');
-app.listen(config.port, function () {
+var fs = require('fs');
+
+var options = {
+  key: fs.readFileSync('real-signed-cert/host.key'),
+  cert: fs.readFileSync('real-signed-cert/bundle.crt')
+};
+https.createServer(options, app).listen(443, function () {
     config.broadcast();
 });

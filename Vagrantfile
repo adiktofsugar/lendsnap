@@ -59,11 +59,15 @@ Vagrant.configure("2") do |config|
   end
 
   if ARGV[0].eql?('up')
+    require 'open-uri'
     token = open('https://discovery.etcd.io/new').read
   end
 
   $user_datas.each_with_index do |user_data_name, i|
-    user_data_file = File.open('deploy/#{user_data_name}-user-data')
+    i = i + 1
+    user_data_path = File.join(File.dirname(__FILE__), "deploy/#{user_data_name}-user-data")
+    temporary_user_data_path=File.join(File.dirname(__FILE__), "deploy/.temporary-#{user_data_name}-user-data")
+
     config.vm.define vm_name = "core-%02d" % i do |config|
       
       config.vm.hostname = vm_name
@@ -111,12 +115,10 @@ Vagrant.configure("2") do |config|
 
       # Replace discovery token with new one on vagrant up
       if ARGV[0].eql?('up')
-        temporary_user_data_path=File.join(File.dirname(__FILE__), 'deploy/.temporary-#{user_data_name}-user-data')
         if !File.exists?(temporary_user_data_path)
-          require 'open-uri'
           require 'yaml'
 
-          data = YAML.load(IO.readlines(temporary_user_data_path)[1..-1].join)
+          data = YAML.load(IO.readlines(user_data_path)[1..-1].join)
           data['coreos']['etcd']['discovery'] = token
 
           yaml = YAML.dump(data)
@@ -127,7 +129,11 @@ Vagrant.configure("2") do |config|
         
         config.vm.provision :file, :source => "#{temporary_user_data_path}", :destination => "/tmp/vagrantfile-user-data"
         config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
-      end        
+      end
+
+      if ARGV[0].eql? 'destroy' and File.exists?(temporary_user_data_path)
+        File.unlink temporary_user_data_path
+      end
     end
   end
 end
