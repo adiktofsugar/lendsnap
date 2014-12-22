@@ -1,0 +1,18 @@
+[Unit]
+Description=Proxy to other services
+
+[Service]
+Restart=on-failed
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStart=/bin/bash -c "\
+    etcd_host=`ifconfig docker0 | awk '/inet /{print $2}'`;\
+    docker run --rm --name %p \
+    -e ETCD_HOST=$etcd_host \
+    -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4` \
+    -p 80:80 -p 443:443 \
+    -v /var/lendsnap-repo/proxy:/var/lendsnap/proxy \
+    proxy"
+ExecStop=-/usr/bin/docker rm -f %p
+
+[Install]
+WantedBy=public-ip.target

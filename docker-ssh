@@ -1,0 +1,11 @@
+#!/bin/bash
+project_root=$(cd `dirname ${BASH_SOURCE[0]}`; pwd)
+image_name=${1:-}
+if ! [[ "$image_name" ]]; then
+    echo "Image name is required."
+    exit 1
+fi
+ip_address=`docker inspect --format='{{.NetworkSettings.IPAddress}}' $image_name`
+
+set -x
+ssh -i $project_root/base-node/root_id_rsa -o "StrictHostKeyChecking no" root@$ip_address

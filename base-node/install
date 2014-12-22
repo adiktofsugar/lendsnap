@@ -1,0 +1,2 @@
+#!/bin/bash
+docker build -t lendsnap/base-node /var/lendsnap-repo/base-node

@@ -1,7 +1,0 @@
-config BR2_PACKAGE_LEVELDB
-	bool "leveldb"
-	help
-	  LevelDB is a fast key-value storage library written at Google that provides an ordered mapping from string keys to string values
-
-	  LevelDB project information is available at the following locations:
-	  https://code.google.com/p/leveldb/ (main homepage)

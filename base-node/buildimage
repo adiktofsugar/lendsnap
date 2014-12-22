@@ -1,0 +1,55 @@
+#!/bin/bash
+current_directory=$(cd `dirname ${BASH_SOURCE[0]}`; pwd)
+image_name=base-node
+buildroot_version=2014.05
+
+function ready_for_menuconfig {
+    set +x
+    mkdir $current_directory/src-buildroot
+    cd $current_directory/src-buildroot
+    wget -c http://buildroot.uclibc.org/downloads/buildroot-$buildroot_version.tar.gz
+    echo "exploding tar file"
+    sh -c "tar -xzvf buildroot-$buildroot_version.tar.gz" >>$current_directory/buildimage.log 2>&1
+    echo "copying buildroot config" 
+    cp -r $current_directory/buildroot.config buildroot-$buildroot_version/.config
+    rm -f output/images/rootfs.tar
+}
+
+function build {
+    cd $current_directory/buildroot-$buildroot_version
+    sh -c "make all" >> $current_directory/buildroot.log 2>&1
+}
+
+function fixup {
+    # quoted from the docker buildroot blog post
+    #
+    # You should see a small, lean, rootfs.tar file, containing the image to be imported 
+    # in Docker. But it’s not quite ready yet. We need to fix a few things. 
+    # 
+    # Docker sets the DNS configuration by bind-mounting over /etc/resolv.conf. 
+    # This means that /etc/resolv.conf has to be a standard file. By default, 
+    # buildroot makes it a symlink. We have to replace that 
+    # symlink with a file (an empty file will do). 
+    # 
+    # Likewise, Docker “injects” itself within containers by bind-mounting over /sbin/init. 
+    # This means that /sbin/init should be a regular file as well. By default, 
+    # buildroot makes it a symlink to busybox. We will change that, too.
+
+    echo "fix up the rootfs filesytem"
+    images_directory=$current_directory/output/images
+    mkdir -p $images_directory/fixup/sbin $images_directory/fixup/etc 
+    touch $images_directory/fixup/sbin/init $images_directory/fixup/etc/resolv.conf
+
+    rm -f $images_directory/fixup.tar
+    cp $images_directory/rootfs.tar $images_directory/fixup.tar
+    tar --append --verbose --file=$images_directory/fixup.tar --directory=$images_directory/fixup .
+
+    cp fixup.tar $current_directory/$image_name.tar
+}
+
+command=${1:-}
+case $command in
+    ready_for_menuconfig|build|fixup) eval $command;;
+    all) ready_for_menuconfig && build && fixup;;
+    *) echo "Not a valid command $command"; exit 1;;
+esac

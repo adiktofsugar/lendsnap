@@ -1,0 +1,4 @@
+# ignore the src-buildroot directory which is produced by buildimage
+src-buildroot
+buildimage.log
+buildroot.log

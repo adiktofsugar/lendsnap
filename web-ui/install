@@ -1,4 +1,5 @@
 #!/bin/bash -x
+/var/lendsnap-repo/base-node/install
 /var/lendsnap-repo/media/install
 sudo systemctl enable /var/lendsnap-repo/data/data-uploaded.service
 

@@ -1,0 +1,17 @@
+[Unit]
+Description=Authorization service
+
+[Service]
+ExecStartPre=-docker rm -f %p
+ExecStart=/bin/bash -c "\
+    etcd_host=`ifconfig docker0 | awk '/^inet /{print $2}'`;\
+    docker run --rm --name %p \
+    -e ETCD_HOST=$etcd_host \
+    -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4` \
+    -v /var/lendsnap-repo/authorization:/var/lendsnap/authorization \
+    authorization
+    "
+ExecStop=-docker rm -f %p
+
+[Install]
+WantedBy=auth-server.target

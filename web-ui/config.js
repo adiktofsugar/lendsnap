@@ -4,7 +4,8 @@ var etcd = new Etcd(process.env.ETCD_HOST);
 function broadcast() {
     var setInfo = function () {
         etcd.set("/services/web-ui", JSON.stringify({
-            host: process.env.MACHINE_PRIVATE_IP
+            host: process.env.MACHINE_PRIVATE_IP,
+            port: process.env.PORT
         }), { ttl: 30 });
     };
     setInterval(setInfo, 20000);

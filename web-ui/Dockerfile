@@ -1,12 +1,12 @@
-FROM jprjr/tinynode
+FROM lendsnap/base-node
 MAINTAINER Sean <anincrediblyshortname@gmail.com>
 
 VOLUME /var/lendsnap/uploaded
 VOLUME /var/lendsnap/media
 COPY . /var/lendsnap/web-ui
+RUN cd /var/lendsnap/web-ui && npm install
 
 EXPOSE 3000
 
-ENTRYPOINT /bin/bash
 WORKDIR /var/lendsnap/web-ui
-CMD node app.js
+CMD /usr/sbin/sshd && node app.js
