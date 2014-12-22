@@ -31,7 +31,7 @@ var getParameters = function (connectionName) {
 
 var getConnection = function (connectionName, callback) {
     callback = callback || function () {};
-    console.log("getConnection", connectionName);
+    //console.log("getConnection", connectionName);
     var parameters = getParameters(connectionName);
 
     var otherConnectionNames = Object.keys(connections).filter(function (openConnectionName) {
@@ -50,7 +50,7 @@ var getConnection = function (connectionName, callback) {
         currentConnection.destroy();
         currentConnection = undefined;
     }
-    console.log("connection parameters", parameters);
+    //console.log("connection parameters", parameters);
     if (!currentConnection) {
         currentConnection = mysql.createConnection(parameters);
         connections[connectionName] = currentConnection;

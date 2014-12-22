@@ -45,6 +45,7 @@ function updateServices() {
             nodes.forEach(function (node) {
                 var serviceKey = node.key;
                 var serviceKeyParts = serviceKey.replace(new RegExp('^/services/'), '').split('/');
+
                 var serviceValue = JSON.parse(node.value);
                 var currentServiceObject = servicesCache;
                 _.each(serviceKeyParts, function (keyPart) {
@@ -54,7 +55,9 @@ function updateServices() {
                     }
                     currentServiceObject = existing;
                 });
-                currentServiceObject = serviceValue;
+                _.each(serviceValue, function (value, key) {
+                    currentServiceObject[key] = value;
+                });
             });
         }
         console.log("services", servicesCache);

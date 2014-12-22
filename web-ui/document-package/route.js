@@ -5,7 +5,6 @@ var Uri = require('jsuri');
 var documentPackageService = require('./service');
 var accountService = require('../account/service');
 var async = require("async");
-var Busboy = require('busboy');
 
 function mount (app) {
     app.get('/document-package', function (req, res, next) {

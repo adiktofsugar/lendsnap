@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+var config = require('./config');
 var _ = require('lodash');
 var express = require('express');
 var http = require('http');
@@ -61,6 +62,7 @@ app.use(function addTemplateVariables(req, res, next) {
         pageTitle += " - " + pageTitleParts.join(" - ");
     }
     _.extend(app.locals, {
+        version: "324",
         page_title: pageTitle,
         error: req.query.error,
         message: req.query.message
@@ -96,24 +98,19 @@ helper.getModules().concat(['.']).forEach(function (moduleName) {
     try {
         moduleRoute = require(moduleRoutePath);
     } catch (e) {
+        console.log('route loading error', e);
         if (e.code !== "MODULE_NOT_FOUND") {
             throw e;
         }
     }
     if (!moduleRoute) {
+        console.log('skipping ',  moduleName, 'moduleRoutePath', moduleRoutePath);
         return;
     }
     console.log("adding routes for", moduleName);
     moduleRoute.mount(app);
 });
 
-
-var config = require('./config');
-var fs = require('fs');
-var options = {
-  key: fs.readFileSync('real-signed-cert/host.key'),
-  cert: fs.readFileSync('real-signed-cert/bundle.crt')
-};
 http.createServer(app).listen(3000, function () {
     config.broadcast();
 });

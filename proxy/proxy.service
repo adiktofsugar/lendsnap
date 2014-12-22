@@ -2,7 +2,7 @@
 Description=Proxy to other services
 
 [Service]
-Restart=on-failed
+Restart=always
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/bin/bash -c "\
     etcd_host=`ifconfig docker0 | awk '/inet /{print $2}'`;\

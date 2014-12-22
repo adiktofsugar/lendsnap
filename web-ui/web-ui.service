@@ -10,7 +10,7 @@ ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/bin/bash -c "\
     etcd_host=`ifconfig docker0 | grep -o 'inet [0-9.]*' | cut -d ' ' -f 2`; \
     docker run --rm --name %p \
-    -P \
+    -p 3000:3000 \
     -e ETCD_HOST=$etcd_host \
     -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4`\
     -v /var/lendsnap-repo/web-ui:/var/lendsnap/web-ui \

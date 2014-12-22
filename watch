@@ -6,8 +6,12 @@ temp_ssh_path="/tmp/$host-ssh-config"
 #vagrant ssh-config $host > $temp_ssh_path
 cat $temp_ssh_path
 while true; do
-    echo "Watching $core_01_services..."
-    first_file_changed=`fswatch -1 $core_01_services | head -n 1`
+    directories_to_watch=""
+    for service in $core_01_services;do
+        directories_to_watch="$directories_to_watch $project_root/$service"
+    done
+    echo "Watching $directories_to_watch..."
+    first_file_changed=`fswatch -1 $directories_to_watch | head -n 1`
     if [[ "$first_file_changed" ]];then
         relative_path=${first_file_changed:${#project_root}}
         app_name=`echo $relative_path | cut -d '/' -f 2`

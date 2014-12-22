@@ -1,5 +1,5 @@
-var send = require('send');
 var Uri = require('jsuri');
+var send = require('send');
 
 function mount (app) {
     app.get('/', function (req, res, next) {

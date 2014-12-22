@@ -5,7 +5,7 @@ function broadcast() {
     var setInfo = function () {
         etcd.set("/services/web-ui", JSON.stringify({
             host: process.env.MACHINE_PRIVATE_IP,
-            port: process.env.PORT
+            port: 3000
         }), { ttl: 30 });
     };
     setInterval(setInfo, 20000);
