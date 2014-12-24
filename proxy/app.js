@@ -28,7 +28,7 @@ function listener(req, res) {
         app = "authorization";
     }
 
-    var service = config.services[app];
+    var service = config.serviceRegister.getService(app);
     if (service) {
         return proxy.web(req, res, {
             target: 'http://' + service.host + ':' + service.port
@@ -49,6 +49,6 @@ var options = {
   cert: fs.readFileSync('real-signed-cert/bundle.crt')
 };
 https.createServer(options, listener).listen(443, function () {
-    config.broadcast();
+    config.serviceRegister.broadcast();
     console.log("Proxy listening on 443");
 });

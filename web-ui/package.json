@@ -17,6 +17,7 @@
     "node-etcd": "^3.0.2",
     "express": "^4.10.6",
     "multer": "^0.1.6",
-    "send": "^0.10.1"
+    "send": "^0.10.1",
+    "lendsnap-service-register": "file:../base-node/custom-modules/lendsnap-service-register"
   }
 }

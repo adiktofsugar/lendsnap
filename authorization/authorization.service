@@ -1,7 +1,11 @@
 [Unit]
 Description=Authorization service
+Requires=base-node.service
+After=base-node.service
 
 [Service]
+TimeoutStartSec=0
+ExecStarPre=/usr/bin/docker build -t authorization /var/lendsnap-repo/authorization
 ExecStartPre=-docker rm -f %p
 ExecStart=/bin/bash -c "\
     etcd_host=`ifconfig docker0 | awk '/^inet /{print $2}'`;\

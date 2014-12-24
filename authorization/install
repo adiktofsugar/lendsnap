@@ -1,4 +1,0 @@
-#!/bin/bash
-/var/lendsnap-repo/base-node/install
-docker build -t authorization /var/lendsnap-repo/authorization
-sudo systemctl enable /var/lendsnap-repo/authorization/authorization.service

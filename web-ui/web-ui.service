@@ -1,10 +1,12 @@
 [Unit]
 Description=Node webapp
-Requires=docker.service data-uploaded.service media.service
-After=docker.service media.service data-uploaded.service
+Requires=base-node.service data-uploaded.service media.service
+After=base-node.service media.service data-uploaded.service
 
 [Service]
 Restart=on-failure
+TimeoutStartSec=0
+ExecStarPre=/usr/bin/docker build -t web-ui /var/lendsnap-repo/web-ui
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/bin/bash -c "\

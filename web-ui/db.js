@@ -2,22 +2,49 @@ var config = require('./config');
 var mysql = require('mysql');
 var _ = require("lodash");
 
+
+var dbReadyFlag = false;
+var dbReadyCallbacks = [];
+function dbReady(callback) {
+    if (callback === undefined) {
+        dbReadyFlag = true;
+    } else {
+        dbReadyCallbacks.push(callback);
+    }
+    if (!dbReadyFlag) {
+        return;
+    }
+    var iterCallback;
+    while ((iterCallback = dbReadyCallbacks.shift())) {
+        iterCallback();
+    }
+}
+function checkDbReady() {
+    if (config.serviceRegister.getService("db")) {
+        return dbReady();
+    }
+    setTimeout(checkDbReady, 100);
+}
+checkDbReady();
+
+
 var connections = {
     "default": null,
     "root": null
 };
 
 var getParameters = function (connectionName) {
+    var dbService = config.serviceRegister.getService("db") || {};
     var defaultParameters = {
-        host: config.dbHost,
-        database : config.dbName,
-        user : config.dbUser,
-        password: config.dbPassword
+        host: dbService.host,
+        database : dbService.name,
+        user : dbService.user,
+        password: dbService.password
     };
     var rootParameters = {
-        host: config.dbHost,
+        host: dbService.host,
         user : 'root',
-        password: config.dbRootPassword
+        password: dbService.root_password
     };
     var parametersMap = {
         'default': defaultParameters,
@@ -30,42 +57,44 @@ var getParameters = function (connectionName) {
 };
 
 var getConnection = function (connectionName, callback) {
-    callback = callback || function () {};
-    //console.log("getConnection", connectionName);
-    var parameters = getParameters(connectionName);
+    dbReady(function () {
+        callback = callback || function () {};
+        //console.log("getConnection", connectionName);
+        var parameters = getParameters(connectionName);
 
-    var otherConnectionNames = Object.keys(connections).filter(function (openConnectionName) {
-        return (openConnectionName != connectionName);
-    });
-    otherConnectionNames.forEach(function (connectionName) {
-        var connection = connections[connectionName];
-        if (connection && connection.destroy) {
-            console.log("Destroying " + connectionName + " connection");
-            connection.destroy();
+        var otherConnectionNames = Object.keys(connections).filter(function (openConnectionName) {
+            return (openConnectionName != connectionName);
+        });
+        otherConnectionNames.forEach(function (connectionName) {
+            var connection = connections[connectionName];
+            if (connection && connection.destroy) {
+                console.log("Destroying " + connectionName + " connection");
+                connection.destroy();
+            }
+        });
+        var currentConnection = connections[connectionName];
+        var lastConnectionErrored = (currentConnection && currentConnection.error);
+        if (lastConnectionErrored) {
+            currentConnection.destroy();
+            currentConnection = undefined;
+        }
+        //console.log("connection parameters", parameters);
+        if (!currentConnection) {
+            currentConnection = mysql.createConnection(parameters);
+            connections[connectionName] = currentConnection;
+            currentConnection.connect(function (error) {
+                if (error) {
+                    console.error("Mysql connection error - " + error);
+                    currentConnection.error = error;
+                    currentConnection.destroy();
+                    return callback(new Error("Couldnt connect to database."));
+                }
+                return callback(null, currentConnection);
+            });
+        } else {
+            return callback(null, currentConnection);
         }
     });
-    var currentConnection = connections[connectionName];
-    var lastConnectionErrored = (currentConnection && currentConnection.error);
-    if (lastConnectionErrored) {
-        currentConnection.destroy();
-        currentConnection = undefined;
-    }
-    //console.log("connection parameters", parameters);
-    if (!currentConnection) {
-        currentConnection = mysql.createConnection(parameters);
-        connections[connectionName] = currentConnection;
-        currentConnection.connect(function (error) {
-            if (error) {
-                console.error("Mysql connection error - " + error);
-                currentConnection.error = error;
-                currentConnection.destroy();
-                return callback(new Error("Couldnt connect to database."));
-            }
-            return callback(null, currentConnection);
-        });
-    } else {
-        return callback(null, currentConnection);
-    }
 };
 
 var queryDefault = function () {

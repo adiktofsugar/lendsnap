@@ -1,9 +1,7 @@
 #!/bin/bash
 project_root=$(cd `dirname ${BASH_SOURCE[0]}`; pwd)
-find $project_root -type f -name install | while read path; do
-  if [[ "$path" = "$project_root/install" ]]; then
-    continue
-  fi
-  echo "$path"
-  eval "$path"
+find $project_root -type f -name \*.service | while read path; do
+    cmd="sudo systemctl enable $path"
+    echo $cmd
+    eval $cmd
 done

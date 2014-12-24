@@ -1,8 +1,11 @@
 [Unit]
 Description=Builds media
-Requires=docker.service
+Requires=docker.service base-node.service
+After=base-node.service
 
 [Service]
+TimeoutStartSec=0
+ExecStarPre=/usr/bin/docker build -t media /var/lendsnap-repo/media
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name %p \

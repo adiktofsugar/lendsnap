@@ -181,6 +181,7 @@ module.exports = function (options, next) {
     };
 
     console.log(chalk.green("Setting up database"));
+    
     initialSetup(function (error) {
         if (error) {
             return next(error);
@@ -208,6 +209,4 @@ module.exports = function (options, next) {
             });
         });
     });
-
-
 };

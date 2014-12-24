@@ -1,5 +1,0 @@
-#!/bin/bash
-/var/lendsnap-repo/base-node/install
-sudo systemctl enable /var/lendsnap-repo/data/data-media.service
-docker build -t media /var/lendsnap-repo/media
-sudo systemctl enable /var/lendsnap-repo/media/media.service

@@ -112,5 +112,5 @@ helper.getModules().concat(['.']).forEach(function (moduleName) {
 });
 
 http.createServer(app).listen(3000, function () {
-    config.broadcast();
+    config.serviceRegister.broadcast();
 });
