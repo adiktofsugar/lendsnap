@@ -1,4 +1,4 @@
-FROM lendsnap/base-node
+FROM base-node
 MAINTAINER Sean <anincrediblyshortname@gmail.com>
 
 VOLUME /var/lendsnap/uploaded

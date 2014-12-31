@@ -1,4 +1,4 @@
-FROM lendsnap/base-node
+FROM base-node
 MAINTAINER Sean <anincrediblyshortname@gmail.com>
 
 RUN npm install -g gulp

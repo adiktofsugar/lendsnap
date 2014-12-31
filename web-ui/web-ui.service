@@ -15,7 +15,6 @@ ExecStart=/bin/bash -c "\
     -p 3000:3000 \
     -e ETCD_HOST=$etcd_host \
     -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4`\
-    -v /var/lendsnap-repo/web-ui:/var/lendsnap/web-ui \
     --volumes-from data-uploaded \
     --volumes-from media \
     web-ui"

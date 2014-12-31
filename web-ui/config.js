@@ -1,15 +1,10 @@
-var ServiceRegister = require('lendsnap-service-register').ServiceRegister;
-var serviceRegister = new ServiceRegister({
-    host: process.env.MACHINE_PRIVATE_IP,
-    port: 3000,
-    etcdHost: process.env.ETCD_HOST,
-    broadcastServiceNames: ['web-ui']
-});
-serviceRegister.listen();
-
-var config = {
-    serviceRegister: serviceRegister
-};
+var serviceRegister = require('lendsnap-service-register')
+    .etcdHost(process.env.ETCD_HOST)
+    .data({
+        host: process.env.MACHINE_PRIVATE_IP,
+        port: 3000
+    })
+    .broadcast('/services/web-ui');
 
 module.exports = {
     serviceRegister: serviceRegister

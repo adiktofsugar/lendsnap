@@ -1,7 +1,7 @@
 [Unit]
-Description=Run db setup
-Requires=docker.service
-After=docker.service
+Description=Create initial db
+Requires=db.service
+After=db.service
 
 [Service]
 Type=oneshot
@@ -11,7 +11,9 @@ ExecStart=/bin/bash -c "\
     docker run --rm --name %p \
     -e ETCD_HOST=$etcd_host \
     -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4`\
-    web-ui scripts/db-setup.js"
+    --link db:db \
+    -v /var/lendsnap-repo/db:/var/lendsnap/db \
+    db node scripts/db-setup.js"
 
 [Install]
-WantedBy=webapp.target
+WantedBy=db.service

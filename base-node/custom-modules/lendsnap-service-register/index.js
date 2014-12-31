@@ -16,45 +16,69 @@ function getNodesFromNode (node) {
 
 var broadcastInterval = 10000;
 var errorTimeout = 100;
-function ServiceRegister(options) {
-    var requiredOptions = ["host", "port", "etcdHost"];
-    var missingRequiredKeys = requiredOptions.filter(function (requiredOption) {
-            return options[requiredOption] === undefined;
-        });
-    if (missingRequiredKeys.length > 0) {
-        throw new Error("ServiceRegister missing required options - " + missingRequiredKeys.join(','));
-    }
-
-    this.etcd = new Etcd(options.etcdHost);
-    this.broadcastServiceNames = options.broadcastServiceNames || [];
-    this.data = _.extend({
-        host: options.host,
-        port: options.port
-    }, options.data || {});
-    this.servicesCache = {};
-    this.showDebug = options.debug;
+function ServiceRegister() {
+    this.properties = {};
 }
 ServiceRegister.prototype = {
+    data: function (data) {
+        this.properties.data = data;
+        this.start();
+        return this;
+    },
+    etcdHost: function (etcdHost) {
+        this.properties.etcdHost = etcdHost;
+        this.etcd = new Etcd(etcdHost);
+        this.start();
+        return this;
+    },
+    broadcast: function () {
+        this.properties.broadcastKeys = Array.prototype.slice.apply(arguments);
+        this.start();
+        return this;
+    },
+    getService: function (servicesKey) {
+        return this.servicesCache[servicesKey];
+    },
+    start: function (force) {
+        var self = this;
+        if (!force) {
+            clearTimeout(this._startTimeout);
+            this._startTimeout = setTimeout(this.start.bind(this, true), 1);
+            return;
+        }
+        if (!this.etcd) {
+            throw new Error('No etcd exists');
+        }
+        if (!this.properties.broadcastKeys) {
+            this.debug("No broadcastKeys set");
+        } else {
+            this.startBroadcast();
+        }
+        this.startListening();
+    },
     debug: function () {
         if (this.showDebug) {
             console.debug.apply(console, arguments);
         }
     },
-    broadcast: function () {
+    startBroadcast: function () {
         var self = this;
-        this.broadcastServiceNames.forEach(function (serviceName) {
-            self.etcd.set('/services/' + serviceName, JSON.stringify(self.data),
-            {ttl: broadcastInterval/1000}, function (error) {
-                var timeout = broadcastInterval;
-                if (error) {
-                    self.debug("Etcd error", error);
-                    timeout = errorTimeout;
-                }
-                setTimeout(self.broadcast.bind(self), timeout);
+        function broadcast() {
+            self.properties.broadcastKeys.forEach(function (etcdKey) {
+                self.etcd.set(etcdKey, JSON.stringify(self.properties.data),
+                {ttl: broadcastInterval/1000}, function (error) {
+                    var timeout = broadcastInterval;
+                    if (error) {
+                        self.debug("Etcd error", error);
+                        timeout = errorTimeout;
+                    }
+                    setTimeout(broadcast, timeout);
+                });
             });
-        });
+        }
+        broadcast();
     },
-    listen: function () {
+    startListening: function () {
         var self = this;
         function setServicesCache(node) {
             var nodes = getNodesFromNode(node);
@@ -67,6 +91,9 @@ ServiceRegister.prototype = {
                     serviceValue = JSON.parse(node.value);
                 } catch (e) {
                     console.log('Error parsing json input', node.value);
+                }
+                if (!self.servicesCache) {
+                    self.servicesCache = {};
                 }
                 var currentServiceObject = self.servicesCache;
                 _.each(serviceKeyParts, function (keyPart, index) {
@@ -96,12 +123,8 @@ ServiceRegister.prototype = {
             });
         }
         requestServices();
-    },
-    getService: function (serviceName) {
-        return this.servicesCache[serviceName];
     }
 };
 
-module.exports = {
-    ServiceRegister: ServiceRegister
-};
+var globalServiceRegister = new ServiceRegister();
+module.exports = globalServiceRegister;

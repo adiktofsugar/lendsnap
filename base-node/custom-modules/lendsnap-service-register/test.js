@@ -1,35 +1,25 @@
 #!/usr/bin/env node
 var test = require('lendsnap-tests');
-var ServiceRegister = require('./index').ServiceRegister;
+var serviceRegister = require('./index');
 var assert = require('assert');
 
+var TestServiceRegister = function () {
+    this.properties = {};
+};
+TestServiceRegister.prototype = serviceRegister;
+
 var tests = {};
-tests.requiredParameters = function () {
-    assert.throws(function () {
-        new ServiceRegister({});
-    });
-};
-tests.debugIsSet = function () {
-    var serviceRegister = new ServiceRegister({
-        host: '1.1.1.1',
-        port: '121212',
-        etcdHost: '123.321',
-        debug: true
-    });
-    assert.equal(serviceRegister.showDebug, true);
-};
 tests.broadcastCallsEtcd = function (done) {
-    var serviceRegister = new ServiceRegister({
-        host: '1.1.1.1',
-        port: '121212',
-        etcdHost: '123.321',
-        broadcastServiceNames: ['test', 'test2']
-    });
-    var etcd = serviceRegister.etcd;
-    var correctKeys = ['/services/test', '/services/test2'];
+    var testServiceRegister = new TestServiceRegister()
+        .etcdHost('123.321')
+        .data({host: '1.1.1.1'})
+        .broadcast('/services/test');
+    
+    var etcd = testServiceRegister.etcd;
+    etcd.get = function () {
+    };
     etcd.set = function (key, value) {
-        var correctKey = correctKeys.shift();
-        var error = assert.async.equal(key, correctKey);
+        var error = assert.async.equal(key, '/services/test');
         if (error) {
             return done(error);
         }
@@ -39,21 +29,16 @@ tests.broadcastCallsEtcd = function (done) {
         } catch (e) {
             return done(e);
         }
-        if (correctKeys.length <= 0) {
-            done();
-        }
+        done();
     };
-    serviceRegister.broadcast();
 };
 tests.listenInterpretsServices = function (done) {
-    var serviceRegister = new ServiceRegister({
-        host: '1.1.1.1',
-        port: '121212',
-        etcdHost: '123.321',
-        broadcastServiceNames: ['test', 'test2']
-    });
-    var etcd = serviceRegister.etcd;
-    var correctKeys = ['/services/test', '/services/test2'];
+    var testServiceRegister = new TestServiceRegister()
+        .etcdHost('123.321')
+        .data({host: '1.1.1.1'})
+        .broadcast('/services/test');
+    
+    var etcd = testServiceRegister.etcd;
     etcd.get = function (key, options, callback) {
         if (!callback) {
             callback = options;
@@ -101,21 +86,19 @@ tests.listenInterpretsServices = function (done) {
           }
         });
     };
-    serviceRegister.listen();
     setTimeout(function () {
-        var dbService = serviceRegister.getService('db');
+        var dbService = testServiceRegister.getService('db');
         var error = assert.async.equal(dbService.host, '172.17.8.102');
         done(error);
-    }, 1);
+    }, 5);
 };
 tests.listenInterpretsServicesWithBadNodeValue = function (done) {
-    var serviceRegister = new ServiceRegister({
-        host: '1.1.1.1',
-        port: '121212',
-        etcdHost: '123.321',
-        broadcastServiceNames: ['test', 'test2']
-    });
-    var etcd = serviceRegister.etcd;
+    var testServiceRegister = new TestServiceRegister()
+        .etcdHost('123.321')
+        .data({host: '1.1.1.1'})
+        .broadcast('/services/test');
+
+    var etcd = testServiceRegister.etcd;
     etcd.get = function (key, options, callback) {
         if (!callback) {
             callback = options;
@@ -147,12 +130,11 @@ tests.listenInterpretsServicesWithBadNodeValue = function (done) {
           }
         });
     };
-    serviceRegister.listen();
     setTimeout(function () {
-        var dbService = serviceRegister.getService('db');
+        var dbService = testServiceRegister.getService('db');
         var error = assert.async.equal(dbService.host, '172.17.8.102');
         done(error);
-    }, 1);
+    }, 5);
 };
 
 test.run(tests);

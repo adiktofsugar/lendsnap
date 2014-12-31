@@ -111,6 +111,4 @@ helper.getModules().concat(['.']).forEach(function (moduleName) {
     moduleRoute.mount(app);
 });
 
-http.createServer(app).listen(3000, function () {
-    config.serviceRegister.broadcast();
-});
+http.createServer(app).listen(3000);

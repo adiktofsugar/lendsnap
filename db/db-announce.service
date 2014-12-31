@@ -1,9 +1,23 @@
 [Unit]
 Description=Announces the database
+Requires=base-node.service
+After=base-node.service
 BindsTo=db.service
 
 [Service]
-ExecStart=/bin/bash /var/lendsnap-repo/db/announce
+Restart=on-failure
+TimeoutStartSec=0
+ExecStartPre=/usr/bin/docker build -t db /var/lendsnap-repo/db
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStart=/bin/bash -c "\
+    etcd_host=`ifconfig docker0 | awk '/inet /{print $2}'`;\
+    docker run --rm --name %p \
+    -e ETCD_HOST=$etcd_host \
+    -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4` \
+    --link db:db \
+    -v /var/lendsnap-repo/db:/var/lendsnap/db \
+    db"
+ExecStop=-/usr/bin/docker rm -f %p
 
 [Install]
-RequiredBy=db.service
+WantedBy=db.service

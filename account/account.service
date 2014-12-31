@@ -1,21 +1,22 @@
 [Unit]
-Description=Proxy to other services
+Description=Account service
 Requires=base-node.service
 After=base-node.service
 
 [Service]
-Restart=always
+Restart=on-failure
 TimeoutStartSec=0
-ExecStarPre=/usr/bin/docker build -t proxy /var/lendsnap-repo/proxy
+ExecStartPre=/usr/bin/docker build -t account /var/lendsnap-repo/account
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/bin/bash -c "\
     etcd_host=`ifconfig docker0 | awk '/inet /{print $2}'`;\
     docker run --rm --name %p \
+    -p 8080:8080 \
     -e ETCD_HOST=$etcd_host \
     -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4` \
-    -p 80:80 -p 443:443 \
-    proxy"
+    -v /var/lendsnap-repo/account:/var/lendsnap/account \
+    account"
 ExecStop=-/usr/bin/docker rm -f %p
 
 [Install]
-WantedBy=public-ip.target
+WantedBy=account-server.target

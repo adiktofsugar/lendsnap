@@ -1,0 +1,3 @@
+- add send password reset email. needs to create a temporary password linked to the user
+- createUser and updateUser services can set properties like is_banker
+- encodePassword is duplicated in db-definition and user-service, and probably authorize-service

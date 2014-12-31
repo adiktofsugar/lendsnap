@@ -4,6 +4,8 @@ After=docker.service
 Requires=docker.service
 
 [Service]
+TimeoutStartSec=0
+ExecStartPre=/usr/bin/docker pull mysql
 ExecStart=/usr/bin/docker run --name %p mysql echo "Data only container for mysql started"
 RemainAfterExit=yes
 

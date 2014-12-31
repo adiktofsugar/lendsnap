@@ -48,7 +48,4 @@ var options = {
   key: fs.readFileSync('real-signed-cert/host.key'),
   cert: fs.readFileSync('real-signed-cert/bundle.crt')
 };
-https.createServer(options, listener).listen(443, function () {
-    config.serviceRegister.broadcast();
-    console.log("Proxy listening on 443");
-});
+https.createServer(options, listener).listen(443);

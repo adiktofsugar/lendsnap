@@ -1,0 +1,9 @@
+{
+  "name": "lendsnap-db-announce",
+  "version": "0.0.1",
+  "dependencies": {
+    "async": "^0.9.0",
+    "mysql": "^2.5.4",
+    "node-etcd": "^3.0.2"
+  }
+}

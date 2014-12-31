@@ -1,12 +1,10 @@
-var _ = require('lodash');
-var ServiceRegister = require('lendsnap-service-register').ServiceRegister;
-var serviceRegister = new ServiceRegister({
-    host: process.env.MACHINE_PRIVATE_IP,
-    port: 443,
-    etcdHost: process.env.ETCD_HOST,
-    broadcastServiceNames: ['proxy']
-});
-serviceRegister.listen();
+require('lendsnap-service-register')
+    .etcdHost(process.env.ETCD_HOST)
+    .data({
+        host: process.env.MACHINE_PRIVATE_IP,
+        port: 44
+    })
+    .broadcast('/services/proxy');
 
 module.exports = {
     serviceRegister: serviceRegister
