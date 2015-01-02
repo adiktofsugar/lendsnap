@@ -1,12 +1,14 @@
 var db = require('../db');
 var dbHelper = require('../db-helper');
 var _ = require('lodash');
-var accountService = require('../account/service');
 var async = require("async");
+var config = require('../config');
+var request = require('request');
+var Uri = require('jsuri');
 
-var dbSetup = require('./db-setup');
-var DOCUMENT_PACKAGE_FIELDS = dbSetup.DOCUMENT_PACKAGE_FIELDS;
-var DOCUMENT_FIELDS = dbSetup.DOCUMENT_FIELDS;
+var dbDefinition = require('../db-definition');
+var DOCUMENT_PACKAGE_FIELDS = dbDefinition.getEditableFieldNames('document_package');
+var DOCUMENT_FIELDS = dbDefinition.getEditableFieldNames('document_package');
 
 var getDocumentById = function (id, callback) {
     db.query(
@@ -44,7 +46,7 @@ var createDocument = function (parameters, callback) {
         "INSERT INTO document " +
         "(" + fields.names.join(",") + ") " +
         "VALUES " +
-        "(" + fields.values.join(",") + ");",
+        "(" + fields.valuesQuestionMarks.join(",") + ");", fields.values,
     function (error, result) {
         if (error) {
             return callback(new Error("Couldn't create document - " + error));
@@ -59,14 +61,14 @@ var createDocument = function (parameters, callback) {
     });
 };
 var updateDocument = function (id, parameters, callback) {
-    var setStatement = dbHelper.getFieldsFromParameters(parameters, {
+    var fields = dbHelper.getFieldsFromParameters(parameters, {
             include: DOCUMENT_FIELDS
-        }).setStatement;
+        });
     db.query(
         "UPDATE document " +
-        setStatement + " " +
+        fields.setStatement + " " +
         "WHERE id=?",
-        [id],
+        fields.values.concat(id),
         function (error, result) {
             if (error) {
                 return callback(new Error("Couldnt update document - " + error));
@@ -112,22 +114,37 @@ var createDocuments = function (documentParametersArray, callback) {
 };
 
 var getDocumentPackagesByUserId = function (userId, callback) {
-    accountService.getUserById(userId, function (error, user) {
+    config.getJson('/services/account', function (error, accountService) {
         if (error) {
-            return callback(new Error("Failed to get user by id - " + error));
+            return callback(new Error("Account service down"));
         }
-        var whereClause = "WHERE user_id=" + db.escape(userId);
-        if (user.is_banker) {
-            whereClause += " OR banker_user_id=" + db.escape(userId);
-        }
-        db.query("" +
-            "SELECT * FROM document_package " + whereClause,
-        function (error, rows) {
+        request.get(new Uri('http://' + accountService.host)
+            .setPort(accountService.port)
+            .setPath('/account/' + userId)
+            .toString(),
+        function (error, response, user) {
             if (error) {
-                return callback(new Error("Could get document packages by user id, userId - " + userId +
-                    " - error - " + error));
+                return callback(new Error("Failed to get user by id - " + error));
             }
-            callback(null, rows);
+            if (response.statusCode.toString().match(/^4/)) {
+                console.error("Bad request to account service", "response", response, "body", body);
+                return callback(new Error("Bad request to account service"));
+            } 
+            var queryArguments = [];
+            var whereClause = "WHERE user_id=?";
+            queryArguments.push(userId);
+            if (user.is_banker) {
+                whereClause += " OR banker_user_id=?";
+                queryArguments.push(userId);
+            }
+            db.query("SELECT * FROM document_package " + whereClause, queryArguments,
+            function (error, rows) {
+                if (error) {
+                    return callback(new Error("Could get document packages by user id, userId - " + userId +
+                        " - error - " + error));
+                }
+                callback(null, rows);
+            });
         });
     });
 };
@@ -153,7 +170,7 @@ var createDocumentPackage = function (parameters, callback) {
         "INSERT INTO document_package " +
         "(" + fields.names.join(",") + ") " +
         "VALUES " +
-        "(" + fields.values.join(",") + ");",
+        "(" + fields.valuesQuestionMarks.join(",") + ");", fields.values,
     function (error, result) {
         if (error) {
             return callback(new Error("Couldn't create document package - " + error));
@@ -168,14 +185,14 @@ var createDocumentPackage = function (parameters, callback) {
     });
 };
 var updateDocumentPackage = function (id, parameters, callback) {
-    var setStatement = dbHelper.getFieldsFromParameters(parameters, {
+    var fields = dbHelper.getFieldsFromParameters(parameters, {
             include: DOCUMENT_PACKAGE_FIELDS
-        }).setStatement;
+        });
     db.query(
         "UPDATE document_package " +
-        setStatement + " " +
+        fields.setStatement + " " +
         "WHERE id=?",
-        [id],
+        fields.values.concat([id]),
         function (error, result) {
             if (error) {
                 return callback(new Error("Couldnt update document package - " + error));

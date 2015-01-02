@@ -1,12 +1,11 @@
 [Unit]
-Description=Account service
+Description=Account Db setup
 Requires=base-node.service
 After=base-node.service
 
 [Service]
-Restart=on-failure
-TimeoutStartSec=0
-#ExecStartPre=/usr/bin/docker build -t account /var/lendsnap-repo/account
+Type=oneshot
+ExecStartPre=/usr/bin/docker build -t account /var/lendsnap-repo/account
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/bin/bash -c "\
     etcd_host=`ifconfig docker0 | awk '/inet /{print $2}'`;\
@@ -15,8 +14,8 @@ ExecStart=/bin/bash -c "\
     -e ETCD_HOST=$etcd_host \
     -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4` \
     -v /var/lendsnap-repo/account:/var/lendsnap/account \
-    account"
+    account scripts/db-setup.js"
 ExecStop=-/usr/bin/docker rm -f %p
 
 [Install]
-WantedBy=account-server.target
+WantedBy=account.service

@@ -3,8 +3,10 @@ var path = require('path');
 var _ = require('lodash');
 var Uri = require('jsuri');
 var documentPackageService = require('./service');
-var accountService = require('../account/service');
 var async = require("async");
+var config = require('../config');
+var request = require('request');
+var Uri = require('jsuri');
 
 function mount (app) {
     app.get('/document-package', function (req, res, next) {
@@ -49,13 +51,21 @@ function mount (app) {
                     });
             },
             function (documentPackage, callback) {
-                accountService.getUserById(documentPackage.user_id,
-                function (error, user) {
+                config.getJson('/services/account', function (error, accountService) {
+                    request.get(new Uri('http://' + accountService.host)
+                        .setPort(accountService.port)
+                        .setPath('/account/' + documentPackage.user_id).toString(),
+                    function (error, response, user) {
                         if (error) {
                             return callback(error);
                         }
+                        if (response.statusCode.toString().match(/^(4|5)/)) {
+                            console.error("Bad request to account service", "response", response, "body", body);
+                            return callback(new Error("Bad request to account service."));
+                        }
                         callback(null, user, documentPackage);
                     });
+                });
             },
             function (user, documentPackage, callback) {
                 documentPackageService.getDocumentsByDocumentPackageId(documentPackage.id,
@@ -93,11 +103,17 @@ function mount (app) {
                 var userEmail = req.body.user_email;
                 console.log("user email", userEmail);
                 if (userEmail) {
-                    accountService.getUserByEmail(userEmail,
-                    function (error, user) {
-                        console.log("getUserByEmail", error, user);
-                        callback(error,  user);
-                    });
+                    var accountService = config.getJson('/services/account');
+                    request.get(new Uri('http://' + accountService.host)
+                        .setPort(accountService.port)
+                        .setPath('/account')
+                        .addQueryParam(email, userEmail)
+                        .toString(), function (error, response, user) {
+                            if (error) {
+                                return callback(error);
+                            }
+                            callback(null, user);
+                        });
                 } else {
                     callback(null, null);
                 }

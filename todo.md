@@ -1,3 +1,6 @@
+- conditional rebuild for services
+    if already built, don't build, otherwise build the thing. but...always build the first time? or maybe a service to build that the normal service requires
+
 
 auth
 ---

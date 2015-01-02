@@ -26,12 +26,12 @@ var createUser = function (attributes, cb) {
     if (password) {
         attributes.password = encodePassword(password);
     }
-    var setStatement = dbHelper.getFieldsFromParameters(attributes, {
+    var fields = dbHelper.getFieldsFromParameters(attributes, {
             include: dbDefinition.getEditableFieldNames("user")
-        }).setStatement;
+        });
     
     db.query("" +
-        "INSERT INTO user " + setStatement,
+        "INSERT INTO user " + fields.setStatement, fields.values,
         function (error, result) {
             if (error) {
                 console.error("Error inserting user", error, "fields", attributes, "result", result);
@@ -60,12 +60,12 @@ var updateUserById = function (userId, attributes, cb) {
     if (password) {
         attributes.password = encodePassword(password);
     }
-    var setStatement = dbHelper.getFieldsFromParameters(attributes, {
+    var fields = dbHelper.getFieldsFromParameters(attributes, {
             include: USER_FIELDS
-        }).setStatement;
+        });
     
-    db.query("UPDATE user " + setStatement + " WHERE id = ?",
-        [userId],
+    db.query("UPDATE user " + fields.setStatement + " WHERE id = ?",
+        fields.values.concat([userId]),
         function (error, user) {
             cb(error, user);
         });

@@ -6,7 +6,7 @@ After=base-node.service
 [Service]
 Restart=always
 TimeoutStartSec=0
-ExecStarPre=/usr/bin/docker build -t proxy /var/lendsnap-repo/proxy
+ExecStartPre=/usr/bin/docker build -t proxy /var/lendsnap-repo/proxy
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/bin/bash -c "\
     etcd_host=`ifconfig docker0 | awk '/inet /{print $2}'`;\

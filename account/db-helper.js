@@ -41,9 +41,8 @@ var getFieldsFromParameters = function (parameters, options) {
             if (fieldsToExclude.indexOf(fieldName) <= -1) {
                 if (fieldsToInclude === null || fieldsToInclude.indexOf(fieldName) > -1) {
                     fieldNames.push(fieldName);
-                    fieldValue = db.escape(fieldValue);
                     fieldValues.push(fieldValue);
-                    setStatement += ", `" + fieldName + "`= " + fieldValue;
+                    setStatement += ", `" + fieldName + "`= ?";
                 }
             }
         }
@@ -51,7 +50,8 @@ var getFieldsFromParameters = function (parameters, options) {
     return {
         names: fieldNames,
         values: fieldValues,
-        setStatement: "SET" + setStatement.slice(1)
+        setStatement: "SET" + setStatement.slice(1),
+        valuesQuestionMarks: fieldValues.map(function () { return '?'; })
     };
 };
 

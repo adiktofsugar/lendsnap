@@ -7,7 +7,8 @@ var encodePassword = function (passwordString) {
 };
 
 function authorize(email, password, callback) {
-    db.query("SELECT email, password FROM user WHERE email = ?", [email],
+    console.log('authorize', email, password);
+    db.query("SELECT * FROM user WHERE email = ?", [email],
     function (error, rows) {
         if (error) {
             console.error("Error selecting user", error);
@@ -17,7 +18,7 @@ function authorize(email, password, callback) {
             return callback(new Error("User doesn't exist"));
         }
         var user = rows[0];
-        if (encodePassword(password) !== password) {
+        if (encodePassword(password) !== user.password) {
             return callback(new Error("Password doesn't match"));
         }
         callback(null, user);

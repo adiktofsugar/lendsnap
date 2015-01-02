@@ -24,23 +24,23 @@ function listener(req, res) {
     uri.host(req.headers.host);
 
     var app = "web-ui";
-    if (uri.path().match(new RegExp('^/authorization'))) {
-        app = "authorization";
+    if (uri.path().match(new RegExp('^/account'))) {
+        app = "account";
     }
-
-    var service = config.serviceRegister.getService(app);
-    if (service) {
-        return proxy.web(req, res, {
-            target: 'http://' + service.host + ':' + service.port
-        });
-    }
-    console.error('No service found for uri', uri.host(), req.url);
-    var errorMessage = "This page doesnt exist.";
-    var errorTemplate = fs.readFileSync('error.html', {encoding: 'utf-8'});
-    var errorString = errorTemplate.replace('__message__', errorMessage);
-    
-    res.statusCode = 404;
-    res.end(errorString);
+    config.getJson('/services/' + app, function (error, service) {
+        if (service) {
+            return proxy.web(req, res, {
+                target: 'http://' + service.host + ':' + service.port
+            });
+        }
+        console.error('No service found for uri', uri.host(), req.url, "tried", app);
+        var errorMessage = "This page doesnt exist.";
+        var errorTemplate = fs.readFileSync('error.html', {encoding: 'utf-8'});
+        var errorString = errorTemplate.replace('__message__', errorMessage);
+        
+        res.statusCode = 404;
+        res.end(errorString);
+    });
 }
 
 

@@ -1,36 +1,47 @@
-#!/usr/bin/env node
-var async  = require('async');
-var options = require('nomnom')
-    .option('destroy', {
-        flag: true,
-        help: 'Run "destroy" step'
-    })
-    .option('baseData', {
-        full: 'base-data',
-        default: undefined,
-        flag: true,
-        help: 'Run "baseData" step'
-    })
-    .help("Setup the database")
-    .parse();
+#!/usr/bin/node
+var db = require('../db');
+var dbDefinition = require('../db-definition');
+var queryBuilder = require('../db-query-builder');
+var async = require('async');
 
-var config = require('../config');
-var dbSetup = require('../db-setup');
-var chalk = require("chalk");
-
-var next = function (error) {
-    if (error) {
-        console.log(chalk.red("Error at the end."), error);
-    } else {
-        console.log(chalk.green("Everything's done!"));
-    }
-    process.exit();
+var query = function (queryString) {
+    return function (callback) {
+        console.log(queryString);
+        db.query(queryString, callback);
+    };
 };
 
-dbSetup({
-    destroy: options.destroy,
-    baseData: options.baseData
-}, function (error) {
-    if (error) return next(error);
-    next();
+var queryFunctions = [];
+var tables = dbDefinition.getTables();
+
+Object.keys(tables).forEach(function (tableName) {
+    var tableDefinition = tables[tableName];
+
+    var createTableFunction = function (callback) {
+        var createTableQueryFunctions = [];
+        queryBuilder.getQueriesForTable(tableName, tableDefinition, function (error, tableQueries) {
+            if (error) {
+                return callback(error);
+            }
+            console.log("table queries");
+            tableQueries.forEach(function (queryString) {
+                console.log(queryString);
+                createTableQueryFunctions.push(query(queryString));
+            });
+            console.log("running queries");
+            async.series(createTableQueryFunctions, callback);
+        });
+        
+    };
+    queryFunctions.push(createTableFunction);
+});
+
+async.series(queryFunctions, function (error) {
+    if (error) {
+        console.error("Error", error);
+        process.exit(1);
+    } else {
+        console.log("Successful");
+        process.exit();
+    }
 });

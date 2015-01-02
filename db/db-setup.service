@@ -5,6 +5,7 @@ After=db.service
 
 [Service]
 Type=oneshot
+ExecStartPre=/usr/bin/docker build -t db /var/lendsnap-repo/db
 ExecStartPre=-/bin/docker rm -f %p
 ExecStart=/bin/bash -c "\
     etcd_host=`ifconfig docker0 | grep -o 'inet [0-9.]*' | cut -d ' ' -f 2`; \

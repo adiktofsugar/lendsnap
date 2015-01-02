@@ -8,10 +8,10 @@ var nunjucks = require('nunjucks');
 var multer = require('multer');
 var cookieSession = require('cookie-session');
 var bodyParser = require('body-parser');
+var request = require('request');
+var Uri = require('jsuri');
 
 var app = express();
-//app.set('views', 'templates');
-//app.set('view engine', 'nunjucks');
 app.set('x-powered-by', false);
 app.set('json spaces', 4);
 
@@ -34,17 +34,25 @@ app.use(function (req, res, next) {
     console.info("Url: \"" + req.url + "\"");
     next();
 });
-app.use(function addMethodByQuery(req, res, next) {
-    if (req.query._method) {
-        req.method = req.query._method.toUpperCase();
-    }
-    next();
-});
 
 app.use(function addUser(req, res, next) {
     req.getUser = function (callback) {
-        var accountService = require('./account/service');
-        accountService.getUserById(req.session.userId, callback);
+        config.getJson('/services/account', function (error, accountService) {
+            if (error) {
+                return callback(error);
+            }
+            var uri = new Uri('http://' + accountService.host)
+                .setPort(accountService.port)
+                .setPath('/account/' + req.session.userId)
+                .toString();
+            request(uri, function (error, response, body) {
+                    if (error) {
+                        console.error("Error calling account service", uri, error, "response", response);
+                        return callback(error);
+                    }
+                    callback(null, body);
+                });
+        });
     };
     next();
 });
@@ -90,25 +98,9 @@ app.use(function errorHandler(err, req, res, next) {
     }
 });
 
-var helper = require('./helper');
-helper.getModules().concat(['.']).forEach(function (moduleName) {
-    var path = require('path');
-    var moduleRoute;
-    var moduleRoutePath = './' + path.join(moduleName, 'route');
-    try {
-        moduleRoute = require(moduleRoutePath);
-    } catch (e) {
-        console.log('route loading error', e);
-        if (e.code !== "MODULE_NOT_FOUND") {
-            throw e;
-        }
-    }
-    if (!moduleRoute) {
-        console.log('skipping ',  moduleName, 'moduleRoutePath', moduleRoutePath);
-        return;
-    }
-    console.log("adding routes for", moduleName);
-    moduleRoute.mount(app);
-});
+require('./route').mount(app);
+require('./document-package/route').mount(app);
 
-http.createServer(app).listen(3000);
+http.createServer(app).listen(3000, function () {
+    config.broadcast();
+});
