@@ -1,7 +1,7 @@
 #!/usr/bin/node
-var db = require('../db');
-var dbDefinition = require('../db-definition');
-var queryBuilder = require('../db-query-builder');
+var db = require('../code/db');
+var dbDefinition = require('../code/db-definition');
+var queryBuilder = require('../code/db-query-builder');
 var async = require('async');
 
 var query = function (queryString) {

@@ -18,7 +18,7 @@ function getConnection(callback) {
             password: dbService.password,
             database: 'lendsnap'
         };
-        if (connection && connection.error) {
+        if (connection) {
             connection.destroy();
         }
         connection = mysql.createConnection(parameters);

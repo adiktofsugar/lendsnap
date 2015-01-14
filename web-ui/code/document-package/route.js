@@ -7,6 +7,8 @@ var async = require("async");
 var config = require('../config');
 var request = require('request');
 var Uri = require('jsuri');
+var mv = require('mv');
+var path = require('path');
 
 function mount (app) {
     app.get('/document-package', function (req, res, next) {
@@ -80,7 +82,11 @@ function mount (app) {
             if (error) {
                 return next(error);
             }
-            console.log("documents", documents);
+            documents = documents.map(function (document) {
+                return _.extend(document, {
+                    name: path.basename(document.path)
+                });
+            });
             var documentsByGroupName = {};
             documents.forEach(function (document) {
                 if (!documentsByGroupName[document.group_name]) {
@@ -138,43 +144,58 @@ function mount (app) {
                 .toString());
         });
     });
+    
     app.post('/document-package/:id/document', function (req, res, next) {
         var documentPackageId = req.params.id;
         var userId = req.session.userId;
 
-        var groupName = req.body.group_name;
-
-        var numberFilesUploaded = req.files.length;
-        var numberFilesProcessed = 0;
-        var newDocumentParametersArray = [];
-        req.files.forEach(function (file) {
+        function processFile(file, callback) {
             var fileKey = userId + '-' + documentPackageId + '-' +
-                    file.fieldname + '-' + filename;
+                    file.fieldname + '-' + file.originalname;
             var saveTo = '/var/lendsnap/uploaded/' + fileKey;
-            fs.appendFile(saveTo, file.buffer, {flag: 'w'}, function (error) {
-                    fileSaved(error, file, saveTo);
-                });
+
+            var error;
+            console.log("path", file.path);
+            console.log("buffer", file.buffer);
+            fs.createReadStream(file.path).pipe(fs.createWriteStream(saveTo))
+            .on("error", function (error) {
+                console.error("process file rename", file.originalname, error);
+                error = new Error("Couldnt process " + file.originalname);
+            })
+            .on("finish", function () {
+                if (error) {
+                    callback(error);
+                } else {
+                    callback(null, {
+                        multerFile: file,
+                        path: fileKey
+                    });
+                }
+            });
+        }
+        var processFileFunctions = req.files["file[]"].map(function (file) {
+            return function (callback) {
+                processFile(file, callback);
+            };
         });
-        function fileSaved(error, file, saveTo) {
-            numberFilesProcessed++;
+        var next = req.query.next || '/document-package/' + params.query.id;
+        async.parallel(processFileFunctions, function (error, processedFiles) {
             if (error) {
-                console.error("File was not saved", file.filename, error);
-            } else {
-                newDocumentParametersArray.push({
+                return res.redirect(new Uri(next)
+                    .addQueryParam('error', String(error))
+                    .toString());
+            }
+            var groupName = req.body.group_name;
+            var documentParametersArray = processedFiles.map(function (processedFile) {
+                return {
                     document_package_id: documentPackageId,
                     group_name: req.body.group_name,
-                    name: path.basename(file.filename),
-                    path: fileKey
-                });
-            }
-            if (numberFilesProcessed >= numberFilesUploaded) {
-                done();
-            }
-        }
-        function done() {
-            documentPackageService.createDocuments(newDocumentParametersArray, function (error) {
-                var next = req.query.next || '/document-package/' + params.query.id;
+                    path: processedFile.path
+                };
+            });
+            documentPackageService.createDocuments(documentParametersArray, function (error) {
                 if (error) {
+                    console.error("couldnt create documents", error);
                     return res.redirect(new Uri(next)
                         .addQueryParam('error', String(error))
                         .toString());
@@ -183,7 +204,7 @@ function mount (app) {
                     .addQueryParam('message', 'Successfully uploaded')
                     .toString());
             });
-        }
+        });
     });
     app.delete('/document-package/:document_package_id/document/:id', function (req, res, next) {
         documentPackageService.deleteDocumentById(req.params.id,

@@ -9,4 +9,4 @@ RUN cd /var/lendsnap/web-ui && npm install
 EXPOSE 3000
 
 WORKDIR /var/lendsnap/web-ui
-CMD /usr/sbin/sshd && node app.js
+CMD /usr/sbin/sshd && node code/app.js

@@ -1,0 +1,22 @@
+Host core-01
+  HostName 127.0.0.1
+  User core
+  Port 2222
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile C:/cygwin64/home/Sean/lendsnap/.vagrant/machines/core-01/virtualbox/private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+
+Host core-02
+  HostName 127.0.0.1
+  User core
+  Port 2201
+  UserKnownHostsFile /dev/null
+  StrictHostKeyChecking no
+  PasswordAuthentication no
+  IdentityFile C:/cygwin64/home/Sean/lendsnap/.vagrant/machines/core-02/virtualbox/private_key
+  IdentitiesOnly yes
+  LogLevel FATAL
+

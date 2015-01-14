@@ -15,7 +15,8 @@ var app = express();
 app.set('x-powered-by', false);
 app.set('json spaces', 4);
 
-var nunjucksEnvironment = nunjucks.configure('templates', {
+console.log("using nunjucks configure as - ", __dirname + '/templates');
+var nunjucksEnvironment = nunjucks.configure(__dirname + '/templates', {
     autoescape: true,
     express: app
 });
@@ -32,6 +33,13 @@ app.use(multer());
 
 app.use(function (req, res, next) {
     console.info("Url: \"" + req.url + "\"");
+    next();
+});
+
+app.use(function useMethodPassedByQuery(req, res, next) {
+    if (req.query._method) {
+        req.method = req.query._method;
+    }
     next();
 });
 

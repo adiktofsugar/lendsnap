@@ -2,3 +2,6 @@ deploy/.temp*
 .vagrant
 .DS_Store
 node_modules
+.current-cluster-token
+.user-data*
+.ssh-config

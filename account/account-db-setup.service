@@ -10,10 +10,8 @@ ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/bin/bash -c "\
     etcd_host=`ifconfig docker0 | awk '/inet /{print $2}'`;\
     docker run --rm --name %p \
-    -p 8080:8080 \
     -e ETCD_HOST=$etcd_host \
     -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4` \
-    -v /var/lendsnap-repo/account:/var/lendsnap/account \
     account scripts/db-setup.js"
 ExecStop=-/usr/bin/docker rm -f %p
 

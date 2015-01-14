@@ -6,8 +6,8 @@ After=base-node.service media.service data-uploaded.service
 [Service]
 Restart=on-failure
 TimeoutStartSec=0
-#ExecStartPre=/usr/bin/docker build -t web-ui /var/lendsnap-repo/web-ui
-ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=/bin/bash -c "if ! $(docker images | grep \"web-ui\" >/dev/null 2>&1); then \
+        docker build -t web-ui /var/lendsnap-repo/web-ui; fi"
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/bin/bash -c "\
     etcd_host=`ifconfig docker0 | grep -o 'inet [0-9.]*' | cut -d ' ' -f 2`; \
@@ -15,7 +15,7 @@ ExecStart=/bin/bash -c "\
     -p 3000:3000 \
     -e ETCD_HOST=$etcd_host \
     -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4`\
-    -v /var/lendsnap-repo/web-ui:/var/lendsnap/web-ui \
+    -v /var/lendsnap-repo/web-ui/code:/var/lendsnap/web-ui/code \
     --volumes-from data-uploaded \
     --volumes-from media \
     web-ui"

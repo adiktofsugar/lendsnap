@@ -5,7 +5,6 @@ function broadcastJson (etcd, key, value){
     if (broadcastTimeout) {
         clearTimeout(broadcastTimeout);
     }
-    console.log("broadcastJson", key, value);
     etcd.set(key, JSON.stringify(value), {ttl: BROADCAST_TTL/1000}, function (error) {
         var timeout = BROADCAST_TTL - 1000;
         if (error) {

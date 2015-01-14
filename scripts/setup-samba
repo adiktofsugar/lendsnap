@@ -1,0 +1,19 @@
+#!/bin/bash -xu
+project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ..; pwd)
+cd $project_root
+if ! [ -e "$project_root/.ssh-config" ]; then
+    vagrant ssh-config > $project_root/.ssh-config
+fi
+computer_name="GOOD-SHINIES" #"$(hostname)"
+server_names="$(awk '/^Host/{print $2}' $project_root/.ssh-config | xargs echo)"
+for server_name in $server_names; do
+    scp -F $project_root/.ssh-config $project_root/mount.cifs core@$server_name:~
+    ssh -t -F $project_root/.ssh-config core@$server_name <<EOF
+        (test -d /var/lendsnap || sudo mkdir /var/lendsnap-repo);
+        sudo chown core /var/lendsnap-repo;
+        sudo umount /var/lendsnap-repo &2>/dev/null;
+        sudo ./mount.cifs //$computer_name/lendsnap /var/lendsnap-repo\
+            -ouser=$USER,pass=,rw,uid=core
+EOF
+done
+#rm $project_root/.ssh-config

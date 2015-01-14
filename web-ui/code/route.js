@@ -77,7 +77,13 @@ function mount (app) {
         });
     });
     app.get('/log-out', function (req, res, next) {
-        delete res.session.userId;
+        if (!req.session) {
+            console.log("req.session doesnt exist?");
+        } else if (!req.session.userId) {
+            console.log('userId doesnt exist');
+        } else {
+            delete req.session.userId;
+        }
         res.redirect('/');
     });
 }

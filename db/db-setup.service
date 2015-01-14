@@ -13,7 +13,6 @@ ExecStart=/bin/bash -c "\
     -e ETCD_HOST=$etcd_host \
     -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4`\
     --link db:db \
-    -v /var/lendsnap-repo/db:/var/lendsnap/db \
     db node scripts/db-setup.js"
 
 [Install]

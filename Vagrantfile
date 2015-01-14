@@ -1,5 +1,7 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
+require 'rbconfig'
+is_windows = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
 
 require 'fileutils'
 
@@ -13,7 +15,7 @@ Vagrant.require_version ">= 1.6.0"
 # after the equals sign..
 
 # Size of the CoreOS cluster created by Vagrant
-$user_datas=["webserver", "db"]
+$user_datas=["webserver"]#, "db"]
 
 # Official CoreOS channel from which updates should be downloaded
 $update_channel='stable'
@@ -35,6 +37,16 @@ $expose_docker_tcp=2375
 $vb_gui = false
 $vb_memory = 1024
 $vb_cpus = 1
+
+unless Vagrant.has_plugin?("vagrant-triggers") then
+  command="vagrant plugin install vagrant-triggers"
+  puts "Running command #{command}"
+  pid = spawn(command)
+  Process.wait pid
+  puts "..finished running command"
+  puts "You have to reload the vagrant process now."
+  exit
+end
 
 
 Vagrant.configure("2") do |config|
@@ -58,15 +70,8 @@ Vagrant.configure("2") do |config|
     config.vbguest.auto_update = false
   end
 
-  if ARGV[0].eql?('up')
-    require 'open-uri'
-    token = open('https://discovery.etcd.io/new').read
-  end
-
   $user_datas.each_with_index do |user_data_name, i|
     i = i + 1
-    user_data_path = File.join(File.dirname(__FILE__), "deploy/#{user_data_name}-user-data")
-    temporary_user_data_path=File.join(File.dirname(__FILE__), "deploy/.temporary-#{user_data_name}-user-data")
 
     config.vm.define vm_name = "core-%02d" % i do |config|
       
@@ -109,31 +114,49 @@ Vagrant.configure("2") do |config|
       ip = "172.17.8.#{i+100}"
       config.vm.network :private_network, ip: ip
 
-      # Uncomment below to enable NFS for sharing the host machine into the coreos-vagrant VM.
-      config.vm.synced_folder ".", "/var/lendsnap-repo",
-        id: "lendsnap", :nfs => true, :mount_options => ['nolock,vers=3,udp']
+      if not is_windows
+        config.vm.synced_folder ".", "/var/lendsnap-repo",
+          id: "lendsnap", :nfs => true, :mount_options => ['nolock,vers=3,udp']
+      end
 
-      # Replace discovery token with new one on vagrant up
-      if ARGV[0].eql?('up')
-        if !File.exists?(temporary_user_data_path)
-          require 'yaml'
 
-          data = YAML.load(IO.readlines(user_data_path)[1..-1].join)
-          data['coreos']['etcd']['discovery'] = token
-
-          yaml = YAML.dump(data)
-          File.open(temporary_user_data_path, 'w') { |file| file.write("#cloud-config\n\n#{yaml}") }
-        else
-          puts "Using existing cloud config data at #{temporary_user_data_path}"
+      project_root = File.expand_path('.', File.dirname(__FILE__))
+      user_data_template_path = File.join(project_root, "deploy/#{user_data_name}-user-data")
+      user_data_path = File.join(project_root, ".user-data-#{user_data_name}")
+      token_path = File.join(project_root, '.current-cluster-token')
+      
+      config.trigger.before :up, :stdout => true, :vm => vm_name do |trigger|
+        info "Starting to generate etcd token..."
+        unless File.exists? token_path
+          file = open(token_path, 'w')
+          require 'open-uri'
+          token = open('https://discovery.etcd.io/new').read
+          file.write(token)
+          file.close
         end
-        
-        config.vm.provision :file, :source => "#{temporary_user_data_path}", :destination => "/tmp/vagrantfile-user-data"
-        config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
-      end
+        token = open(token_path).read
+        data = YAML.load(IO.readlines(user_data_template_path)[1..-1].join)
+        data['coreos']['etcd']['discovery'] = token
 
-      if ARGV[0].eql? 'destroy' and File.exists?(temporary_user_data_path)
-        File.unlink temporary_user_data_path
+        yaml = YAML.dump(data)
+        open(user_data_path, 'w') do |file|
+            file.write("#cloud-config\n\n#{yaml}")
+        end
+        if is_windows
+          puts "!! RUN scripts/setup-samba after !!"
+        end
       end
+      config.trigger.before :destroy, :stdout => true, :vm => vm_name do
+        File.unlink user_data_path if File.exists? user_data_path
+        File.unlink token_path if File.exists? token_path
+        info("Deleted #{user_data_path}")
+      end
+      config.vm.provision :file, :source => "#{user_data_path}", :destination => "/tmp/vagrantfile-user-data"
+      config.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
+
+      # This is for windows if i can ever get it to work. For now use the setup-samba script
+      # config.vm.synced_folder ".", "/var/lendsnap-repo",
+      #   id: "lendsnap", type: "smb"
     end
   end
 end

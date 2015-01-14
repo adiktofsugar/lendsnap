@@ -8,7 +8,7 @@ var Uri = require('jsuri');
 
 var dbDefinition = require('../db-definition');
 var DOCUMENT_PACKAGE_FIELDS = dbDefinition.getEditableFieldNames('document_package');
-var DOCUMENT_FIELDS = dbDefinition.getEditableFieldNames('document_package');
+var DOCUMENT_FIELDS = dbDefinition.getEditableFieldNames('document');
 
 var getDocumentById = function (id, callback) {
     db.query(
@@ -39,6 +39,9 @@ var createDocument = function (parameters, callback) {
     var fields = dbHelper.getFieldsFromParameters(parameters, {
             include: DOCUMENT_FIELDS
         });
+    if (!parameters.document_package_id) {
+        return callback(new Error("No document_package_id given."));
+    }
     if (!parameters.path) {
         return callback(new Error("No path given."));
     }
@@ -106,8 +109,9 @@ var createDocuments = function (documentParametersArray, callback) {
     });
     async.waterfall(documentCreateFunctions, function (error, createdDocuments) {
         if (error) {
-            console.log("Errors creating documents", error);
-            console.log("-- created documents", createdDocuments);
+            console.error("Errors creating documents", error);
+            console.error("-- created documents", createdDocuments);
+            return callback(error, createDocuments);
         }
         callback(null, createdDocuments);
     });

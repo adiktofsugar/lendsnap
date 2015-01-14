@@ -1,7 +1,7 @@
 #!/usr/bin/node
 var mysql = require('mysql');
 var async = require('async');
-var credentals = require('../credentals');
+var credentals = require('../credentials');
 
 var connection = mysql.createConnection({
     user: 'root',

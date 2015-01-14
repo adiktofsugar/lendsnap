@@ -1,6 +1,7 @@
+- Get smb shares working properly on windows. Right now I have to manually scp the mount.cifs file i built and share and connect and all that...every time i build the machine. I could also make a service to do it all automatically based on metadata...hmm...
+
 - conditional rebuild for services
     if already built, don't build, otherwise build the thing. but...always build the first time? or maybe a service to build that the normal service requires
-
 
 auth
 ---
