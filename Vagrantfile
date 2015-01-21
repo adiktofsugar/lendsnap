@@ -142,8 +142,12 @@ Vagrant.configure("2") do |config|
         open(user_data_path, 'w') do |file|
             file.write("#cloud-config\n\n#{yaml}")
         end
+      end
+      config.trigger.after :up, :vm => vm_name do
         if is_windows
-          puts "!! RUN scripts/setup-samba after !!"
+          info "Running setup samba script"
+          pid = spawn("#{project_root}/scripts/setup-samba")
+          Process.wait(pid)
         end
       end
       config.trigger.before :destroy, :stdout => true, :vm => vm_name do

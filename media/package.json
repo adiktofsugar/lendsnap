@@ -4,11 +4,8 @@
   "dependencies": {
     "gulp": "~3.8.8",
     "gulp-clean": "~0.3.1",
-<<<<<<< HEAD
-    "gulp-less": "^2.0.1"
-=======
     "gulp-less": "^2.0.1",
-    "http-server":"^0.7.4"
->>>>>>> recover-origin/master
+    "http-server":"^0.7.4",
+    "node-etcd": "^3.0.2"
   }
 }

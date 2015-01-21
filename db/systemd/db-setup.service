@@ -14,6 +14,7 @@ ExecStart=/bin/bash -c "\
     -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4`\
     --link db:db \
     db node scripts/db-setup.js"
+RemainAfterExit=1
 
 [Install]
 WantedBy=db.service

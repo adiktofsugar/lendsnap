@@ -4,4 +4,4 @@ COPY . /var/lendsnap/account
 RUN cd /var/lendsnap/account && npm install
 WORKDIR /var/lendsnap/account
 EXPOSE 8080
-CMD /usr/sbin/sshd && node app.js
+CMD /usr/sbin/sshd && node code/app.js

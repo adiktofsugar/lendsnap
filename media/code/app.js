@@ -4,6 +4,6 @@ var server = httpServer.createServer({
     root: '/var/lendsnap/media',
     
 });
-server.listen(3001, function () {
+server.listen(config.port, function () {
     config.broadcast();
 });
