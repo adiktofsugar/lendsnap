@@ -1,3 +1,15 @@
+var flattenNodes(nodes) {
+    var flattenedNodes = [];
+    nodes.forEach(function(node) {
+        if (node.nodes) {
+            flattenNodes = flattenNodes.concat(flattenNodes(node.nodes));
+        } else {
+            flattenNodes.push(node);
+        }
+    });
+    return flattenNodes;
+}
+
 var BROADCAST_TTL = 30000;
 
 var broadcastTimeout;
@@ -17,7 +29,34 @@ function broadcastJson (etcd, key, value){
     });
 }
 
-function getJson (etcd, key, callback) {
+var cacheJsonTimeout;
+var jsonCache = {};
+function cacheJson(etcd) {
+    clearTimeout(cacheJsonTimeout);
+    etcd.get('/services', {recursive:true}, function (error, response) {
+        var timeout = 1000;
+        if (error) {
+            console.error("Error fetching services", error);
+            timeout = 100;
+        }
+        var nodes = flattenNodes(response.node.nodes);
+        nodes.forEach(function (node) {
+            try {
+                jsonCache[node.key] = JSON.parse(node.value);
+            } catch (e) {
+                console.error("Couldnt set " + node.key +", value was " + node.value);
+            }
+            var cachedValue = jsonCache[node.key];
+            if (cachedValue && cachedValue.host && cachedValue.port) {
+                cachedValue.address = cachedValue.host + ':' + cachedValue.port;
+            }
+        });
+        cacheJsonTimeout = setTimeout(function () {
+            cacheJson(etcd);
+        }, timeout);
+    });
+}
+function getJson (key) {
     callback = callback || function () {};
     etcd.get(key, function (error, response) {
         if (error) {
@@ -33,5 +72,6 @@ function getJson (etcd, key, callback) {
 
 module.exports = {
     broadcastJson: broadcastJson,
+    cacheJson: cacheJson,
     getJson: getJson
 };

@@ -33,23 +33,21 @@ function mount (app) {
         res.render('log-in.html');
     })
     .post(function(req, res, next) {
-        config.getJson('/services/account', function (error, accountService) {
-            var uri = new Uri('http://' + accountService.host)
-                .setPort(accountService.port)
-                .setPath('/authorize').toString();
-            var data = {
-                email: req.body.email,
-                password: req.body.password
-            };
-            request.post({uri: uri, json: data}, function (error, response, body) {
-                if (error || response.statusCode.toString().match(/^(4|5)/)) {
-                    console.error("Failed log in attempt", "error", error, "statusCode", response.statusCode, "body", body);
-                    return res.redirect(new Uri('/log-in')
-                        .addQueryParam('error', 'Failed log in').toString());
-                }
-                req.session.userId = body.id;
-                res.redirect('/');
-            });
+        var accountService = config.getJson('/services/account');
+        var uri = new Uri('http://' + accountService.address)
+            .setPath('/authorize').toString();
+        var data = {
+            email: req.body.email,
+            password: req.body.password
+        };
+        request.post({uri: uri, json: data}, function (error, response, body) {
+            if (error || response.statusCode.toString().match(/^(4|5)/)) {
+                console.error("Failed log in attempt", "error", error, "statusCode", response.statusCode, "body", body);
+                return res.redirect(new Uri('/log-in')
+                    .addQueryParam('error', 'Failed log in').toString());
+            }
+            req.session.userId = body.id;
+            res.redirect('/');
         });
     });
     app.route('/register')
@@ -57,23 +55,21 @@ function mount (app) {
         res.render('register.html');
     })
     .post(function (req, res, next) {
-        config.getJson('/services/account', function (error, accountService) {
-            var uri = new Uri('http://' + accountService.host)
-                .setPort(accountService.port)
-                .setPath('/account').toString();
-            var data = {
-                email: req.body.email,
-                password: req.body.password
-            };
-            request.post(uri, data, function (error, response, body) {
-                if (error || response.statusCode.toString().match(/^(4|5)/)) {
-                    console.error("Failed create user attempt", "error", error, "statusCode", response.statusCode, "body", body);
-                    return res.redirect(new Uri('/register')
-                        .addQueryParam('error', 'Failed register').toString());
-                }
-                req.session.userId = body.id;
-                res.redirect('/');
-            });
+        var accountService = config.getJson('/services/account');
+        var uri = new Uri('http://' + accountService.address)
+            .setPath('/account').toString();
+        var data = {
+            email: req.body.email,
+            password: req.body.password
+        };
+        request.post(uri, data, function (error, response, body) {
+            if (error || response.statusCode.toString().match(/^(4|5)/)) {
+                console.error("Failed create user attempt", "error", error, "statusCode", response.statusCode, "body", body);
+                return res.redirect(new Uri('/register')
+                    .addQueryParam('error', 'Failed register').toString());
+            }
+            req.session.userId = body.id;
+            res.redirect('/');
         });
     });
     app.get('/log-out', function (req, res, next) {

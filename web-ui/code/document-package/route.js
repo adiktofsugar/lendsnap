@@ -53,20 +53,18 @@ function mount (app) {
                     });
             },
             function (documentPackage, callback) {
-                config.getJson('/services/account', function (error, accountService) {
-                    request.get(new Uri('http://' + accountService.host)
-                        .setPort(accountService.port)
-                        .setPath('/account/' + documentPackage.user_id).toString(),
-                    function (error, response, user) {
-                        if (error) {
-                            return callback(error);
-                        }
-                        if (response.statusCode.toString().match(/^(4|5)/)) {
-                            console.error("Bad request to account service", "response", response, "body", body);
-                            return callback(new Error("Bad request to account service."));
-                        }
-                        callback(null, user, documentPackage);
-                    });
+                var accountService = config.getJson('/services/account');
+                request.get(new Uri('http://' + accountService.address)
+                    .setPath('/account/' + documentPackage.user_id).toString(),
+                function (error, response, user) {
+                    if (error) {
+                        return callback(error);
+                    }
+                    if (response.statusCode.toString().match(/^(4|5)/)) {
+                        console.error("Bad request to account service", "response", response, "body", body);
+                        return callback(new Error("Bad request to account service."));
+                    }
+                    callback(null, user, documentPackage);
                 });
             },
             function (user, documentPackage, callback) {
@@ -110,8 +108,7 @@ function mount (app) {
                 console.log("user email", userEmail);
                 if (userEmail) {
                     var accountService = config.getJson('/services/account');
-                    request.get(new Uri('http://' + accountService.host)
-                        .setPort(accountService.port)
+                    request.get(new Uri('http://' + accountService.address)
                         .setPath('/account')
                         .addQueryParam(email, userEmail)
                         .toString(), function (error, response, user) {
