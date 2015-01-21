@@ -1,12 +1,10 @@
 [Unit]
-Description=Data only container for uploaded data
-After=docker.service
+Description=Creates the /mnt/uploaded folder
 
 [Service]
-ExecStart=/usr/bin/docker run --name %p \
-    -v /mnt/uploaded:/var/lendsnap/uploaded \
-    busybox echo "Data only container for nginx (uploaded files)"
-RemainAfterExit=yes
+Type=oneshot
+ExecStart=/bin/bash -c "mkdir -p /mnt/uploaded"
+RemainAfterExit=1
 
 [Install]
 WantedBy=webapp.target

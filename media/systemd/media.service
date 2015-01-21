@@ -1,0 +1,20 @@
+[Unit]
+Description=Builds media
+Requires=docker.service base-node.service
+After=base-node.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=/usr/bin/docker build -t media /var/lendsnap-repo/media
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStart=/bin/bash -c "\
+    etcd_host=`ifconfig docker0 | grep -o 'inet [0-9.]*' | cut -d ' ' -f 2`; \
+    docker run --rm --name %p \
+    -p 3001:3001\
+    -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4`\
+    -e ETCD_HOST=$etcd_host\
+    media"
+ExecStop=/usr/bin/docker stop -t 3 %p
+
+[Install]
+WantedBy=webapp.service

@@ -45,21 +45,20 @@ app.use(function useMethodPassedByQuery(req, res, next) {
 
 app.use(function addUser(req, res, next) {
     req.getUser = function (callback) {
-        config.getJson('/services/account', function (error, accountService) {
+        var accountService = config.getJson('/services/account');
+        if (!accountService) {
+            console.error("account service is not up");
+            return callback(new Error("account service is not up"));
+        }
+        var uri = new Uri(accountService.address)
+            .setPath('/account/' + req.session.userId)
+            .toString();
+        request(uri, function (error, response, body) {
             if (error) {
+                console.error("Error calling account service", uri, error, "response", response);
                 return callback(error);
             }
-            var uri = new Uri('http://' + accountService.host)
-                .setPort(accountService.port)
-                .setPath('/account/' + req.session.userId)
-                .toString();
-            request(uri, function (error, response, body) {
-                    if (error) {
-                        console.error("Error calling account service", uri, error, "response", response);
-                        return callback(error);
-                    }
-                    callback(null, body);
-                });
+            callback(null, body);
         });
     };
     next();

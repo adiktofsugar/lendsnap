@@ -118,39 +118,6 @@ var createDocuments = function (documentParametersArray, callback) {
 };
 
 var getDocumentPackagesByUserId = function (userId, callback) {
-<<<<<<< HEAD
-    config.getJson('/services/account', function (error, accountService) {
-        if (error) {
-            return callback(new Error("Account service down"));
-        }
-        request.get(new Uri('http://' + accountService.host)
-            .setPort(accountService.port)
-            .setPath('/account/' + userId)
-            .toString(),
-        function (error, response, user) {
-            if (error) {
-                return callback(new Error("Failed to get user by id - " + error));
-            }
-            if (response.statusCode.toString().match(/^4/)) {
-                console.error("Bad request to account service", "response", response, "body", body);
-                return callback(new Error("Bad request to account service"));
-            } 
-            var queryArguments = [];
-            var whereClause = "WHERE user_id=?";
-            queryArguments.push(userId);
-            if (user.is_banker) {
-                whereClause += " OR banker_user_id=?";
-                queryArguments.push(userId);
-            }
-            db.query("SELECT * FROM document_package " + whereClause, queryArguments,
-            function (error, rows) {
-                if (error) {
-                    return callback(new Error("Could get document packages by user id, userId - " + userId +
-                        " - error - " + error));
-                }
-                callback(null, rows);
-            });
-=======
     var accountService = config.getJson('/services/account');
     if (!accountService) {
         return callback(new Error("Account service down"));
@@ -180,7 +147,6 @@ var getDocumentPackagesByUserId = function (userId, callback) {
                     " - error - " + error));
             }
             callback(null, rows);
->>>>>>> recover-origin/master
         });
     });
 };
@@ -211,42 +177,4 @@ var createDocumentPackage = function (parameters, callback) {
         if (error) {
             return callback(new Error("Couldn't create document package - " + error));
         }
-        getDocumentPackageById(result.insertId, function (error, documentPackage) {
-            if (error) {
-                return callback(new Error("Couldn't get package by id " + result.insertId +
-                    " - " + error));
-            }
-            callback(null, documentPackage);
-        });
-    });
-};
-var updateDocumentPackage = function (id, parameters, callback) {
-    var fields = dbHelper.getFieldsFromParameters(parameters, {
-            include: DOCUMENT_PACKAGE_FIELDS
-        });
-    db.query(
-        "UPDATE document_package " +
-        fields.setStatement + " " +
-        "WHERE id=?",
-        fields.values.concat([id]),
-        function (error, result) {
-            if (error) {
-                return callback(new Error("Couldnt update document package - " + error));
-            }
-            callback(null);
-        });
-};
-
-module.exports = {
-    getDocumentById: getDocumentById,
-    getDocumentsByDocumentPackageId: getDocumentsByDocumentPackageId,
-    createDocument: createDocument,
-    updateDocument: updateDocument,
-    deleteDocumentById: deleteDocumentById,
-    createDocuments: createDocuments,
-    
-    getDocumentPackageById: getDocumentPackageById,
-    getDocumentPackagesByUserId: getDocumentPackagesByUserId,
-    createDocumentPackage: createDocumentPackage,
-    updateDocumentPackage: updateDocumentPackage
-};
+        getDocumentPackageById(result.insertId, func

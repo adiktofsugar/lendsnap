@@ -7,30 +7,30 @@ var config = require('./config');
 var connection;
 function getConnection(callback) {
     callback = callback || function () {};
-    config.getJson('/services/db', function (error, dbService) {
+    var dbService = config.getJson('/services/db');
+    if (!dbService) {
+        console.error("db service not up");
+        return callback(new Error("db service is not up"));
+    }
+    var parameters = {
+        host: dbService.host,
+        port: dbService.port,
+        user: dbService.user,
+        password: dbService.password,
+        database: 'lendsnap'
+    };
+    if (connection) {
+        connection.destroy();
+    }
+    connection = mysql.createConnection(parameters);
+    connection.connect(function (error) {
         if (error) {
-            return callback(error);
-        }
-        var parameters = {
-            host: dbService.host,
-            port: dbService.port,
-            user: dbService.user,
-            password: dbService.password,
-            database: 'lendsnap'
-        };
-        if (connection) {
+            console.error("Db connection error", error);
+            connection.error = error;
             connection.destroy();
+            return callback(new Error("Db connection error."));
         }
-        connection = mysql.createConnection(parameters);
-        connection.connect(function (error) {
-            if (error) {
-                console.error("Db connection error", error);
-                connection.error = error;
-                connection.destroy();
-                return callback(new Error("Db connection error."));
-            }
-            callback(null, connection);
-        });
+        callback(null, connection);
     });
 }
 
