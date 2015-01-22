@@ -145,9 +145,7 @@ Vagrant.configure("2") do |config|
       end
       config.trigger.after :up, :vm => vm_name do
         if is_windows
-          info "Running setup samba script"
-          pid = spawn("#{project_root}/scripts/setup-samba")
-          Process.wait(pid)
+          info "Run the setup samba script"
         end
       end
       config.trigger.before :destroy, :stdout => true, :vm => vm_name do

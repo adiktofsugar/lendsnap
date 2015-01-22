@@ -1,4 +1,5 @@
-#!/bin/bash -xu
+#!/bin/bash
+set -x
 project_root=$(cd `dirname ${BASH_SOURCE[0]}`; cd ..; pwd)
 cd $project_root
 if ! [ -e "$project_root/.ssh-config" ]; then

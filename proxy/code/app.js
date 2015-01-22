@@ -27,6 +27,9 @@ function listener(req, res) {
     if (uri.path().match(new RegExp('^/account'))) {
         app = "account";
     }
+    if (uri.path().match(new RegExp('^/media'))) {
+        app = "media";
+    }
     config.getJson('/services/' + app, function (error, service) {
         if (service) {
             return proxy.web(req, res, {
@@ -35,7 +38,7 @@ function listener(req, res) {
         }
         console.error('No service found for uri', uri.host(), req.url, "tried", app);
         var errorMessage = "This page doesnt exist.";
-        var errorTemplate = fs.readFileSync('error.html', {encoding: 'utf-8'});
+        var errorTemplate = fs.readFileSync(__dirname + '/error.html', {encoding: 'utf-8'});
         var errorString = errorTemplate.replace('__message__', errorMessage);
         
         res.statusCode = 404;

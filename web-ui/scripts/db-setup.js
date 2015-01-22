@@ -36,6 +36,7 @@ Object.keys(tables).forEach(function (tableName) {
     queryFunctions.push(createTableFunction);
 });
 
+
 async.series(queryFunctions, function (error) {
     if (error) {
         console.error("Error", error);

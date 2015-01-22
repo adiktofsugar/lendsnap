@@ -1,58 +1,73 @@
 ;(function ($, window, document, undefined) {
   'use strict';
 
-  Foundation.libs.accordion = {
-    name : 'accordion',
+  Foundation.libs.equalizer = {
+    name : 'equalizer',
 
     version : '5.5.0',
 
     settings : {
-      content_class: 'content',
-      active_class: 'active',
-      multi_expand: false,
-      toggleable: true,
-      callback : function () {}
+      use_tallest: true,
+      before_height_change: $.noop,
+      after_height_change: $.noop,
+      equalize_on_stack: false
     },
 
     init : function (scope, method, options) {
+      Foundation.inherit(this, 'image_loaded');
       this.bindings(method, options);
+      this.reflow();
     },
 
     events : function () {
+      this.S(window).off('.equalizer').on('resize.fndtn.equalizer', function(e){
+        this.reflow();
+      }.bind(this));
+    },
+
+    equalize: function(equalizer) {
+      var isStacked = false,
+          vals = equalizer.find('[' + this.attr_name() + '-watch]:visible'),
+          settings = equalizer.data(this.attr_name(true)+'-init');
+
+      if (vals.length === 0) return;
+      var firstTopOffset = vals.first().offset().top;
+      settings.before_height_change();
+      equalizer.trigger('before-height-change').trigger('before-height-change.fndth.equalizer');
+      vals.height('inherit');
+      vals.each(function(){
+        var el = $(this);
+        if (el.offset().top !== firstTopOffset) {
+          isStacked = true;
+        }
+      });
+
+      if (settings.equalize_on_stack === false) {
+        if (isStacked) return;
+      };
+
+      var heights = vals.map(function(){ return $(this).outerHeight(false) }).get();
+
+      if (settings.use_tallest) {
+        var max = Math.max.apply(null, heights);
+        vals.css('height', max);
+      } else {
+        var min = Math.min.apply(null, heights);
+        vals.css('height', min);
+      }
+      settings.after_height_change();
+      equalizer.trigger('after-height-change').trigger('after-height-change.fndtn.equalizer');
+    },
+
+    reflow : function () {
       var self = this;
-      var S = this.S;
-      S(this.scope)
-      .off('.fndtn.accordion')
-      .on('click.fndtn.accordion', '[' + this.attr_name() + '] > .accordion-navigation > a', function (e) {
-        var accordion = S(this).closest('[' + self.attr_name() + ']'),
-            groupSelector = self.attr_name() + '=' + accordion.attr(self.attr_name()),
-            settings = accordion.data(self.attr_name(true) + '-init') || self.settings,
-            target = S('#' + this.href.split('#')[1]),
-            aunts = $('> .accordion-navigation', accordion),
-            siblings = aunts.children('.'+settings.content_class),
-            active_content = siblings.filter('.' + settings.active_class);
 
-        e.preventDefault();
-
-        if (accordion.attr(self.attr_name())) {
-          siblings = siblings.add('[' + groupSelector + '] dd > '+'.'+settings.content_class);
-          aunts = aunts.add('[' + groupSelector + '] .accordion-navigation');
-        }
-
-        if (settings.toggleable && target.is(active_content)) {
-          target.parent('.accordion-navigation').toggleClass(settings.active_class, false);
-          target.toggleClass(settings.active_class, false);
-          settings.callback(target);
-          target.triggerHandler('toggled', [accordion]);
-          accordion.triggerHandler('toggled', [target]);
-          return;
-        }
-
-        if (!settings.multi_expand) {
-          siblings.removeClass(settings.active_class);
-          aunts.removeClass(settings.active_class);
-        }
-
-        target.addClass(settings.active_class).parent().addClass(settings.active_class);
-        settings.callback(target);
-        target.trig
+      this.S('[' + this.attr_name() + ']', this.scope).each(function(){
+        var $eq_target = $(this);
+        self.image_loaded(self.S('img', this), function(){
+          self.equalize($eq_target)
+        });
+      });
+    }
+  };
+})(jQuery, window, window.document);

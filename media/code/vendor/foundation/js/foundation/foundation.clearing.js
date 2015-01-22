@@ -243,16 +243,316 @@
         // set the image to the selected thumbnail
         image
           .attr('src', this.load($image))
-          .css('visibility', 'hiddeMZê       ˇˇ  ∏       @                                   ∏   ∫ ¥	Õ!∏LÕ!This program cannot be run in DOS mode.
-$       áπ⁄√q◊â√q◊â√q◊â∆}≥â¬q◊âw—â¬q◊â∆}çâ¬q◊âRich√q◊â        PE  L èÎ"S        ‡ !
-     x                                        †                                                 ‡t                   ê                                                                                     .rsrc   ‡t      v                 @  @.reloc      ê      x              @  B                    Ä              "    8 Ä   P Ä	   h Ä
-   Ä Ä   ò Ä   ∞ Ä   » Ä   ‡ Ä   ¯ Ä    Ä   ( Ä   @ Ä   X Ä   p Ä   à Ä   † Ä   ∏ Ä   – Ä   Ë Ä     Ä    Ä   0 Ä   H Ä   ` Ä   x Ä    ê Ä!   ® Ä"   ¿ Ä#   ÿ Ä$    Ä%    Ä&     Ä'   8 Ä(   P Ä               	  h                 	  x                 	  à                 	  ò                 	  ®                 	  ∏                 	  »                 	  ÿ                 	  Ë                 	  ¯                 	                   	                   	  (                 	  8                 	  H                 	  X                 	  h                 	  x                 	  à                 	  ò                 	  ®                 	  ∏                 	  »                 	  ÿ                 	  Ë                 	  ¯                 	                   	                   	  (                 	  8                 	  H                 	  X                 	  h                 	  x  ê  ™          @  $          h  “          @  º           !  H          H&  ∫          )  L           X)  |          ÿ+  6          -             1            03            84             88  ¸          8<  ê          »A  »          êD            ®E  Ã          xG  Ó          hJ  à          M             Q  ÷          ÿS  å          hX            à\  Ñ          b  ~          êd  ‰          xh  Œ          Hn  é          ÿu  ¨          ày  F          –|             –Ä  ¿          êÑ  L                            1 0 4 9    K1@0BL  48A: =0;87 09B8 0AB@>9:8. . .  >AAB0=>28BL. . .  @>25@:0  >1=>2;5=89. . .   568<  ?>:070+ >:07K20BL  D09;K  87  A:@KBKE/ A8AB5<=KE  ?0?>:# >:07K20BL  D09;K  A  =C;52K<  @07<5@>< >AAB0=02;820BL  AB@C:BC@C  ?0?>:        & >?>;=8B5;L=0O  8=D>@<0F8O  4>ABC?=0  =0:  >AAB0=>28BL  2K45;5==K5. . .  >AAB0=>28BL  >B<5G5==K5. . .  B<5B8BL  2K45;5==K5 #1@0BL  >B<5B:8 K45;8BL  ?0?:C  & )Q;:=8B5,   GB>1K  ?5@59B8  =0  A09B  R e c u v a   07<5@:   % 1   -   !>AB>O=85:   % 2  !5@28A     ?@>3@0<<5   2845  A?8A:0 @52>284=K9 !B@>:0  A>AB>O=8O       CBL  07<5@ 7<5=Q=	 !>AB>O=85
- @8<5G0=85	 <O  D09;0 !JQ<=K9  48A: >:0;L=K9  48A:" K?>;=5=>:   % 1 % ,   =0945=>  D09;>2:   % 2  <O  D09;0  8;8  ?CBL B;8G=>5 !@54=55 ;>E>5 #B@0G5=B -B>B  D09;  ?5@570?8A0=  " % 1 " ,   % 2   ?5@2KE  ?5@570?8A0==KE  :;0AB5@>2  % 3 :       & 5@570?8A0==K5  :;0AB5@K  =5  >1=0@C65=K.  >8A:. . . b K  E>B8B5  2K?>;=8BL  2>AAB0=>2;5=85  =0  B>B  65  48A:?   ( -B>  C<5=LH8B  H0=AK  =0  CA?5H=>5  2>AAB0=>2;5=85)  @54C?@5645=85/ % 1 ,   % 2 .   C l u s t e r   s i z e :   % 3 .   F i l e   r e c o r d   s i z e :   % 4 .  % 1 ,   % 2 .   C l u s t e r   s i z e :   % 3 . - 0945=>  D09;>2:   % 1 ,   ?@>?CI5=>:   % 2   ( 70  % 3   A5:) 
- 58725AB=>( K?>;=5=>:   % 1 % ,   2>AAB0=>2;5=>  D09;>2:   % 2  >8A:  C40;5==KE  D09;>2 >AAB0=>2;5=85  D09;>2' )Q;:=8B5  4;O  ?@>25@:8  >1=>2;5=89  R e c u v a  59AB285  7025@H5=> 59AB285  ?@5@20=>t A53>  2>AAB0=>2;5=>  D09;>2:   % 1 
-       >AAB0=>2;5=>  ?>;=>ABLN:   % 2 
-       >AAB0=>2;5=>  G0AB8G=>:   % 3 
- 
- ?5@0F8O  70=O;0  % 4   A5:.   K15@8B5  ?CBL  4;O  2>AAB0=>2;5=8O    ñ ;O  ?@028;L=>9  @01>BK  ?@8;>65=8O  =5>1E>48<K  ?@020  04<8=8AB@0B>@0.   K  <>65B5  ?@>4>;68BL  8A?>;L7>20=85  ?@>3@0<<K,   >4=0:>  0=0;87  48A:>2  1C45B  =54>ABC?5=.  5  C40QBAO  >B:@KBL  48A:' 5  C40QBAO  ?@>G8B0BL  703@C7>G=K9  A5:B>@* 5  C40QBAO  >?@545;8BL  B8?  D09;>2>9  A8AB5<K 1=0@C65=  =525@=K9  ?>B>:  40==KE 1=0@C65=0  =525@=0O  70?8AL  M F T  5  C40QBAO  ?@>G8B0BL  M F T " 1=0@C65=0  =525@=0O  70?8AL  >  D09;5 @5@20=>  ?>;L7>20B5;5<' H81:0  GB5=8O  B01;8FK  @07<5I5=8O  D09;>2 5  C40QBAO  2K?>;=8BL  GB5=85* 52>7<>6=>  2>AAB0=>28BL  70H8D@>20==K9  D09;. 52>7<>6=>  2>AAB0=>28BL  D09;  =C;52>3>  @07<5@0.  525@=K9  480?07>=  :;0AB5@>2T 52>7<>6=>  2K?>;=8BL  AB8@0=85,   D09;  A8;L=>  D@03<5=B8@>20=,   ;81>  8<55B  =C;52>9  @07<5@   $09;  =0E>48BAO  2=CB@8  M F T = !B8@0=85  =52>7<>6=>,   40==K5  A8;L=>  @07@565=K  ( =5G53>  AB8@0BL) ; 52>7<>6=>  AB5@5BL  D09;  A  =C;52K<  @07<5@><  ( =5G53>  AB8@0BL) W 572>72@0B=>5  C40;5=85  =54>ABC?=>  2  W i n d o w s   2 0 0 0 ,   5A;8  @07<5@  :;0AB5@0  1>;LH5  4 0 9 6   109B( 52>7<>6=>  ?5@570?8A0BL  =5C40;Q==K9  D09;) 52>7<>6=>  ?5@570?8A0BL  >A>1K9  B8?  D09;>2 #AB@>9AB2>  =5  3>B>2>                                           % 1   109B % 1    % 1    % 1                  B<5=0 /7K: K?>;=5=85. . .  O K 1 5  1K;8  2>AAB0=>2;5=K  A;54CNI85  D09;K  ( 2A53>  % 1 ) :  @8G8=0 :;NG8BL  C3;C1;Q==K9  0=0;87U K  E>B8B5  2K?>;=8BL  C3;C1;Q==K9  0=0;87?   0  1>;LH8E  48A:0E  >=  <>65B  70=OBL  1>;55  G0A0.  $09;K  =5  =0945=K@ 0945=>  D09;>2:   % 1 .   >  =8  >48=  87  =8E  =5  A>>B25BAB2C5B  D8;LB@C. 
-  @>A<>B@ !2>4:0	 03>;>2>: !>740=     7<5=Q= B:@KB ;0AB5@>2  =0  A<5I5=88  % 2 :   % 1    @>A<>B@  =54>ABC?5= $09;K  =5  2K1@0=K $09;  ?5@570?8A0=  A  ?><>ILN  " % 1 "   5@570?8A0=>  :;0AB5@>2  D09;0:   % 1                    58725AB=0O  ?0?:0Q >ABC?=0  =>20O  25@A8O  R e c u v a   ( % 1 ) . 
- 
- 5@59B8  2  @0745;  703@C7:8  =0  A09B5  ?@>3@0<<K?  >O28;0AL  =>20O  25@A8O) 2B><0B8G5A:8  ?@>25@OBL  >1=>2;5=8O  R e c u v a & )Q;:=8B5,   GB>1K  ?>A5B8BL  A09B  P i r i f o r m  #40;5=85  D09;>2' K?>;=5=>:   % 1 % ,   ?5@570?8A0=>  D09;>2:   % 2 # 5@570?8A0=>  D09;>2:   % 1   ( 70  % 2   A5:) % -B8  D09;K  =5  1K;8  C40;5=K  ( 2A53>  % 1 ) :  G8AB:0  A2>1>4=>3>  <5AB0-
+          .css('visibility', 'hidden');
+
+        startLoad.call(this);
+      }
+    },
+
+    close : function (e, el) {
+      e.preventDefault();
+
+      var root = (function (target) {
+            if (/blackout/.test(target.selector)) {
+              return target;
+            } else {
+              return target.closest('.clearing-blackout');
+            }
+          }($(el))),
+          body = $(document.body), container, visible_image;
+
+      if (el === e.target && root) {
+        body.css('overflow', '');
+        container = $('div', root).first();
+        visible_image = $('.visible-img', container);
+        visible_image.trigger('close.fndtn.clearing');
+        this.settings.prev_index = 0;
+        $('ul[' + this.attr_name() + ']', root)
+          .attr('style', '').closest('.clearing-blackout')
+          .removeClass('clearing-blackout');
+        container.removeClass('clearing-container');
+        visible_image.hide();
+        visible_image.trigger('closed.fndtn.clearing');        
+      }
+
+      // Event to re-enable scrolling on touch devices
+      $('body').off('touchmove');
+
+      return false;
+    },
+
+    is_open : function (current) {
+      return current.parent().prop('style').length > 0;
+    },
+
+    keydown : function (e) {
+      var clearing = $('.clearing-blackout ul[' + this.attr_name() + ']'),
+          NEXT_KEY = this.rtl ? 37 : 39,
+          PREV_KEY = this.rtl ? 39 : 37,
+          ESC_KEY = 27;
+
+      if (e.which === NEXT_KEY) this.go(clearing, 'next');
+      if (e.which === PREV_KEY) this.go(clearing, 'prev');
+      if (e.which === ESC_KEY) this.S('a.clearing-close').trigger('click').trigger('click.fndtn.clearing');
+    },
+
+    nav : function (e, direction) {
+      var clearing = $('ul[' + this.attr_name() + ']', '.clearing-blackout');
+
+      e.preventDefault();
+      this.go(clearing, direction);
+    },
+
+    resize : function () {
+      var image = $('img', '.clearing-blackout .visible-img'),
+          label = $('.clearing-touch-label', '.clearing-blackout');
+
+      if (image.length) {
+        this.center_and_label(image, label);
+        image.trigger('resized.fndtn.clearing')
+      }
+    },
+
+    // visual adjustments
+    fix_height : function (target) {
+      var lis = target.parent().children(),
+          self = this;
+
+      lis.each(function () {
+        var li = self.S(this),
+            image = li.find('img');
+
+        if (li.height() > image.outerHeight()) {
+          li.addClass('fix-height');
+        }
+      })
+      .closest('ul')
+      .width(lis.length * 100 + '%');
+
+      return this;
+    },
+
+    update_paddles : function (target) {
+      target = target.closest('li');
+      var visible_image = target
+        .closest('.carousel')
+        .siblings('.visible-img');
+
+      if (target.next().length > 0) {
+        this.S('.clearing-main-next', visible_image).removeClass('disabled');
+      } else {
+        this.S('.clearing-main-next', visible_image).addClass('disabled');
+      }
+
+      if (target.prev().length > 0) {
+        this.S('.clearing-main-prev', visible_image).removeClass('disabled');
+      } else {
+        this.S('.clearing-main-prev', visible_image).addClass('disabled');
+      }
+    },
+
+    center_and_label : function (target, label) {
+      if (!this.rtl) {
+        target.css({
+          marginLeft : -(target.outerWidth() / 2),
+          marginTop : -(target.outerHeight() / 2)
+        });
+
+        if (label.length > 0) {
+          label.css({
+            marginLeft : -(label.outerWidth() / 2),
+            marginTop : -(target.outerHeight() / 2)-label.outerHeight()-10
+          });
+        }
+      } else {
+        target.css({
+          marginRight : -(target.outerWidth() / 2),
+          marginTop : -(target.outerHeight() / 2),
+          left: 'auto',
+          right: '50%'
+        });
+
+        if (label.length > 0) {
+          label.css({
+            marginRight : -(label.outerWidth() / 2),
+            marginTop : -(target.outerHeight() / 2)-label.outerHeight()-10,
+            left: 'auto',
+            right: '50%'
+          });
+        }
+      }
+      return this;
+    },
+
+    // image loading and preloading
+
+    load : function ($image) {
+      var href;
+
+      if ($image[0].nodeName === 'A') {
+        href = $image.attr('href');
+      } else {
+        href = $image.closest('a').attr('href');
+      }
+
+      this.preload($image);
+
+      if (href) return href;
+      return $image.attr('src');
+    },
+
+    preload : function ($image) {
+      this
+        .img($image.closest('li').next())
+        .img($image.closest('li').prev());
+    },
+
+    img : function (img) {
+      if (img.length) {
+        var new_img = new Image(),
+            new_a = this.S('a', img);
+
+        if (new_a.length) {
+          new_img.src = new_a.attr('href');
+        } else {
+          new_img.src = this.S('img', img).attr('src');
+        }
+      }
+      return this;
+    },
+
+    // image caption
+
+    caption : function (container, $image) {
+      var caption = $image.attr('data-caption');
+
+      if (caption) {
+        container
+          .html(caption)
+          .show();
+      } else {
+        container
+          .text('')
+          .hide();
+      }
+      return this;
+    }, 
+
+    // directional methods
+
+    go : function ($ul, direction) {
+      var current = this.S('.visible', $ul),
+          target = current[direction]();
+
+      // Check for skip selector.
+      if (this.settings.skip_selector && target.find(this.settings.skip_selector).length != 0) {
+        target = target[direction]();
+      }
+
+      if (target.length) {
+        this.S('img', target)
+          .trigger('click', [current, target]).trigger('click.fndtn.clearing', [current, target])
+          .trigger('change.fndtn.clearing');
+      }
+    },
+
+    shift : function (current, target, callback) {
+      var clearing = target.parent(),
+          old_index = this.settings.prev_index || target.index(),
+          direction = this.direction(clearing, current, target),
+          dir = this.rtl ? 'right' : 'left',
+          left = parseInt(clearing.css('left'), 10),
+          width = target.outerWidth(),
+          skip_shift;
+
+      var dir_obj = {};
+
+      // we use jQuery animate instead of CSS transitions because we
+      // need a callback to unlock the next animation
+      // needs support for RTL **
+      if (target.index() !== old_index && !/skip/.test(direction)){
+        if (/left/.test(direction)) {
+          this.lock();
+          dir_obj[dir] = left + width;
+          clearing.animate(dir_obj, 300, this.unlock());
+        } else if (/right/.test(direction)) {
+          this.lock();
+          dir_obj[dir] = left - width;
+          clearing.animate(dir_obj, 300, this.unlock());
+        }
+      } else if (/skip/.test(direction)) {
+        // the target image is not adjacent to the current image, so
+        // do we scroll right or not
+        skip_shift = target.index() - this.settings.up_count;
+        this.lock();
+
+        if (skip_shift > 0) {
+          dir_obj[dir] = -(skip_shift * width);
+          clearing.animate(dir_obj, 300, this.unlock());
+        } else {
+          dir_obj[dir] = 0;
+          clearing.animate(dir_obj, 300, this.unlock());
+        }
+      }
+
+      callback();
+    },
+
+    direction : function ($el, current, target) {
+      var lis = this.S('li', $el),
+          li_width = lis.outerWidth() + (lis.outerWidth() / 4),
+          up_count = Math.floor(this.S('.clearing-container').outerWidth() / li_width) - 1,
+          target_index = lis.index(target),
+          response;
+
+      this.settings.up_count = up_count;
+
+      if (this.adjacent(this.settings.prev_index, target_index)) {
+        if ((target_index > up_count) && target_index > this.settings.prev_index) {
+          response = 'right';
+        } else if ((target_index > up_count - 1) && target_index <= this.settings.prev_index) {
+          response = 'left';
+        } else {
+          response = false;
+        }
+      } else {
+        response = 'skip';
+      }
+
+      this.settings.prev_index = target_index;
+
+      return response;
+    },
+
+    adjacent : function (current_index, target_index) {
+      for (var i = target_index + 1; i >= target_index - 1; i--) {
+        if (i === current_index) return true;
+      }
+      return false;
+    },
+
+    // lock management
+
+    lock : function () {
+      this.settings.locked = true;
+    },
+
+    unlock : function () {
+      this.settings.locked = false;
+    },
+
+    locked : function () {
+      return this.settings.locked;
+    },
+
+    off : function () {
+      this.S(this.scope).off('.fndtn.clearing');
+      this.S(window).off('.fndtn.clearing');
+    },
+
+    reflow : function () {
+      this.init();
+    }
+  };
+
+}(jQuery, window, window.document));

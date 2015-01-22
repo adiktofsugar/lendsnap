@@ -50,7 +50,7 @@ app.use(function addUser(req, res, next) {
             console.error("account service is not up");
             return callback(new Error("account service is not up"));
         }
-        var uri = new Uri(accountService.address)
+        var uri = new Uri('http://' + accountService.address)
             .setPath('/account/' + req.session.userId)
             .toString();
         request(uri, function (error, response, body) {

@@ -11,6 +11,7 @@ ExecStart=/bin/bash -c "\
     docker run --rm --name %p \
     -e ETCD_HOST=$etcd_host \
     -e MACHINE_PRIVATE_IP=`cat /etc/private_ipv4`\
+    -v /var/lendsnap-repo/web-ui/code:/var/lendsnap/web-ui/code \
     web-ui scripts/db-setup.js"
 
 [Install]

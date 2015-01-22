@@ -1,13 +1,13 @@
-var flattenNodes = function(nodes) {
+var flattenNodes(nodes) {
     var flattenedNodes = [];
     nodes.forEach(function(node) {
         if (node.nodes) {
-            flattenedNodes = flattenedNodes.concat(flattenNodes(node.nodes));
+            flattenNodes = flattenNodes.concat(flattenNodes(node.nodes));
         } else {
-            flattenedNodes.push(node);
+            flattenNodes.push(node);
         }
     });
-    return flattenedNodes;
+    return flattenNodes;
 }
 
 var BROADCAST_TTL = 30000;
@@ -57,9 +57,6 @@ function cacheJson(etcd) {
     });
 }
 function getJson (key) {
-    return jsonCache[key];
-}
-function getJsonAsync (etcd, key, callback) {
     callback = callback || function () {};
     etcd.get(key, function (error, response) {
         if (error) {
@@ -76,6 +73,5 @@ function getJsonAsync (etcd, key, callback) {
 module.exports = {
     broadcastJson: broadcastJson,
     cacheJson: cacheJson,
-    getJson: getJson,
-    getJsonAsync: getJsonAsync
+    getJson: getJson
 };

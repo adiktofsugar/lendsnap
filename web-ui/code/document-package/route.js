@@ -170,7 +170,12 @@ function mount (app) {
                 }
             });
         }
-        var processFileFunctions = req.files["file[]"].map(function (file) {
+        var files = req.files["file[]"];
+        if (!(files instanceof Array)) {
+            files = [files];
+        }
+        console.log("files", files);
+        var processFileFunctions = files.map(function (file) {
             return function (callback) {
                 processFile(file, callback);
             };
